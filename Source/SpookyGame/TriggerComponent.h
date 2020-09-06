@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "TriggerComponent.generated.h"
 
+class AInteractableBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPOOKYGAME_API UTriggerComponent : public UActorComponent
@@ -25,8 +26,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//TArray of actors to trigger when TriggerActors() function is called
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<AActor*> ActorsToTrigger;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<AInteractableBase*> ActorsToTrigger;
 
 	//Function to be called to trigger actors in ActorsToTrigger array
 	UFUNCTION(BlueprintCallable)

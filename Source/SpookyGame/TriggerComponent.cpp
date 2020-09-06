@@ -2,7 +2,9 @@
 
 
 #include "TriggerComponent.h"
+
 #include "TriggerInterface.h"
+#include "InteractableBase.h"
 
 // Sets default values for this component's properties
 UTriggerComponent::UTriggerComponent()
@@ -35,15 +37,14 @@ void UTriggerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UTriggerComponent::TriggerActors()
 {
-	for (AActor* Actor : ActorsToTrigger)
+	for (AInteractableBase* Actor : ActorsToTrigger)
 	{
 		//Call trigger function for all actors in array if they implement the trigger interface
-		ITriggerInterface* TriggerActor = Cast<ITriggerInterface>(Actor);
-		if (IsValid(Actor) && Cast<ITriggerInterface>(Actor))
+		if (IsValid(Actor))
 		{
+			ITriggerInterface* TriggerActor = Cast<ITriggerInterface>(Actor);
 			TriggerActor->Execute_OnTrigger(Actor);
 		}
-
 	}
 }
 
