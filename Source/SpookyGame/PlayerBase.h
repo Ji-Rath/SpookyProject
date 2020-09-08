@@ -49,6 +49,21 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	AInteractableBase* InteractHover = nullptr;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UCameraShake> WalkingScreenShake;
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* SoundFootstep;
+
+	UPROPERTY(EditDefaultsOnly)
+	float WalkFootstepRate = 1.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float RunFootstepRate = 1.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float CrouchFootstepRate = 1.f;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -82,8 +97,9 @@ private:
 	float InitialCapsuleHeight;
 
 	//Handle triggering footstep sounds and screen shake
-	UFUNCTION()
-	void HandleFootsteps();
+	void TriggerFootstep();
+
+	void FootstepDetection();
 
 	//Handle footstep sound delay
 	FTimerHandle FootstepTimer;

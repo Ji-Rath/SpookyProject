@@ -35,6 +35,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName Description;
 
+	//Whether the actor can only be used once
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bOneTimeInteraction = false;
 
 private:
 	

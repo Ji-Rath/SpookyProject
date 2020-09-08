@@ -39,8 +39,7 @@ void APlayerBase::MovementForward(float AxisValue)
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(GetControlRotation());
 	AddMovementInput(ForwardVector, AxisValue);
 
-	if(!GetWorldTimerManager().IsTimerActive(FootstepTimer))
-		GetWorldTimerManager().SetTimer(FootstepTimer, this, &APlayerBase::HandleFootsteps, 1.f);
+	FootstepDetection();
 }
 
 void APlayerBase::MovementRight(float AxisValue)
@@ -48,8 +47,7 @@ void APlayerBase::MovementRight(float AxisValue)
 	FVector RightVector = UKismetMathLibrary::GetRightVector(GetControlRotation());
 	AddMovementInput(RightVector, AxisValue);
 
-	if (!GetWorldTimerManager().IsTimerActive(FootstepTimer))
-		GetWorldTimerManager().SetTimer(FootstepTimer, this, &APlayerBase::HandleFootsteps, 1.f);
+	FootstepDetection();
 }
 
 void APlayerBase::HoverInteraction(float DeltaTime)
@@ -59,7 +57,10 @@ void APlayerBase::HoverInteraction(float DeltaTime)
 	FCollisionQueryParams QueryParams = FCollisionQueryParams(FName(TEXT("Interaction Actor")), false, this);
 	FHitResult Hit;
 	FVector CameraLocation = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetCameraLocation();
-	APlayerControllerBase* PlayerController = Cast<APlayerControllerBase>(GetController());
+	APlayerControllerBase* PlayerController = Cast<APlayerControllerBase>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	if (!ensure(PlayerController != nullptr)) return;
+	if(!ensure(PlayerController->MainUI != nullptr)) return;
 
 	//Line trace for interactable objects
 	if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, CameraLocation + Distance, ECC_Visibility, QueryParams))
@@ -153,8 +154,30 @@ void APlayerBase::HandleCrouching(float DeltaTime)
 	}
 }
 
-void APlayerBase::HandleFootsteps()
+void APlayerBase::TriggerFootstep()
 {
-	UE_LOG(LogTemp, Log, TEXT("Test"));
+	if(!ensure(WalkingScreenShake != nullptr || SoundFootstep != nullptr)) return;
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundFootstep, GetActorLocation());
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	PlayerController->PlayerCameraManager->PlayCameraShake(WalkingScreenShake);
+}
+
+void APlayerBase::FootstepDetection()
+{
+	if (GetCharacterMovement()->IsWalking() && GetVelocity().Size() > 0)
+	{
+		if (!GetWorldTimerManager().IsTimerActive(FootstepTimer))
+		{
+			float Timer = WalkFootstepRate;
+			if (bIsSprinting) Timer = RunFootstepRate;
+			if (bIsCrouching) Timer = CrouchFootstepRate;
+			GetWorldTimerManager().SetTimer(FootstepTimer, this, &APlayerBase::TriggerFootstep, Timer);
+		}
+	}
+	else
+	{
+		GetWorldTimerManager().ClearTimer(FootstepTimer);
+	}
 }
 
