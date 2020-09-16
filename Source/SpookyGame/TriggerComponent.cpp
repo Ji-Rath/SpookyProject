@@ -5,6 +5,7 @@
 
 #include "TriggerInterface.h"
 #include "InteractableBase.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values for this component's properties
 UTriggerComponent::UTriggerComponent()
@@ -37,14 +38,45 @@ void UTriggerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UTriggerComponent::TriggerActors()
 {
-	for (AInteractableBase* Actor : ActorsToTrigger)
+	AInteractableBase* InteractActor;
+
+	for (AActor* Actor : ActorsToTrigger)
 	{
 		//Call trigger function for all actors in array if they implement the trigger interface
-		if (IsValid(Actor))
+		if (IsValid(Actor) && UKismetSystemLibrary::DoesImplementInterface(Actor, UTriggerInterface::StaticClass()))
 		{
-			ITriggerInterface* TriggerActor = Cast<ITriggerInterface>(Actor);
-			TriggerActor->Execute_OnTrigger(Actor);
+			InteractActor = Cast<AInteractableBase>(Actor);
+			if (IsValid(InteractActor))
+			{
+				if (InteractActor->bCanInteract)
+				{
+					ITriggerInterface::Execute_OnTrigger(Actor);
+					if (InteractActor->bOneTimeInteraction)
+						InteractActor->bCanInteract = false;
+				}
+			}
+			else
+				ITriggerInterface::Execute_OnTrigger(Actor);
 		}
 	}
+
+	//Trigger interact with owning actor if possible
+	if (TriggerSelf && UKismetSystemLibrary::DoesImplementInterface(GetOwner(), UTriggerInterface::StaticClass()))
+	{
+		InteractActor = Cast<AInteractableBase>(GetOwner());
+		if (IsValid(InteractActor))
+		{
+			if (InteractActor->bCanInteract)
+			{
+				ITriggerInterface::Execute_OnTrigger(GetOwner());
+				if (InteractActor->bOneTimeInteraction)
+					InteractActor->bCanInteract = false;
+			}
+		}
+		else
+			ITriggerInterface::Execute_OnTrigger(GetOwner());
+		
+	}
+		
 }
 

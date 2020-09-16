@@ -23,9 +23,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//Determine whether the player can interact with the actor
+	//Determine whether anything can interact with the actor
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanInteract = true;
+
+	//Determine whether the player can interact with the actor
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bPlayerInteract = false;
 
 	//The name of the actor
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -36,10 +40,7 @@ public:
 	FName Description;
 
 	//Whether the actor can only be used once
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bOneTimeInteraction = false;
-
-private:
-	
 
 };

@@ -27,11 +27,14 @@ public:
 
 	//TArray of actors to trigger when TriggerActors() function is called
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<AInteractableBase*> ActorsToTrigger;
+	TArray<AActor*> ActorsToTrigger;
 
 	//Function to be called to trigger actors in ActorsToTrigger array
 	UFUNCTION(BlueprintCallable)
 	void TriggerActors();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool TriggerSelf = true;
 
 		
 };

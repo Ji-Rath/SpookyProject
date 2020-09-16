@@ -65,9 +65,10 @@ void APlayerBase::HoverInteraction(float DeltaTime)
 	//Line trace for interactable objects
 	if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, CameraLocation + Distance, ECC_Visibility, QueryParams))
 	{
-		if (ensure(Hit.GetActor()) && Cast<AInteractableBase>(Hit.GetActor()))
+		InteractHover = Cast<AInteractableBase>(Hit.GetActor());
+		if (ensure(IsValid(InteractHover)) && InteractHover->bPlayerInteract)
 		{
-			InteractHover = Cast<AInteractableBase>(Hit.GetActor());
+			
 			PlayerController->MainUI->PlayInteractAnim(EUMGSequencePlayMode::Forward);
 		}
 		else
@@ -85,14 +86,13 @@ void APlayerBase::HoverInteraction(float DeltaTime)
 
 void APlayerBase::Interact()
 {
-	if (IsValid(InteractHover) && InteractHover->bCanInteract)
+	if (IsValid(InteractHover) && InteractHover->bPlayerInteract)
 	{
 		UTriggerComponent* TriggerComponent = InteractHover->FindComponentByClass<UTriggerComponent>();
 		if (TriggerComponent != nullptr)
 		{
 			TriggerComponent->TriggerActors();
 		}
-
 	}
 }
 
