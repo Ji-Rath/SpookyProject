@@ -14,6 +14,8 @@
 #include "TriggerComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Components/SpotLightComponent.h"
 
 // Sets default values
 APlayerBase::APlayerBase()
@@ -23,6 +25,12 @@ APlayerBase::APlayerBase()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(RootComponent);
+
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
+	SpringArm->SetupAttachment(Camera);
+
+	Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
+	Flashlight->SetupAttachment(SpringArm);
 }
 
 // Called when the game starts or when spawned
@@ -66,9 +74,10 @@ void APlayerBase::HoverInteraction(float DeltaTime)
 	if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, CameraLocation + Distance, ECC_Visibility, QueryParams))
 	{
 		InteractHover = Cast<AInteractableBase>(Hit.GetActor());
+
+		//Set visibility of interact UI
 		if (ensure(IsValid(InteractHover)) && InteractHover->bPlayerInteract)
 		{
-			
 			PlayerController->MainUI->PlayInteractAnim(EUMGSequencePlayMode::Forward);
 		}
 		else
@@ -88,6 +97,7 @@ void APlayerBase::Interact()
 {
 	if (IsValid(InteractHover) && InteractHover->bPlayerInteract)
 	{
+		//Call TriggerActors from TriggerComponent 
 		UTriggerComponent* TriggerComponent = InteractHover->FindComponentByClass<UTriggerComponent>();
 		if (TriggerComponent != nullptr)
 		{
@@ -104,6 +114,7 @@ void APlayerBase::Tick(float DeltaTime)
 	//Get actors in front of player that are interactable
 	HoverInteraction(DeltaTime);
 
+	//Handle smooth crouching mechanic
 	HandleCrouching(DeltaTime);
 }
 

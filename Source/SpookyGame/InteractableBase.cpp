@@ -2,6 +2,7 @@
 
 
 #include "InteractableBase.h"
+#include "TriggerInterface.h"
 
 // Sets default values
 AInteractableBase::AInteractableBase()
@@ -15,6 +16,12 @@ AInteractableBase::AInteractableBase()
 void AInteractableBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (this->Implements<UTriggerInterface>())
+	{
+		if (bIsOn)
+			ITriggerInterface::Execute_OnTrigger(this);
+	}
 	
 }
 

@@ -10,6 +10,8 @@
 class ITriggerInterface;
 class AInteractableBase;
 class UCameraComponent;
+class USpringArmComponent;
+class USpotLightComponent;
 
 UCLASS()
 class SPOOKYGAME_API APlayerBase : public ACharacter
@@ -32,6 +34,14 @@ public:
 	//Camera component
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UCameraComponent* Camera;
+
+	//Spring arm component
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USpringArmComponent* SpringArm;
+
+	//Flashlight component
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USpotLightComponent* Flashlight;
 
 	//Speed to crouch and uncrouch
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")

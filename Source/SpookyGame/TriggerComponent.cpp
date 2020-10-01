@@ -51,6 +51,8 @@ void UTriggerComponent::TriggerActors()
 				if (InteractActor->bCanInteract)
 				{
 					ITriggerInterface::Execute_OnTrigger(Actor);
+					InteractActor->ToggleOnStatus();
+
 					if (InteractActor->bOneTimeInteraction)
 						InteractActor->bCanInteract = false;
 				}
@@ -69,6 +71,8 @@ void UTriggerComponent::TriggerActors()
 			if (InteractActor->bCanInteract)
 			{
 				ITriggerInterface::Execute_OnTrigger(GetOwner());
+				InteractActor->ToggleOnStatus();
+
 				if (InteractActor->bOneTimeInteraction)
 					InteractActor->bCanInteract = false;
 			}

@@ -32,15 +32,20 @@ public:
 	bool bPlayerInteract = false;
 
 	//The name of the actor
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName Name;
 
 	//A short description of the actor
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName Description;
 
 	//Whether the actor can only be used once
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bOneTimeInteraction = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsOn = false;
+
+	UFUNCTION()
+	void ToggleOnStatus() { bIsOn = !bIsOn; }
 };

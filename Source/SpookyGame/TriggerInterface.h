@@ -24,6 +24,6 @@ class SPOOKYGAME_API ITriggerInterface
 public:
 	
 	//Called from a trigger component to change the state of the actor
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnTrigger();
 };
