@@ -16,6 +16,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SpotLightComponent.h"
+#include "GameFramework/Controller.h"
 
 // Sets default values
 APlayerBase::APlayerBase()
@@ -67,8 +68,8 @@ void APlayerBase::HoverInteraction(float DeltaTime)
 	FVector CameraLocation = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetCameraLocation();
 	APlayerControllerBase* PlayerController = Cast<APlayerControllerBase>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-	if (!ensure(PlayerController != nullptr)) return;
-	if(!ensure(PlayerController->MainUI != nullptr)) return;
+	if (ensure(PlayerController == nullptr)) return;
+	if (PlayerController->MainUI == nullptr) return;
 
 	//Line trace for interactable objects
 	if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, CameraLocation + Distance, ECC_Visibility, QueryParams))
@@ -116,6 +117,9 @@ void APlayerBase::Tick(float DeltaTime)
 
 	//Handle smooth crouching mechanic
 	HandleCrouching(DeltaTime);
+
+	if (IsValid(LookingAt))
+		HandleLookingAt(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -137,6 +141,15 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &APlayerBase::Sprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerBase::StopSprint);
 
+}
+
+void APlayerBase::ForceLookAt(AActor* LookAt, float Duration /*= 1.f*/)
+{
+	if (ensure(IsValid(LookAt)))
+	{
+		LookingAt = LookAt;
+		GetWorldTimerManager().SetTimer(LookAtTimer, this, &APlayerBase::ClearLookingAt, Duration, false);
+	}
 }
 
 void APlayerBase::HandleCrouching(float DeltaTime)
@@ -176,6 +189,7 @@ void APlayerBase::TriggerFootstep()
 
 void APlayerBase::FootstepDetection()
 {
+	//Ensure player is moving
 	if (GetCharacterMovement()->IsWalking() && GetVelocity().Size() > 0)
 	{
 		if (!GetWorldTimerManager().IsTimerActive(FootstepTimer))
@@ -190,5 +204,20 @@ void APlayerBase::FootstepDetection()
 	{
 		GetWorldTimerManager().ClearTimer(FootstepTimer);
 	}
+}
+
+void APlayerBase::HandleLookingAt(float DeltaTime)
+{
+	AController* PlayerController = GetController();
+	
+	FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), LookingAt->GetActorLocation());
+	FRotator ControlRot = UKismetMathLibrary::RInterpTo(PlayerController->GetControlRotation(), LookAtRot, DeltaTime, LookAtSpeed);
+
+	GetController()->SetControlRotation(ControlRot);
+}
+
+void APlayerBase::ClearLookingAt()
+{
+	LookingAt = nullptr;
 }
 

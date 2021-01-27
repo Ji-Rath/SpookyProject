@@ -74,6 +74,12 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float CrouchFootstepRate = 1.f;
 
+	UFUNCTION(BlueprintCallable)
+	void ForceLookAt(AActor* LookAt, float Duration = 1.f);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float LookAtSpeed = 3.f;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -122,4 +128,14 @@ private:
 
 	//When true, player wants to sprint
 	bool bIsSprinting;
+
+	//Actor that player is looking at
+	AActor* LookingAt = nullptr;
+
+	//Timer to handle looking at an object
+	FTimerHandle LookAtTimer;
+
+	void HandleLookingAt(float DeltaTime);
+
+	void ClearLookingAt();
 };
