@@ -24,26 +24,26 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	//Determine whether anything can interact with the actor
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	bool bCanInteract = true;
 
 	//Determine whether the player can interact with the actor
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	bool bPlayerInteract = false;
 
 	//The name of the actor
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Text")
 	FName Name;
 
 	//A short description of the actor
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Text")
 	FName Description;
 
 	//Whether the actor can only be used once
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
 	bool bOneTimeInteraction = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	bool bIsOn = false;
 
 	UFUNCTION()

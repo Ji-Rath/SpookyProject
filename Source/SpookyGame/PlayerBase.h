@@ -12,6 +12,7 @@ class AInteractableBase;
 class UCameraComponent;
 class USpringArmComponent;
 class USpotLightComponent;
+class UMatineeCameraShake;
 
 UCLASS()
 class SPOOKYGAME_API APlayerBase : public ACharacter
@@ -60,7 +61,7 @@ public:
 	AInteractableBase* InteractHover = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UCameraShake> WalkingScreenShake;
+	TSubclassOf<UMatineeCameraShake> WalkingScreenShake;
 
 	UPROPERTY(EditDefaultsOnly)
 	USoundBase* SoundFootstep;
