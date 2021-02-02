@@ -21,4 +21,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TEnumAsByte<EUMGSequencePlayMode::Type> CurrentPlayMode;
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void ToggleInventory();
 };
