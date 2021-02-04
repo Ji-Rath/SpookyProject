@@ -7,6 +7,8 @@
 #include "ItemData.h"
 #include "InventoryComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryChange, bool, bAdded);
+
 USTRUCT()
 struct FInventoryContents
 {
@@ -40,6 +42,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	int InventorySize;
+
+	UPROPERTY()
+	FInventoryChange OnInventoryChange;
 
 private:
 	UFUNCTION(BlueprintCallable)

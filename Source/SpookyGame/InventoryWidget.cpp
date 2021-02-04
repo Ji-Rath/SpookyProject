@@ -8,7 +8,8 @@
 
 bool UInventoryWidget::Initialize()
 {
-	Super::Initialize();
+	bool Success = Super::Initialize();
+	if (!Success) { return false; }
 
 	if (GetOwningPlayerPawn())
 		InventoryRef = GetOwningPlayerPawn()->FindComponentByClass<UInventoryComponent>();
@@ -17,16 +18,14 @@ bool UInventoryWidget::Initialize()
 
 void UInventoryWidget::UpdateInventory()
 {
-	if (GetOwningPlayerPawn())
-		InventoryRef = GetOwningPlayerPawn()->FindComponentByClass<UInventoryComponent>();
-
-	if (ensure(InventoryRef && ItemWidget))
+	if (InventoryRef && ItemWidget)
 	{
 		InventoryDisplay->ClearChildren();
 		for (const FInventoryContents& InventoryItem : InventoryRef->Inventory)
 		{
 			UInventoryItemWidget* ItemReference = CreateWidget<UInventoryItemWidget>(InventoryDisplay, ItemWidget);
 			ItemReference->UpdateDisplay(InventoryItem.ItemData->Name, InventoryItem.Count);
+			InventoryDisplay->AddChild(ItemReference);
 		}
 	}
 }

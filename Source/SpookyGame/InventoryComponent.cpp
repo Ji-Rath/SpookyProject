@@ -43,6 +43,7 @@ bool UInventoryComponent::AddToInventory(UItemData* Item, const int Count)
 			if (InventoryContent.Count + Count <= InventoryContent.ItemData->MaxStack)
 			{
 				InventoryContent.Count += Count;
+				OnInventoryChange.Broadcast(true);
 				return true;
 			}
 		}
@@ -54,6 +55,7 @@ bool UInventoryComponent::AddToInventory(UItemData* Item, const int Count)
 	InventoryItem.Count = Count;
 
 	Inventory.Add(InventoryItem);
+	OnInventoryChange.Broadcast(true);
 	return true;
 }
 

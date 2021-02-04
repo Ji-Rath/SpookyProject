@@ -13,6 +13,8 @@ class UCameraComponent;
 class USpringArmComponent;
 class USpotLightComponent;
 class UMatineeCameraShake;
+class UPlayerInteractComponent;
+class UAttentionComponent;
 
 UCLASS()
 class SPOOKYGAME_API APlayerBase : public ACharacter
@@ -28,37 +30,34 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	//Distance that the player can interact with objects
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float InteractDistance = 500.f;
-
 	//Camera component
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UCameraComponent* Camera;
-
 	//Spring arm component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USpringArmComponent* SpringArm;
-
+	USpringArmComponent* LightSpringArm;
+	//Spring arm component
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USpringArmComponent* CameraSpringArm;
 	//Flashlight component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USpotLightComponent* Flashlight;
+	//Player interact component
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPlayerInteractComponent* PlayerInteract;
+	//Player attention component
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UAttentionComponent* AttentionComp;
 
 	//Speed to crouch and uncrouch
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float CrouchSpeed = 5.f;
-
 	//Player walking speed (Copied from CharacterMovement Component)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float WalkSpeed = 250.f;
-
 	//Player running speed
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	float SprintSpeed = 350.f;
-
-	//Store interact actor that the player is currently looking at
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	AInteractableBase* InteractHover = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UMatineeCameraShake> WalkingScreenShake;
@@ -68,18 +67,16 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float WalkFootstepRate = 1.f;
-
 	UPROPERTY(EditDefaultsOnly)
 	float RunFootstepRate = 1.f;
-
 	UPROPERTY(EditDefaultsOnly)
 	float CrouchFootstepRate = 1.f;
 
-	UFUNCTION(BlueprintCallable)
-	void ForceLookAt(AActor* LookAt, float Duration = 1.f);
+	//Called when player no longer wants to crouch
+	void StopCrouch();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float LookAtSpeed = 3.f;
+	//Called to begin crouching
+	void StartCrouch();
 
 protected:
 	// Called when the game starts or when spawned
@@ -91,27 +88,11 @@ private:
 	//Control player movement right and left
 	void MovementRight(float AxisValue);
 
-	void HoverInteraction(float DeltaTime);
-
-	void Interact();
-
 	//Change player move state to sprinting
 	void Sprint() { GetCharacterMovement()->MaxWalkSpeed = SprintSpeed; bIsSprinting = true; }
 
 	//Change player move state to running
 	void StopSprint() { GetCharacterMovement()->MaxWalkSpeed = WalkSpeed; bIsSprinting = false; }
-
-	//Called to begin crouching
-	void StartCrouch() { bIsCrouching = true; }
-
-	//Called when player no longer wants to crouch
-	void StopCrouch() { bIsCrouching = false; }
-
-	//Called every tick to handle smooth crouching
-	void HandleCrouching(float DeltaTime);
-
-	//Store initial capsulehalfheight
-	float InitialCapsuleHeight;
 
 	//Handle triggering footstep sounds and screen shake
 	void TriggerFootstep();
@@ -121,22 +102,6 @@ private:
 	//Handle footstep sound delay
 	FTimerHandle FootstepTimer;
 
-	//Store interact actor that player is interacting with
-	AInteractableBase* CurrentInteractActor = nullptr;
-
-	//When true, player wants to crouch
-	bool bIsCrouching;
-
 	//When true, player wants to sprint
 	bool bIsSprinting;
-
-	//Actor that player is looking at
-	AActor* LookingAt = nullptr;
-
-	//Timer to handle looking at an object
-	FTimerHandle LookAtTimer;
-
-	void HandleLookingAt(float DeltaTime);
-
-	void ClearLookingAt();
 };

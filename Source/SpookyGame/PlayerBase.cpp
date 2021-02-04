@@ -2,21 +2,19 @@
 
 
 #include "PlayerBase.h"
-
 #include "Kismet/KismetMathLibrary.h"
 #include "TriggerInterface.h"
-#include "InteractableBase.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "Camera/PlayerCameraManager.h"
-#include "PlayerControllerBase.h"
-#include "MainUIBase.h"
-#include "TriggerComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SpotLightComponent.h"
 #include "GameFramework/Controller.h"
+#include "PlayerInteractComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "AttentionComponent.h"
 
 // Sets default values
 APlayerBase::APlayerBase()
@@ -24,14 +22,27 @@ APlayerBase::APlayerBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	Camera->SetupAttachment(RootComponent);
+	CameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Spring Arm"));
+	CameraSpringArm->SetupAttachment(RootComponent);
 
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
-	SpringArm->SetupAttachment(Camera);
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	Camera->SetupAttachment(CameraSpringArm);
+
+	LightSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
+	LightSpringArm->SetupAttachment(Camera);
 
 	Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
-	Flashlight->SetupAttachment(SpringArm);
+	Flashlight->SetupAttachment(LightSpringArm);
+
+	PlayerInteract = CreateDefaultSubobject<UPlayerInteractComponent>(TEXT("Player Interact"));
+
+	AttentionComp = CreateDefaultSubobject<UAttentionComponent>(TEXT("Attention Component"));
+
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+		GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchSpeed;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -39,8 +50,6 @@ void APlayerBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitialCapsuleHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
 void APlayerBase::MovementForward(float AxisValue)
@@ -59,67 +68,11 @@ void APlayerBase::MovementRight(float AxisValue)
 	FootstepDetection();
 }
 
-void APlayerBase::HoverInteraction(float DeltaTime)
-{
-	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(GetControlRotation());
-	FVector Distance = ForwardVector * InteractDistance;
-	FCollisionQueryParams QueryParams = FCollisionQueryParams(FName(TEXT("Interaction Actor")), false, this);
-	FHitResult Hit;
-	FVector CameraLocation = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetCameraLocation();
-	APlayerControllerBase* PlayerController = Cast<APlayerControllerBase>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-
-	if (ensure(PlayerController == nullptr)) return;
-	if (PlayerController->MainUI == nullptr) return;
-
-	//Line trace for interactable objects
-	if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, CameraLocation + Distance, ECC_Visibility, QueryParams))
-	{
-		InteractHover = Cast<AInteractableBase>(Hit.GetActor());
-
-		//Set visibility of interact UI
-		if (ensure(IsValid(InteractHover)) && InteractHover->bPlayerInteract)
-		{
-			PlayerController->MainUI->PlayInteractAnim(EUMGSequencePlayMode::Forward);
-		}
-		else
-		{
-			InteractHover = nullptr;
-			PlayerController->MainUI->PlayInteractAnim(EUMGSequencePlayMode::Reverse);
-		}
-	}
-	else
-	{
-		InteractHover = nullptr;
-		PlayerController->MainUI->PlayInteractAnim(EUMGSequencePlayMode::Reverse);
-	}
-}
-
-void APlayerBase::Interact()
-{
-	if (IsValid(InteractHover) && InteractHover->bPlayerInteract)
-	{
-		//Call TriggerActors from TriggerComponent 
-		UTriggerComponent* TriggerComponent = InteractHover->FindComponentByClass<UTriggerComponent>();
-		if (TriggerComponent != nullptr)
-		{
-			TriggerComponent->TriggerActors();
-		}
-	}
-}
-
 // Called every frame
 void APlayerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//Get actors in front of player that are interactable
-	HoverInteraction(DeltaTime);
-
-	//Handle smooth crouching mechanic
-	HandleCrouching(DeltaTime);
-
-	if (IsValid(LookingAt))
-		HandleLookingAt(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -133,7 +86,7 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookRight", this, &APawn::AddControllerYawInput);
 
-	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerBase::Interact);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, PlayerInteract, &UPlayerInteractComponent::Interact);
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerBase::StartCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerBase::StopCrouch);
@@ -141,41 +94,6 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &APlayerBase::Sprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerBase::StopSprint);
 
-}
-
-void APlayerBase::ForceLookAt(AActor* LookAt, float Duration /*= 1.f*/)
-{
-	if (ensure(IsValid(LookAt)))
-	{
-		LookingAt = LookAt;
-		GetWorldTimerManager().SetTimer(LookAtTimer, this, &APlayerBase::ClearLookingAt, Duration, false);
-	}
-}
-
-void APlayerBase::HandleCrouching(float DeltaTime)
-{
-	UCharacterMovementComponent* MoveComponent = GetCharacterMovement();
-	FHitResult Hit;
-	float SmoothCrouch = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
-	if (bIsCrouching && GetMovementComponent()->IsMovingOnGround())
-	{
-		SmoothCrouch = FMath::FInterpTo(SmoothCrouch, MoveComponent->CrouchedHalfHeight, DeltaTime, CrouchSpeed);
-		MoveComponent->MaxWalkSpeed = MoveComponent->MaxWalkSpeedCrouched;
-
-		GetCapsuleComponent()->SetCapsuleHalfHeight(SmoothCrouch);
-
-	}
-	else if (GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight() != InitialCapsuleHeight && !GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), GetActorLocation() + (GetActorLocation().UpVector * InitialCapsuleHeight), ECC_Visibility, FCollisionQueryParams(NAME_None, false, this)))
-	{
-		SmoothCrouch = FMath::FInterpTo(SmoothCrouch, InitialCapsuleHeight, DeltaTime, CrouchSpeed);
-
-		GetCapsuleComponent()->SetCapsuleHalfHeight(SmoothCrouch);
-
-		if(bIsSprinting)
-			MoveComponent->MaxWalkSpeed = SprintSpeed;
-		else
-			MoveComponent->MaxWalkSpeed = WalkSpeed;
-	}
 }
 
 void APlayerBase::TriggerFootstep()
@@ -196,7 +114,7 @@ void APlayerBase::FootstepDetection()
 		{
 			float Timer = WalkFootstepRate;
 			if (bIsSprinting) Timer = RunFootstepRate;
-			if (bIsCrouching) Timer = CrouchFootstepRate;
+			//if (bIsCrouching) Timer = CrouchFootstepRate;
 			GetWorldTimerManager().SetTimer(FootstepTimer, this, &APlayerBase::TriggerFootstep, Timer);
 		}
 	}
@@ -206,18 +124,12 @@ void APlayerBase::FootstepDetection()
 	}
 }
 
-void APlayerBase::HandleLookingAt(float DeltaTime)
+void APlayerBase::StopCrouch()
 {
-	AController* PlayerController = GetController();
-	
-	FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), LookingAt->GetActorLocation());
-	FRotator ControlRot = UKismetMathLibrary::RInterpTo(PlayerController->GetControlRotation(), LookAtRot, DeltaTime, LookAtSpeed);
-
-	GetController()->SetControlRotation(ControlRot);
+	GetCharacterMovement()->UnCrouch(true);
 }
 
-void APlayerBase::ClearLookingAt()
+void APlayerBase::StartCrouch()
 {
-	LookingAt = nullptr;
+	GetCharacterMovement()->Crouch(true);
 }
-
