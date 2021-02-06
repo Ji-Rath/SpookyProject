@@ -15,9 +15,10 @@
 #include "PlayerInteractComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AttentionComponent.h"
+#include "AdvCharacterMovementComponent.h"
 
 // Sets default values
-APlayerBase::APlayerBase()
+APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UAdvCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -37,12 +38,6 @@ APlayerBase::APlayerBase()
 	PlayerInteract = CreateDefaultSubobject<UPlayerInteractComponent>(TEXT("Player Interact"));
 
 	AttentionComp = CreateDefaultSubobject<UAttentionComponent>(TEXT("Attention Component"));
-
-	if (GetCharacterMovement())
-	{
-		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-		GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchSpeed;
-	}
 }
 
 // Called when the game starts or when spawned
@@ -66,6 +61,12 @@ void APlayerBase::MovementRight(float AxisValue)
 	AddMovementInput(RightVector, AxisValue);
 
 	FootstepDetection();
+}
+
+void APlayerBase::Sprint()
+{
+	GetCharacterMovement()->SetMovementMode(MOVE_Custom, CUSTOM_Sprint);
+	bIsSprinting = true;
 }
 
 // Called every frame
@@ -96,6 +97,12 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 }
 
+void APlayerBase::StopSprint()
+{
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	bIsSprinting = false;
+}
+
 void APlayerBase::TriggerFootstep()
 {
 	if(!ensure(WalkingScreenShake != nullptr || SoundFootstep != nullptr)) return;
@@ -108,13 +115,14 @@ void APlayerBase::TriggerFootstep()
 void APlayerBase::FootstepDetection()
 {
 	//Ensure player is moving
-	if (GetCharacterMovement()->IsWalking() && GetVelocity().Size() > 0)
+	bool bWantsToMove = GetCharacterMovement()->IsWalking() || GetCharacterMovement()->CustomMovementMode == CUSTOM_Sprint;
+	if (bWantsToMove && GetVelocity().Size() > 0)
 	{
 		if (!GetWorldTimerManager().IsTimerActive(FootstepTimer))
 		{
 			float Timer = WalkFootstepRate;
-			if (bIsSprinting) Timer = RunFootstepRate;
-			//if (bIsCrouching) Timer = CrouchFootstepRate;
+			if (GetCharacterMovement()->IsSprinting()) Timer = RunFootstepRate;
+			if (GetCharacterMovement()->IsCrouching()) Timer = CrouchFootstepRate;
 			GetWorldTimerManager().SetTimer(FootstepTimer, this, &APlayerBase::TriggerFootstep, Timer);
 		}
 	}
@@ -124,12 +132,27 @@ void APlayerBase::FootstepDetection()
 	}
 }
 
+void APlayerBase::OnEndCrouch(float HeightAdjust, float ScaledHeightAdjust)
+{
+	Super::OnEndCrouch(HeightAdjust, HeightAdjust);
+
+	if (bIsSprinting)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Custom, CUSTOM_Sprint);
+	}
+}
+
+UAdvCharacterMovementComponent* APlayerBase::GetCharacterMovement()
+{
+	return Cast<UAdvCharacterMovementComponent>(Super::GetCharacterMovement());
+}
+
 void APlayerBase::StopCrouch()
 {
-	GetCharacterMovement()->UnCrouch(true);
+	GetCharacterMovement()->bWantsToCrouch = false;
 }
 
 void APlayerBase::StartCrouch()
 {
-	GetCharacterMovement()->Crouch(true);
+	GetCharacterMovement()->bWantsToCrouch = true;
 }

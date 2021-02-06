@@ -15,6 +15,7 @@ class USpotLightComponent;
 class UMatineeCameraShake;
 class UPlayerInteractComponent;
 class UAttentionComponent;
+class UAdvCharacterMovementComponent;
 
 UCLASS()
 class SPOOKYGAME_API APlayerBase : public ACharacter
@@ -22,7 +23,7 @@ class SPOOKYGAME_API APlayerBase : public ACharacter
 	GENERATED_BODY()
 public:
 	// Sets default values for this character's properties
-	APlayerBase();
+	APlayerBase(const FObjectInitializer& ObjectInitializer);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -49,27 +50,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UAttentionComponent* AttentionComp;
 
-	//Speed to crouch and uncrouch
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	float CrouchSpeed = 5.f;
-	//Player walking speed (Copied from CharacterMovement Component)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	float WalkSpeed = 250.f;
-	//Player running speed
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
-	float SprintSpeed = 350.f;
-
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Footsteps")
 	TSubclassOf<UMatineeCameraShake> WalkingScreenShake;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Footsteps|Sounds")
 	USoundBase* SoundFootstep;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Footsteps")
 	float WalkFootstepRate = 1.f;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Footsteps")
 	float RunFootstepRate = 1.f;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Footsteps")
 	float CrouchFootstepRate = 1.f;
 
 	//Called when player no longer wants to crouch
@@ -84,15 +75,13 @@ protected:
 private:
 	//Control player movement forward and backward
 	void MovementForward(float AxisValue);
-
 	//Control player movement right and left
 	void MovementRight(float AxisValue);
 
 	//Change player move state to sprinting
-	void Sprint() { GetCharacterMovement()->MaxWalkSpeed = SprintSpeed; bIsSprinting = true; }
-
+	void Sprint();
 	//Change player move state to running
-	void StopSprint() { GetCharacterMovement()->MaxWalkSpeed = WalkSpeed; bIsSprinting = false; }
+	void StopSprint();
 
 	//Handle triggering footstep sounds and screen shake
 	void TriggerFootstep();
@@ -104,4 +93,9 @@ private:
 
 	//When true, player wants to sprint
 	bool bIsSprinting;
+
+	void OnEndCrouch(float HeightAdjust, float ScaledHeightAdjust) override;
+
+	/** Function to cast MovementComponent to custom CharacterMovementComponent */
+	UAdvCharacterMovementComponent* GetCharacterMovement();
 };
