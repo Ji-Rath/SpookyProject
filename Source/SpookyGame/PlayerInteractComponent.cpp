@@ -4,7 +4,6 @@
 #include "PlayerInteractComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "PlayerControllerBase.h"
 #include "TriggerComponent.h"
 #include "InteractableBase.h"
 #include "MainUIBase.h"
@@ -16,6 +15,7 @@ UPlayerInteractComponent::UPlayerInteractComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.TickInterval = 0.25;
 
 	// ...
 }
@@ -41,11 +41,9 @@ void UPlayerInteractComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 {
-	APawn* Player = Cast<APawn>(GetOwner());
-	APlayerControllerBase* PlayerController = Cast<APlayerControllerBase>(Player->GetController());
-
-	if (!PlayerController) return;
-	if (!PlayerController->MainUI) return;
+	/** Ensure that the owner is a pawn */
+	APawn* Player = GetOwner<APawn>();
+	if (!Player) return;
 
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(Player->GetControlRotation());
 	FVector Distance = ForwardVector * InteractDistance;
@@ -61,19 +59,16 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 		//Set visibility of interact UI
 		if (IsValid(InteractHover) && InteractHover->bPlayerInteract)
 		{
-			PlayerController->MainUI->PlayInteractAnim(EUMGSequencePlayMode::Forward);
+			FString Message = "Interact with " + InteractHover->Name.ToString();
+			OnUpdateInteract.Broadcast(Message);
+			return;
 		}
-		else
-		{
-			InteractHover = nullptr;
-			PlayerController->MainUI->PlayInteractAnim(EUMGSequencePlayMode::Reverse);
-		}
+		// @todo Create function in interactable to see if the player can interact with the object - Check bPlayerInteract and bInteractOnce
 	}
-	else
-	{
-		InteractHover = nullptr;
-		PlayerController->MainUI->PlayInteractAnim(EUMGSequencePlayMode::Reverse);
-	}
+
+	//If there is no interactable traced, send a blank message
+	InteractHover = nullptr;
+	OnUpdateInteract.Broadcast("");
 }
 
 void UPlayerInteractComponent::Interact()

@@ -43,10 +43,10 @@ public:
 	//Flashlight component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USpotLightComponent* Flashlight;
-	//Player interact component
+	//Handles player interaction with the world
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UPlayerInteractComponent* PlayerInteract;
-	//Player attention component
+	//Handles camera control to specific objects
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UAttentionComponent* AttentionComp;
 

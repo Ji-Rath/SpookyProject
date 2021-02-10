@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "PlayerInteractComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateInteract, FString, Message);
+
 class AInteractableBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -33,10 +35,15 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	AInteractableBase* InteractHover = nullptr;
 
+	//Delegate called when there is a change in InteractHover
+	UPROPERTY()
+	FUpdateInteract OnUpdateInteract;
+
+	/** Called when the player wants to interact with the currently viewed interactable */
+	UFUNCTION(BlueprintCallable)
 	void Interact();
 
 private:
-
 	void HoverInteraction(float DeltaTime);
 		
 };

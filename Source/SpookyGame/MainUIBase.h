@@ -16,11 +16,6 @@ class SPOOKYGAME_API UMainUIBase : public UUserWidget
 	
 
 public:
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
-	void PlayInteractAnim(EUMGSequencePlayMode::Type PlayMode);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TEnumAsByte<EUMGSequencePlayMode::Type> CurrentPlayMode;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void ToggleInventory();
