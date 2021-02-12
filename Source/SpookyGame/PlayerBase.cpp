@@ -16,6 +16,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AttentionComponent.h"
 #include "AdvCharacterMovementComponent.h"
+#include "PhysicsGrabComponent.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 
 // Sets default values
 APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UAdvCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -36,8 +38,9 @@ APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	Flashlight->SetupAttachment(LightSpringArm);
 
 	PlayerInteract = CreateDefaultSubobject<UPlayerInteractComponent>(TEXT("Player Interact"));
-
 	AttentionComp = CreateDefaultSubobject<UAttentionComponent>(TEXT("Attention Component"));
+	PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("Physics Handle"));
+	PhysicsGrab = CreateDefaultSubobject<UPhysicsGrabComponent>(TEXT("Physics Grab"));
 }
 
 // Called when the game starts or when spawned
@@ -88,6 +91,7 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookRight", this, &APawn::AddControllerYawInput);
 
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, PlayerInteract, &UPlayerInteractComponent::Interact);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, PhysicsGrab, &UPhysicsGrabComponent::Grab);
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerBase::StartCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerBase::StopCrouch);

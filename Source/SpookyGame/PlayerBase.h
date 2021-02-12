@@ -16,6 +16,8 @@ class UMatineeCameraShake;
 class UPlayerInteractComponent;
 class UAttentionComponent;
 class UAdvCharacterMovementComponent;
+class UPhysicsHandleComponent;
+class UPhysicsGrabComponent;
 
 UCLASS()
 class SPOOKYGAME_API APlayerBase : public ACharacter
@@ -49,6 +51,10 @@ public:
 	//Handles camera control to specific objects
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UAttentionComponent* AttentionComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPhysicsHandleComponent* PhysicsHandle;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPhysicsGrabComponent* PhysicsGrab;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Footsteps")
 	TSubclassOf<UMatineeCameraShake> WalkingScreenShake;

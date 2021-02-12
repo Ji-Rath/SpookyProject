@@ -22,8 +22,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//TArray of actors to trigger when TriggerActors() function is called
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

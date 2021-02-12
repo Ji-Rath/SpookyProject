@@ -3,7 +3,7 @@
 
 #include "PlayerInteractComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerController.h"
 #include "TriggerComponent.h"
 #include "InteractableBase.h"
 #include "MainUIBase.h"
@@ -44,31 +44,31 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 	/** Ensure that the owner is a pawn */
 	APawn* Player = GetOwner<APawn>();
 	if (!Player) return;
+	APlayerController* PlayerController = Player->GetController<APlayerController>();
 
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(Player->GetControlRotation());
 	FVector Distance = ForwardVector * InteractDistance;
 	FCollisionQueryParams QueryParams = FCollisionQueryParams(FName(TEXT("Interaction Actor")), false, Player);
 	FHitResult Hit;
-	FVector CameraLocation = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetCameraLocation();
+	FVector CameraLocation = PlayerController->PlayerCameraManager->GetCameraLocation();
+	
 
 	//Line trace for interactable objects
 	if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, CameraLocation + Distance, ECC_Visibility, QueryParams))
 	{
+		/** Set interact message when hovering over an interactable */
 		InteractHover = Cast<AInteractableBase>(Hit.GetActor());
-
-		//Set visibility of interact UI
-		if (IsValid(InteractHover) && InteractHover->bPlayerInteract)
+		if (IsValid(InteractHover) && InteractHover->CanInteract())
 		{
-			FString Message = "Interact with " + InteractHover->Name.ToString();
+			FString Message = InteractMessage + InteractHover->Name.ToString();
 			OnUpdateInteract.Broadcast(Message);
 			return;
 		}
-		// @todo Create function in interactable to see if the player can interact with the object - Check bPlayerInteract and bInteractOnce
 	}
 
 	//If there is no interactable traced, send a blank message
 	InteractHover = nullptr;
-	OnUpdateInteract.Broadcast("");
+	OnUpdateInteract.Broadcast(TEXT(""));
 }
 
 void UPlayerInteractComponent::Interact()

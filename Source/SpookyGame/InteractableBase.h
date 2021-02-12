@@ -33,11 +33,11 @@ public:
 
 	//The name of the actor
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Text")
-	FName Name;
+	FText Name;
 
 	//A short description of the actor
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Text")
-	FName Description;
+	FText Description;
 
 	//Whether the actor can only be used once
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
@@ -47,5 +47,11 @@ public:
 	bool bIsOn = false;
 
 	UFUNCTION()
-	void ToggleOnStatus() { bIsOn = !bIsOn; }
+	void ToggleOnStatus();
+
+	UFUNCTION()
+	bool CanInteract() const;
+
+	UFUNCTION()
+	void SetInteractable(bool Interactable);
 };

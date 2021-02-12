@@ -39,11 +39,13 @@ public:
 	UPROPERTY()
 	FUpdateInteract OnUpdateInteract;
 
+	UPROPERTY(EditDefaultsOnly, Category = "InteractMessage")
+	FString InteractMessage = TEXT("Interact with ");
+
 	/** Called when the player wants to interact with the currently viewed interactable */
 	UFUNCTION(BlueprintCallable)
 	void Interact();
 
 private:
 	void HoverInteraction(float DeltaTime);
-		
 };

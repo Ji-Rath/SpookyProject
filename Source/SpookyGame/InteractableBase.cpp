@@ -32,3 +32,22 @@ void AInteractableBase::Tick(float DeltaTime)
 
 }
 
+void AInteractableBase::ToggleOnStatus()
+{
+	bIsOn = !bIsOn;
+
+	/** Prevent more interactions if it should only be triggered once */
+	if (bOneTimeInteraction)
+		SetInteractable(false);
+}
+
+bool AInteractableBase::CanInteract() const
+{
+	return bCanInteract;
+}
+
+void AInteractableBase::SetInteractable(bool Interactable)
+{
+	bCanInteract = Interactable;
+}
+
