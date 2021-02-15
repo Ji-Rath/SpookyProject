@@ -54,4 +54,8 @@ public:
 
 	UFUNCTION()
 	void SetInteractable(bool Interactable);
+
+	UFUNCTION(BlueprintNativeEvent)
+	FText GetName() const;
+	FText GetName_Implementation() const;
 };

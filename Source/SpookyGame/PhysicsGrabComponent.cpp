@@ -45,6 +45,7 @@ void UPhysicsGrabComponent::Grab()
 	if (HandleRef->GetGrabbedComponent())
 	{
 		HandleRef->ReleaseComponent();
+		OnGrabUpdate.Broadcast(false, nullptr);
 	}
 	else
 	{
@@ -62,6 +63,7 @@ void UPhysicsGrabComponent::Grab()
 		if (GetWorld()->LineTraceSingleByObjectType(OUT Hit, CameraLocation, CameraLocation + Distance, QueryParams))
 		{
 			HandleRef->GrabComponentAtLocationWithRotation(Hit.GetComponent(), Hit.BoneName, Hit.GetComponent()->GetComponentLocation(), Hit.GetComponent()->GetComponentRotation());
+			OnGrabUpdate.Broadcast(true, nullptr);
 		}
 	}
 }

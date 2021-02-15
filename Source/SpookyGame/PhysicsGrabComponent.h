@@ -4,6 +4,8 @@
 #include "Components/ActorComponent.h"
 #include "PhysicsGrabComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGrabUpdate, bool, bGrab, AInteractableBase*, Actor);
+
 class UPhysicsHandleComponent;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -24,6 +26,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Grab")
 	float InteractDistance = 100.f;
+
+	UPROPERTY()
+	FGrabUpdate OnGrabUpdate;
 private:
 	UPROPERTY()
 	UPhysicsHandleComponent* HandleRef;

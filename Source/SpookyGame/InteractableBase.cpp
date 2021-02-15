@@ -51,3 +51,8 @@ void AInteractableBase::SetInteractable(bool Interactable)
 	bCanInteract = Interactable;
 }
 
+FText AInteractableBase::GetName_Implementation() const
+{
+	return Name;
+}
+

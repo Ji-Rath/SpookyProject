@@ -5,27 +5,31 @@
 #include "InteractWidget.h"
 #include "Components/TextBlock.h"
 #include "PlayerInteractComponent.h"
+#include "InteractableBase.h"
+#include "PhysicsGrabComponent.h"
 
 bool UInteractWidget::Initialize()
 {
 	bool Success = Super::Initialize();
 	if (!Success) { return false; }
 	
-	if (GetOwningPlayerPawn())
+	if (APawn* Player = GetOwningPlayerPawn())
 	{
-		UPlayerInteractComponent* InteractComponent = GetOwningPlayerPawn()->FindComponentByClass<UPlayerInteractComponent>();
+		UPlayerInteractComponent* InteractComponent = Player->FindComponentByClass<UPlayerInteractComponent>();
 		if (InteractComponent)
-			InteractComponent->OnUpdateInteract.AddDynamic(this, &UInteractWidget::UpdateText);
+			InteractComponent->OnUpdateInteract.AddDynamic(this, &UInteractWidget::UpdateUI);
+		UPhysicsGrabComponent* GrabComponent = Player->FindComponentByClass<UPhysicsGrabComponent>();
+		if (GrabComponent)
+			GrabComponent->OnGrabUpdate.AddDynamic(this, &UInteractWidget::UpdateUI);
 	}
 
 	return true;
 }
 
-void UInteractWidget::UpdateText(FString NewText)
+void UInteractWidget::UpdateUI(bool bShowCursor, AInteractableBase* Interactable)
 {
-	if (NewText != "")
+	if (bShowCursor)
 	{
-		InteractText->SetText(FText::FromString(NewText));
 		if (CurrentPlayMode != EUMGSequencePlayMode::Forward)
 		{
 			CurrentPlayMode = EUMGSequencePlayMode::Forward;
@@ -36,5 +40,19 @@ void UInteractWidget::UpdateText(FString NewText)
 	{
 		CurrentPlayMode = EUMGSequencePlayMode::Reverse;
 		PlayAnimation(InteractionFade, 0.0f, 1, CurrentPlayMode);
+	}
+
+	if (CurrentInteractable != Interactable)
+	{
+		if (IsValid(Interactable))
+		{
+			InteractText->SetText(Interactable->GetName());
+			PlayAnimation(MessageFade, 0.0f, 1, EUMGSequencePlayMode::Forward);
+		}
+		else
+		{
+			PlayAnimation(MessageFade, 0.0f, 1, EUMGSequencePlayMode::Reverse);
+		}
+		CurrentInteractable = Interactable;
 	}
 }

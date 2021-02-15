@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PlayerInteractComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateInteract, FString, Message);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUpdateInteract, bool, bInteractable, AInteractableBase*, Actor);
 
 class AInteractableBase;
 

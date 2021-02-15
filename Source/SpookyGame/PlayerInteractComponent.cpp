@@ -51,24 +51,29 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 	FCollisionQueryParams QueryParams = FCollisionQueryParams(FName(TEXT("Interaction Actor")), false, Player);
 	FHitResult Hit;
 	FVector CameraLocation = PlayerController->PlayerCameraManager->GetCameraLocation();
-	
+	bool bHitInteractable = GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, CameraLocation + Distance, ECC_Visibility, QueryParams);
 
-	//Line trace for interactable objects
-	if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, CameraLocation + Distance, ECC_Visibility, QueryParams))
+	/** Return early if there is no change */
+	if (Hit.GetActor() == InteractHover) { return; }
+
+	if (bHitInteractable)
 	{
 		/** Set interact message when hovering over an interactable */
-		InteractHover = Cast<AInteractableBase>(Hit.GetActor());
-		if (IsValid(InteractHover) && InteractHover->CanInteract())
+		AInteractableBase* Interactable = Cast<AInteractableBase>(Hit.GetActor());
+		if (IsValid(Interactable) && Interactable->CanInteract())
 		{
-			FString Message = InteractMessage + InteractHover->Name.ToString();
-			OnUpdateInteract.Broadcast(Message);
+			InteractHover = Interactable;
+			OnUpdateInteract.Broadcast(true, InteractHover);
 			return;
 		}
 	}
-
-	//If there is no interactable traced, send a blank message
-	InteractHover = nullptr;
-	OnUpdateInteract.Broadcast(TEXT(""));
+	
+	/** Send interaction update when there is no longer an interactable in view */
+	if (InteractHover && !Cast<AInteractableBase>(Hit.GetActor()))
+	{
+		InteractHover = nullptr;
+		OnUpdateInteract.Broadcast(false, nullptr);
+	}
 }
 
 void UPlayerInteractComponent::Interact()
