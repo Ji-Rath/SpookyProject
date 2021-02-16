@@ -15,7 +15,7 @@ class SPOOKYGAME_API UItemData : public UPrimaryDataAsset
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Name;
 
 	UPROPERTY(EditAnywhere)
@@ -23,4 +23,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	int MaxStack;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AInteractableBase> ActorClass;
 };

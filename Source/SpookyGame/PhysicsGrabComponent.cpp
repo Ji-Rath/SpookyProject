@@ -4,6 +4,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "InteractableBase.h"
 
 // Sets default values for this component's properties
 UPhysicsGrabComponent::UPhysicsGrabComponent()
@@ -58,9 +59,10 @@ void UPhysicsGrabComponent::Grab()
 		FCollisionObjectQueryParams QueryParams = FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody);
 		FHitResult Hit;
 		FVector CameraLocation = PlayerController->PlayerCameraManager->GetCameraLocation();
+		bool bTraced = GetWorld()->LineTraceSingleByObjectType(OUT Hit, CameraLocation, CameraLocation + Distance, QueryParams);
 
-		/** Line trace for physics objects  */
-		if (GetWorld()->LineTraceSingleByObjectType(OUT Hit, CameraLocation, CameraLocation + Distance, QueryParams))
+		/** Ensure there was a trace and that we are not dragging an interactable */
+		if (bTraced && !Cast<AInteractableBase>(Hit.GetActor()))
 		{
 			HandleRef->GrabComponentAtLocationWithRotation(Hit.GetComponent(), Hit.BoneName, Hit.GetComponent()->GetComponentLocation(), Hit.GetComponent()->GetComponentRotation());
 			OnGrabUpdate.Broadcast(true, nullptr);

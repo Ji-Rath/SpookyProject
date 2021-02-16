@@ -11,7 +11,6 @@ class ITriggerInterface;
 class AInteractableBase;
 class UCameraComponent;
 class USpringArmComponent;
-class USpotLightComponent;
 class UMatineeCameraShake;
 class UPlayerInteractComponent;
 class UAttentionComponent;
@@ -38,13 +37,10 @@ public:
 	UCameraComponent* Camera;
 	//Spring arm component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USpringArmComponent* LightSpringArm;
+	USpringArmComponent* ItemSpringArm;
 	//Spring arm component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USpringArmComponent* CameraSpringArm;
-	//Flashlight component
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USpotLightComponent* Flashlight;
 	//Handles player interaction with the world
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UPlayerInteractComponent* PlayerInteract;

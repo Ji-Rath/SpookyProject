@@ -46,6 +46,24 @@ public:
 	UPROPERTY()
 	FInventoryChange OnInventoryChange;
 
+	UPROPERTY(EditAnywhere, meta = (UseComponentPicker))
+	FComponentReference ItemAttachParent;
+
+	UFUNCTION(BlueprintCallable)
+	void EquipSlot(int Slot);
+
+	UFUNCTION(BlueprintCallable)
+	void UnequipItem();
+
+	UFUNCTION(BlueprintCallable)
+	void DropItemFromSlot(int Slot, int Count);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveFromInventory(int ItemSlot, const int Count);
+
+	UFUNCTION(BlueprintCallable)
+	int FindItemSlot(UItemData* Item);
+
 private:
 	UFUNCTION(BlueprintCallable)
 	bool AddToInventory(UItemData* Item, const int Count);

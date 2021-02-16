@@ -84,7 +84,7 @@ void UPlayerInteractComponent::Interact()
 		UTriggerComponent* TriggerComponent = InteractHover->FindComponentByClass<UTriggerComponent>();
 		if (TriggerComponent != nullptr)
 		{
-			TriggerComponent->TriggerActors();
+			TriggerComponent->TriggerActors(GetOwner());
 		}
 	}
 }

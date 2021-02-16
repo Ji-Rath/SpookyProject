@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "InteractableBase.generated.h"
 
+class UItemData;
+
 UCLASS()
 class SPOOKYGAME_API AInteractableBase : public AActor
 {
@@ -14,6 +16,8 @@ class SPOOKYGAME_API AInteractableBase : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AInteractableBase();
+
+	void OnConstruction(const FTransform& Transform) override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -31,13 +35,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	bool bPlayerInteract = false;
 
+	UPROPERTY(EditAnywhere, Category = "Data")
+	bool bUseData = false;
+
 	//The name of the actor
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Text")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", meta = (EditCondition = "!bUseData"))
 	FText Name;
 
-	//A short description of the actor
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Text")
-	FText Description;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", meta = (EditCondition = "bUseData"))
+	UItemData* ItemData;
 
 	//Whether the actor can only be used once
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")

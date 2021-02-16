@@ -27,7 +27,7 @@ void UTriggerComponent::BeginPlay()
 		ActorsToTrigger.Add(GetOwner());
 }
 
-void UTriggerComponent::TriggerActors()
+void UTriggerComponent::TriggerActors(AActor* Instigator)
 {
 	for (AActor* Actor : ActorsToTrigger)
 	{
@@ -38,14 +38,14 @@ void UTriggerComponent::TriggerActors()
 			{
 				if (InteractActor->CanInteract())
 				{
-					ITriggerInterface::Execute_OnTrigger(Actor);
+					ITriggerInterface::Execute_OnTrigger(Actor, Instigator);
 					InteractActor->ToggleOnStatus();
 				}
 			}
 			else
 			{
 				/** Handle cases where the object is not a child of AInteractableBase */
-				ITriggerInterface::Execute_OnTrigger(Actor); 
+				ITriggerInterface::Execute_OnTrigger(Actor, Instigator);
 			}
 		}
 	}

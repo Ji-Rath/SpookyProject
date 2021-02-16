@@ -31,11 +31,8 @@ APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(CameraSpringArm);
 
-	LightSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
-	LightSpringArm->SetupAttachment(Camera);
-
-	Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
-	Flashlight->SetupAttachment(LightSpringArm);
+	ItemSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
+	ItemSpringArm->SetupAttachment(Camera);
 
 	PlayerInteract = CreateDefaultSubobject<UPlayerInteractComponent>(TEXT("Player Interact"));
 	AttentionComp = CreateDefaultSubobject<UAttentionComponent>(TEXT("Attention Component"));

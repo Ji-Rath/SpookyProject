@@ -29,7 +29,7 @@ public:
 
 	//Function to be called to trigger actors in ActorsToTrigger array
 	UFUNCTION(BlueprintCallable)
-	void TriggerActors();
+	void TriggerActors(AActor* Instigator);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool TriggerSelf = true;

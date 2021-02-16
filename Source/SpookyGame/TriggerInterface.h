@@ -25,5 +25,5 @@ public:
 	
 	//Called from a trigger component to change the state of the actor
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnTrigger();
+	void OnTrigger(const AActor* Interactor);
 };
