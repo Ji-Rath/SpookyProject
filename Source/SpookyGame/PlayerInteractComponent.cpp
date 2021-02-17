@@ -15,21 +15,10 @@ UPlayerInteractComponent::UPlayerInteractComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	PrimaryComponentTick.TickInterval = 0.25;
+	PrimaryComponentTick.TickInterval = 0.1;
 
 	// ...
 }
-
-
-// Called when the game starts
-void UPlayerInteractComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-	
-}
-
 
 // Called every frame
 void UPlayerInteractComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -78,7 +67,7 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 
 void UPlayerInteractComponent::Interact()
 {
-	if (IsValid(InteractHover) && InteractHover->bPlayerInteract)
+	if (IsValid(InteractHover) && InteractHover->CanInteract())
 	{
 		//Call TriggerActors from TriggerComponent 
 		UTriggerComponent* TriggerComponent = InteractHover->FindComponentByClass<UTriggerComponent>();

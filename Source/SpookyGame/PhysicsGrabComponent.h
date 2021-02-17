@@ -8,6 +8,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGrabUpdate, bool, bGrab, AInteract
 
 class UPhysicsHandleComponent;
 
+/**
+ * Allows a pawn to grab a physics body through the use of a physics handle component
+ */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SPOOKYGAME_API UPhysicsGrabComponent : public UActorComponent
 {
@@ -24,17 +27,18 @@ public:
 	/** Called to grab the in-range physics object */
 	void Grab();
 
-	UPROPERTY(EditAnywhere, Category = "Grab")
-	float InteractDistance = 100.f;
-
 	UPROPERTY()
 	FGrabUpdate OnGrabUpdate;
+
 private:
 	UPROPERTY()
 	UPhysicsHandleComponent* HandleRef;
 
 	UPROPERTY()
 	APawn* Player;
+
+	UPROPERTY(EditAnywhere, Category = "Grab")
+	float InteractDistance = 100.f;
 };
 
 

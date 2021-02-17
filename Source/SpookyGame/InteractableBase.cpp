@@ -9,9 +9,7 @@
 AInteractableBase::AInteractableBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-	
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 void AInteractableBase::OnConstruction(const FTransform& Transform)
@@ -20,9 +18,7 @@ void AInteractableBase::OnConstruction(const FTransform& Transform)
 
 	#if IS_EDITOR
 	if (bUseData && ItemData)
-	{
 		Name = ItemData->Name;
-	}
 	#endif
 }
 
@@ -31,19 +27,8 @@ void AInteractableBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (this->Implements<UTriggerInterface>())
-	{
-		if (bIsOn)
-			ITriggerInterface::Execute_OnTrigger(this, this);
-	}
-	
-}
-
-// Called every frame
-void AInteractableBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
+	if (this->Implements<UTriggerInterface>() && bIsOn)
+		ITriggerInterface::Execute_OnTrigger(this, this);
 }
 
 void AInteractableBase::ToggleOnStatus()
@@ -60,13 +45,18 @@ bool AInteractableBase::CanInteract() const
 	return bCanInteract;
 }
 
-void AInteractableBase::SetInteractable(bool Interactable)
+void AInteractableBase::SetInteractable(bool bIsInteractable)
 {
-	bCanInteract = Interactable;
+	bCanInteract = bIsInteractable;
 }
 
-FText AInteractableBase::GetName_Implementation() const
+FText AInteractableBase::GetName() const
 {
 	return Name;
+}
+
+UItemData* AInteractableBase::GetItemData() const
+{
+	return ItemData;
 }
 

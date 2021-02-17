@@ -35,21 +35,33 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UInventoryComponent::EquipSlot(int ItemSlot)
 {
+	UnequipItem();
+
 	if (IsValid(Inventory[ItemSlot].ItemData))
 	{
 		TSubclassOf<AInteractableBase> ActorClass = Inventory[ItemSlot].ItemData->ActorClass;
 		AInteractableBase* Interactable = GetWorld()->SpawnActor<AInteractableBase>(ActorClass, GetOwner()->GetTransform());
-		Interactable->AttachToComponent(Cast<USceneComponent>(ItemAttachParent.GetComponent(GetOwner())), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true));
+		FAttachmentTransformRules TransformRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true);
+
+		Interactable->AttachToComponent(Cast<USceneComponent>(ItemAttachParent.GetComponent(GetOwner())), TransformRules);
+		Interactable->SetActorEnableCollision(false);
+		EquippedSlot = ItemSlot;
 	}
 }
 
 void UInventoryComponent::UnequipItem()
 {
 	USceneComponent* ItemAttach = Cast<USceneComponent>(ItemAttachParent.GetComponent(GetOwner()));
-	TArray<USceneComponent *> ItemsAttached = ItemAttach->GetAttachChildren();
-	for (USceneComponent* Item : ItemsAttached)
+	if (ensureMsgf(ItemAttach, TEXT("ItemAttach component is not a scene component!")))
 	{
-		Item->DestroyComponent();
+		/** Unequip any items that were binded to the actor */
+		TArray<AActor *> ItemsAttached;
+		GetOwner()->GetAttachedActors(OUT ItemsAttached);
+		for (AActor* Item : ItemsAttached)
+		{
+			Item->Destroy();
+		}
+		EquippedSlot = -1;
 	}
 }
 
@@ -86,6 +98,11 @@ int UInventoryComponent::FindItemSlot(UItemData* Item)
 	return -1;
 }
 
+int UInventoryComponent::GetEquippedSlot() const
+{
+	return EquippedSlot;
+}
+
 bool UInventoryComponent::AddToInventory(UItemData* Item, const int Count)
 {
 	for (FInventoryContents& InventoryContent : Inventory)
@@ -111,5 +128,10 @@ bool UInventoryComponent::AddToInventory(UItemData* Item, const int Count)
 	Inventory.Add(InventoryItem);
 	OnInventoryChange.Broadcast(true);
 	return true;
+}
+
+TArray<FInventoryContents> UInventoryComponent::GetInventory() const
+{
+	return Inventory;
 }
 

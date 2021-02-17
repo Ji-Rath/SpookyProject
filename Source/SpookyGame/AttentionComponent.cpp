@@ -9,11 +9,11 @@ void UAttentionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		HandleLookingAt(DeltaTime);
 }
 
-void UAttentionComponent::ForceLookAt(AActor* LookAt, float Duration /*= 1.f*/)
+void UAttentionComponent::LookAt(AActor* LookAtActor, float Duration /*= 1.f*/)
 {
-	if (ensure(IsValid(LookAt)))
+	if (ensure(IsValid(LookAtActor)))
 	{
-		LookingAt = LookAt;
+		LookingAt = LookAtActor;
 		GetOwner()->GetWorldTimerManager().SetTimer(LookAtTimer, this, &UAttentionComponent::ClearLookingAt, Duration, false);
 	}
 }
@@ -23,7 +23,7 @@ void UAttentionComponent::HandleLookingAt(float DeltaTime)
 	AController* PlayerController = GetOwner<APawn>()->GetController();
 
 	FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(), LookingAt->GetActorLocation());
-	FRotator ControlRot = UKismetMathLibrary::RInterpTo(PlayerController->GetControlRotation(), LookAtRot, DeltaTime, LookAtSpeed);
+	FRotator ControlRot = UKismetMathLibrary::RInterpTo(PlayerController->GetControlRotation(), LookAtRot, DeltaTime, LookAtStrength);
 
 	PlayerController->SetControlRotation(ControlRot);
 }

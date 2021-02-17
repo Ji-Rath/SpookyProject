@@ -21,11 +21,14 @@ void UInventoryWidget::UpdateInventory()
 	if (InventoryRef && ItemWidget)
 	{
 		InventoryDisplay->ClearChildren();
-		for (const FInventoryContents& InventoryItem : InventoryRef->Inventory)
+		int CurrentSlot = 0;
+		for (const FInventoryContents& InventoryItem : InventoryRef->GetInventory())
 		{
 			UInventoryItemWidget* ItemReference = CreateWidget<UInventoryItemWidget>(InventoryDisplay, ItemWidget);
 			ItemReference->UpdateDisplay(InventoryItem.ItemData->Name, InventoryItem.Count);
 			InventoryDisplay->AddChild(ItemReference);
+			ItemReference->ItemSlot = CurrentSlot;
+			CurrentSlot++;
 		}
 	}
 }

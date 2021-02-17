@@ -10,6 +10,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUpdateInteract, bool, bInteractabl
 
 class AInteractableBase;
 
+/**
+ * Allows the player to interact with interactables, executing functionality based on what was interacted with
+ */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPOOKYGAME_API UPlayerInteractComponent : public UActorComponent
 {
@@ -19,28 +22,13 @@ public:
 	// Sets default values for this component's properties
 	UPlayerInteractComponent();
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	//Distance that the player can interact with objects
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float InteractDistance = 500.f;
-
-	//Store interact actor that the player is currently looking at
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	AInteractableBase* InteractHover = nullptr;
-
 	//Delegate called when there is a change in InteractHover
 	UPROPERTY()
 	FUpdateInteract OnUpdateInteract;
-
-	UPROPERTY(EditDefaultsOnly, Category = "InteractMessage")
-	FString InteractMessage = TEXT("Interact with ");
 
 	/** Called when the player wants to interact with the currently viewed interactable */
 	UFUNCTION(BlueprintCallable)
@@ -48,4 +36,12 @@ public:
 
 private:
 	void HoverInteraction(float DeltaTime);
+
+	//Store interact actor that the player is currently looking at
+	UPROPERTY(VisibleAnywhere)
+	AInteractableBase* InteractHover = nullptr;
+
+	//Distance that the player can interact with objects
+	UPROPERTY(EditDefaultsOnly)
+	float InteractDistance = 500.f;
 };

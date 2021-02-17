@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "AttentionComponent.generated.h"
 
+/**
+ * Allows a possessed pawn to 'forcefully' look in a specific direction or actor
+ */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SPOOKYGAME_API UAttentionComponent : public UActorComponent
 {
@@ -14,11 +17,17 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	/**
+	 * Look at the specified actor for a set duration
+	 * @param LookAtActor - Actor to look at
+	 * @param Duration - Length in seconds to look at actor
+	*/
 	UFUNCTION(BlueprintCallable)
-	void ForceLookAt(AActor* LookAt, float Duration = 1.f);
+	void LookAt(AActor* LookAtActor, float Duration = 1.f);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float LookAtSpeed = 3.f;
+	/** Clear any duration to look at an actor */
+	UFUNCTION()
+	void ClearLookingAt();
 
 private:
 	//Actor that player is looking at
@@ -29,5 +38,6 @@ private:
 
 	void HandleLookingAt(float DeltaTime);
 
-	void ClearLookingAt();
+	UPROPERTY(EditDefaultsOnly)
+	float LookAtStrength = 3.f;
 };
