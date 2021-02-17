@@ -22,7 +22,9 @@ void UInventoryWidget::UpdateInventory()
 	{
 		InventoryDisplay->ClearChildren();
 		int CurrentSlot = 0;
-		for (const FInventoryContents& InventoryItem : InventoryRef->GetInventory())
+		TArray<FInventoryContents> Inventory;
+		InventoryRef->GetInventory(OUT Inventory);
+		for (const FInventoryContents& InventoryItem : Inventory)
 		{
 			UInventoryItemWidget* ItemReference = CreateWidget<UInventoryItemWidget>(InventoryDisplay, ItemWidget);
 			ItemReference->UpdateDisplay(InventoryItem.ItemData->Name, InventoryItem.Count);

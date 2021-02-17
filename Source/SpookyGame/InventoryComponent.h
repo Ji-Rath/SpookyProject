@@ -9,14 +9,14 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryChange, bool, bAdded); 
 
-USTRUCT()
+USTRUCT(Blueprintable)
 struct FInventoryContents
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UItemData* ItemData;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int Count;
 };
 
@@ -66,7 +66,7 @@ public:
 	 * @return Slot with containing item
 	*/
 	UFUNCTION(BlueprintCallable)
-	int FindItemSlot(UItemData* Item);
+	int FindItemSlot(UItemData* Item) const;
 
 	/**
 	 * Returns the currently equipped slot
@@ -74,6 +74,13 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	int GetEquippedSlot() const;
+
+	/**
+	 * Returns the currently equipped slot item
+	 * @warning Will return -1 if there is no slot equipped
+	 */
+	UFUNCTION(BlueprintCallable)
+	void GetEquippedSlotItem(FInventoryContents& InventorySlot) const;
 
 	/**
 	 * Attempt to add an item to the inventory
@@ -84,7 +91,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool AddToInventory(UItemData* Item, const int Count);
 
-	TArray<FInventoryContents> GetInventory() const;
+	void GetInventory(TArray<FInventoryContents>& InvContents) const;
 	
 private:
 	UPROPERTY(EditAnywhere)

@@ -84,7 +84,7 @@ void UInventoryComponent::RemoveFromInventory(int ItemSlot, const int Count)
 	}
 }
 
-int UInventoryComponent::FindItemSlot(UItemData* Item)
+int UInventoryComponent::FindItemSlot(UItemData* Item) const
 {
 	/** Find slot with item in it */
 	for (int i = 0; i < Inventory.Num(); i++)
@@ -101,6 +101,18 @@ int UInventoryComponent::FindItemSlot(UItemData* Item)
 int UInventoryComponent::GetEquippedSlot() const
 {
 	return EquippedSlot;
+}
+
+void UInventoryComponent::GetEquippedSlotItem(FInventoryContents& InventorySlot) const
+{
+	if (GetEquippedSlot() != -1)
+	{
+		InventorySlot = Inventory[GetEquippedSlot()];
+	}
+	else
+	{
+		InventorySlot = FInventoryContents();
+	}
 }
 
 bool UInventoryComponent::AddToInventory(UItemData* Item, const int Count)
@@ -130,8 +142,8 @@ bool UInventoryComponent::AddToInventory(UItemData* Item, const int Count)
 	return true;
 }
 
-TArray<FInventoryContents> UInventoryComponent::GetInventory() const
+void UInventoryComponent::GetInventory(TArray<FInventoryContents>& InvContents) const
 {
-	return Inventory;
+	InvContents = Inventory;
 }
 
