@@ -6,6 +6,7 @@
 #include "Pickupable.generated.h"
 
 class UTriggerComponent;
+class UStaticMeshComponent;
 
 UCLASS()
 class SPOOKYGAME_API APickupable : public AInteractableBase, public ITriggerInterface

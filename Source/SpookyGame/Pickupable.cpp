@@ -3,6 +3,7 @@
 #include "Pickupable.h"
 #include "InventoryComponent.h"
 #include "TriggerComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 
 
@@ -13,6 +14,9 @@ APickupable::APickupable()
 
 	bPlayerInteract = true;
 	bUseData = true;
+	ItemMesh->SetGenerateOverlapEvents(false);
+	ItemMesh->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
+	ItemMesh->SetSimulatePhysics(true);
 }
 
 void APickupable::OnTrigger_Implementation(const AActor* Interactor)
