@@ -10,9 +10,6 @@ AInteractableBase::AInteractableBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-
-	if (Implements<UTriggerInterface>() && bIsOn)
-		ITriggerInterface::Execute_OnTrigger(this, this);
 }
 
 void AInteractableBase::OnConstruction(const FTransform& Transform)
@@ -28,7 +25,8 @@ void AInteractableBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+	if (Implements<UTriggerInterface>() && bIsOn)
+		ITriggerInterface::Execute_OnTrigger(this, this);
 }
 
 void AInteractableBase::ToggleOnStatus()
