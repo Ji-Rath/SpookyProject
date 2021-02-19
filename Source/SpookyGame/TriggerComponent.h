@@ -6,8 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "TriggerComponent.generated.h"
 
-class AInteractableBase;
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPOOKYGAME_API UTriggerComponent : public UActorComponent
 {
@@ -30,9 +28,4 @@ public:
 	//Function to be called to trigger actors in ActorsToTrigger array
 	UFUNCTION(BlueprintCallable)
 	void TriggerActors(AActor* Instigator);
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool TriggerSelf = true;
-
-		
 };

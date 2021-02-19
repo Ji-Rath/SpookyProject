@@ -10,16 +10,17 @@ AInteractableBase::AInteractableBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+	if (Implements<UTriggerInterface>() && bIsOn)
+		ITriggerInterface::Execute_OnTrigger(this, this);
 }
 
 void AInteractableBase::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	#if IS_EDITOR
 	if (bUseData && ItemData)
 		Name = ItemData->Name;
-	#endif
 }
 
 // Called when the game starts or when spawned
@@ -27,8 +28,7 @@ void AInteractableBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (this->Implements<UTriggerInterface>() && bIsOn)
-		ITriggerInterface::Execute_OnTrigger(this, this);
+	
 }
 
 void AInteractableBase::ToggleOnStatus()
@@ -40,9 +40,14 @@ void AInteractableBase::ToggleOnStatus()
 		SetInteractable(false);
 }
 
-bool AInteractableBase::CanInteract() const
+bool AInteractableBase::CanTrigger_Implementation() const
 {
 	return bCanInteract;
+}
+
+bool AInteractableBase::CanPlayerTrigger_Implementation() const
+{
+	return bCanInteract && bPlayerInteract;
 }
 
 void AInteractableBase::SetInteractable(bool bIsInteractable)
@@ -50,7 +55,7 @@ void AInteractableBase::SetInteractable(bool bIsInteractable)
 	bCanInteract = bIsInteractable;
 }
 
-FText AInteractableBase::GetName() const
+FText AInteractableBase::GetName_Implementation() const 
 {
 	return Name;
 }

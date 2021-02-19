@@ -6,9 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "PlayerInteractComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUpdateInteract, bool, bInteractable, AInteractableBase*, Actor);
+class ITriggerInterface;
 
-class AInteractableBase;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUpdateInteract, bool, bInteractable, TScriptInterface<ITriggerInterface>, Actor);
 
 /**
  * Allows the player to interact with interactables, executing functionality based on what was interacted with
@@ -39,7 +39,7 @@ private:
 
 	//Store interact actor that the player is currently looking at
 	UPROPERTY(VisibleAnywhere)
-	AInteractableBase* InteractHover = nullptr;
+	AActor* InteractHover = nullptr;
 
 	//Distance that the player can interact with objects
 	UPROPERTY(EditDefaultsOnly)

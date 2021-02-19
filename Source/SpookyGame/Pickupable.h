@@ -9,7 +9,7 @@ class UTriggerComponent;
 class UStaticMeshComponent;
 
 UCLASS()
-class SPOOKYGAME_API APickupable : public AInteractableBase, public ITriggerInterface
+class SPOOKYGAME_API APickupable : public AInteractableBase
 {
 	GENERATED_BODY()
 	
@@ -22,6 +22,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Pickupable")
 	int Amount;
 
+	UFUNCTION(BlueprintCallable)
+	UStaticMeshComponent* GetItemMesh() const { return ItemMesh ? ItemMesh : nullptr; };
+
+protected:
 	UPROPERTY(VisibleAnywhere)
 	UTriggerComponent* TriggerComp;
 

@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "TriggerInterface.h"
 #include "InteractableBase.generated.h"
 
 class UItemData;
 
 UCLASS()
-class SPOOKYGAME_API AInteractableBase : public AActor
+class SPOOKYGAME_API AInteractableBase : public AActor, public ITriggerInterface
 {
 	GENERATED_BODY()
 	
@@ -33,19 +34,23 @@ public:
 	void ToggleOnStatus();
 
 	/** Returns whether the interactable can be interacted with */
-	UFUNCTION()
-	bool CanInteract() const;
+	bool CanTrigger() const;
+	bool CanTrigger_Implementation() const override;
 
-	/** Change the ability of the actor to be interacted with */
-	UFUNCTION()
-	void SetInteractable(bool bIsInteractable);
+	/** Returns whether the player can interact with the actor */
+	bool CanPlayerTrigger() const;
+	bool CanPlayerTrigger_Implementation() const override;
 
 	/** Returns the name of the interactable */
-	UFUNCTION()
 	FText GetName() const;
+	FText GetName_Implementation() const override;
+
+	/** Change the ability of the actor to be interacted with */
+	UFUNCTION(BlueprintCallable)
+	void SetInteractable(bool bIsInteractable);
 
 	/** Returns the item data */
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	UItemData* GetItemData() const;
 
 protected:

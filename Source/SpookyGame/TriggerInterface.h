@@ -23,7 +23,16 @@ class SPOOKYGAME_API ITriggerInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	
-	//Called from a trigger component to change the state of the actor
+	/** Called from a trigger component to change the state of the actor */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnTrigger(const AActor* Interactor);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool CanTrigger() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool CanPlayerTrigger() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FText GetName() const;
 };

@@ -4,9 +4,10 @@
 #include "Components/ActorComponent.h"
 #include "PhysicsGrabComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGrabUpdate, bool, bGrab, AInteractableBase*, Actor);
-
+class ITriggerInterface;
 class UPhysicsHandleComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGrabUpdate, bool, bGrab, TScriptInterface<ITriggerInterface>, Actor);
 
 /**
  * Allows a pawn to grab a physics body through the use of a physics handle component

@@ -2,10 +2,7 @@
 
 
 #include "TriggerComponent.h"
-
 #include "TriggerInterface.h"
-#include "InteractableBase.h"
-#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values for this component's properties
 UTriggerComponent::UTriggerComponent()
@@ -22,9 +19,6 @@ UTriggerComponent::UTriggerComponent()
 void UTriggerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (TriggerSelf)
-		ActorsToTrigger.Add(GetOwner());
 }
 
 void UTriggerComponent::TriggerActors(AActor* Instigator)
@@ -32,15 +26,12 @@ void UTriggerComponent::TriggerActors(AActor* Instigator)
 	for (AActor* Actor : ActorsToTrigger)
 	{
 		/** Call trigger function for all actors in array if they implement the trigger interface */
-		if (IsValid(Actor) && UKismetSystemLibrary::DoesImplementInterface(Actor, UTriggerInterface::StaticClass()))
+		if (IsValid(Actor) && Actor->Implements<UTriggerInterface>())
 		{
-			if (AInteractableBase* InteractActor = Cast<AInteractableBase>(Actor))
+			if (ITriggerInterface::Execute_CanTrigger(Actor))
 			{
-				if (InteractActor->CanInteract())
-				{
-					ITriggerInterface::Execute_OnTrigger(Actor, Instigator);
-					InteractActor->ToggleOnStatus();
-				}
+				ITriggerInterface::Execute_OnTrigger(Actor, Instigator);
+				// InteractActor->ToggleOnStatus();
 			}
 			else
 			{

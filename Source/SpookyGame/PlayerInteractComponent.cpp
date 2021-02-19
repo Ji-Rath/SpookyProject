@@ -5,8 +5,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerController.h"
 #include "TriggerComponent.h"
-#include "InteractableBase.h"
-#include "MainUIBase.h"
+#include "TriggerInterface.h"
 
 
 // Sets default values for this component's properties
@@ -15,7 +14,6 @@ UPlayerInteractComponent::UPlayerInteractComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	PrimaryComponentTick.TickInterval = 0.1;
 
 	// ...
 }
@@ -40,25 +38,26 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 	FCollisionQueryParams QueryParams = FCollisionQueryParams(FName(TEXT("Interaction Actor")), false, Player);
 	FHitResult Hit;
 	FVector CameraLocation = PlayerController->PlayerCameraManager->GetCameraLocation();
+
 	bool bHitInteractable = GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, CameraLocation + Distance, ECC_Visibility, QueryParams);
+	AActor* HitActor = Hit.GetActor();
 
 	/** Return early if there is no change */
-	if (Hit.GetActor() == InteractHover) { return; }
+	if (HitActor == InteractHover) { return; }
 
-	if (bHitInteractable)
+	if (bHitInteractable && HitActor->Implements<UTriggerInterface>())
 	{
 		/** Set interact message when hovering over an interactable */
-		AInteractableBase* Interactable = Cast<AInteractableBase>(Hit.GetActor());
-		if (IsValid(Interactable) && Interactable->CanInteract())
+		if (HitActor && ITriggerInterface::Execute_CanPlayerTrigger(Hit.GetActor()))
 		{
-			InteractHover = Interactable;
+			InteractHover = Hit.GetActor();
 			OnUpdateInteract.Broadcast(true, InteractHover);
 			return;
 		}
 	}
 	
 	/** Send interaction update when there is no longer an interactable in view */
-	if (InteractHover && !Cast<AInteractableBase>(Hit.GetActor()))
+	if (InteractHover && (!HitActor || (HitActor && !HitActor->Implements<UTriggerInterface>())))
 	{
 		InteractHover = nullptr;
 		OnUpdateInteract.Broadcast(false, nullptr);
@@ -67,13 +66,15 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 
 void UPlayerInteractComponent::Interact()
 {
-	if (IsValid(InteractHover) && InteractHover->CanInteract())
+	if (InteractHover && ITriggerInterface::Execute_CanPlayerTrigger(InteractHover))
 	{
-		//Call TriggerActors from TriggerComponent 
+		/** Trigger interacted actor */
+		if (InteractHover)
+			ITriggerInterface::Execute_OnTrigger(InteractHover, GetOwner());
+
+		/** Call trigger actors from component */
 		UTriggerComponent* TriggerComponent = InteractHover->FindComponentByClass<UTriggerComponent>();
-		if (TriggerComponent != nullptr)
-		{
+		if (TriggerComponent)
 			TriggerComponent->TriggerActors(GetOwner());
-		}
 	}
 }

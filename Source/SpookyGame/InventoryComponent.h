@@ -58,7 +58,7 @@ public:
 
 	/** Remove an item from current inventory */
 	UFUNCTION(BlueprintCallable)
-	void RemoveFromInventory(int ItemSlot, const int Count);
+	void RemoveFromInventory(int ItemSlot, const int Count = 1);
 
 	/**
 	 * Find the first slot containing Item

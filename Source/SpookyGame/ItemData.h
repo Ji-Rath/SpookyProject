@@ -25,5 +25,5 @@ public:
 	int MaxStack;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AInteractableBase> ActorClass;
+	TSubclassOf<class APickupable> ActorClass;
 };

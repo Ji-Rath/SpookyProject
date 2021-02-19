@@ -2,7 +2,7 @@
 
 
 #include "InventoryComponent.h"
-#include "InteractableBase.h"
+#include "Pickupable.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -39,12 +39,13 @@ void UInventoryComponent::EquipSlot(int ItemSlot)
 
 	if (IsValid(Inventory[ItemSlot].ItemData))
 	{
-		TSubclassOf<AInteractableBase> ActorClass = Inventory[ItemSlot].ItemData->ActorClass;
-		AInteractableBase* Interactable = GetWorld()->SpawnActor<AInteractableBase>(ActorClass, GetOwner()->GetTransform());
+		TSubclassOf<APickupable> ActorClass = Inventory[ItemSlot].ItemData->ActorClass;
+		APickupable* Interactable = GetWorld()->SpawnActor<APickupable>(ActorClass, GetOwner()->GetTransform());
 		FAttachmentTransformRules TransformRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true);
 
 		Interactable->AttachToComponent(Cast<USceneComponent>(ItemAttachParent.GetComponent(GetOwner())), TransformRules);
 		Interactable->SetActorEnableCollision(false);
+		Interactable->GetItemMesh()->SetSimulatePhysics(false);
 		EquippedSlot = ItemSlot;
 	}
 }
@@ -67,7 +68,7 @@ void UInventoryComponent::UnequipItem()
 
 void UInventoryComponent::DropItemFromSlot(int Slot, int Count)
 {
-	AInteractableBase* DroppedItem = GetWorld()->SpawnActor<AInteractableBase>(Inventory[Slot].ItemData->ActorClass, GetOwner()->GetTransform());
+	APickupable* DroppedItem = GetWorld()->SpawnActor<APickupable>(Inventory[Slot].ItemData->ActorClass, GetOwner()->GetTransform());
 	RemoveFromInventory(Slot, Count);
 }
 
@@ -81,6 +82,11 @@ void UInventoryComponent::RemoveFromInventory(int ItemSlot, const int Count)
 		{
 			Inventory.RemoveAt(ItemSlot);
 		}
+	}
+
+	if (EquippedSlot == ItemSlot)
+	{
+		UnequipItem();
 	}
 }
 
@@ -132,14 +138,19 @@ bool UInventoryComponent::AddToInventory(UItemData* Item, const int Count)
 		}
 	}
 
-	/** Just add the item to a new slot */
-	FInventoryContents InventoryItem;
-	InventoryItem.ItemData = Item;
-	InventoryItem.Count = Count;
+	if (Inventory.Num() < InventorySize)
+	{
+		/** Just add the item to a new slot */
+		FInventoryContents InventoryItem;
+		InventoryItem.ItemData = Item;
+		InventoryItem.Count = Count;
 
-	Inventory.Add(InventoryItem);
-	OnInventoryChange.Broadcast(true);
-	return true;
+		Inventory.Add(InventoryItem);
+		OnInventoryChange.Broadcast(true);
+		return true;
+	}
+	
+	return false;
 }
 
 void UInventoryComponent::GetInventory(TArray<FInventoryContents>& InvContents) const

@@ -11,12 +11,16 @@ bool UInventoryWidget::Initialize()
 	bool Success = Super::Initialize();
 	if (!Success) { return false; }
 
-	if (GetOwningPlayerPawn())
-		InventoryRef = GetOwningPlayerPawn()->FindComponentByClass<UInventoryComponent>();
+	if (APawn* Player = GetOwningPlayerPawn<APawn>())
+	{
+		InventoryRef = Player->FindComponentByClass<UInventoryComponent>();
+		if (InventoryRef)
+			InventoryRef->OnInventoryChange.AddDynamic(this, &UInventoryWidget::UpdateInventory);
+	}
 	return true;
 }
 
-void UInventoryWidget::UpdateInventory()
+void UInventoryWidget::UpdateInventory(bool bItemAdded)
 {
 	if (InventoryRef && ItemWidget)
 	{
