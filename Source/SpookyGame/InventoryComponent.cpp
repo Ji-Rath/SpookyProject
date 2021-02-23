@@ -62,7 +62,7 @@ void UInventoryComponent::UnequipItem()
 		{
 			Item->Destroy();
 		}
-		EquippedSlot = -1;
+		EquippedSlot = 0;
 	}
 }
 
@@ -81,12 +81,11 @@ void UInventoryComponent::RemoveFromInventory(int ItemSlot, const int Count)
 		if (Inventory[ItemSlot].Count <= 0)
 		{
 			Inventory.RemoveAt(ItemSlot);
+			if (EquippedSlot == ItemSlot)
+			{
+				UnequipItem();
+			}
 		}
-	}
-
-	if (EquippedSlot == ItemSlot)
-	{
-		UnequipItem();
 	}
 }
 
@@ -145,8 +144,10 @@ bool UInventoryComponent::AddToInventory(UItemData* Item, const int Count)
 		InventoryItem.ItemData = Item;
 		InventoryItem.Count = Count;
 
-		Inventory.Add(InventoryItem);
+		int Slot = Inventory.Add(InventoryItem);
 		OnInventoryChange.Broadcast(true);
+
+		EquipSlot(Slot);
 		return true;
 	}
 	

@@ -31,15 +31,33 @@ public:
 	UPROPERTY()
 	FGrabUpdate OnGrabUpdate;
 
+	UPROPERTY(EditDefaultsOnly)
+	float GrabThreshhold = 25.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float PushForce = 100000.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float InitialForce = 500.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float PushDuration = 0.5f;
+
 private:
 	UPROPERTY()
-	UPhysicsHandleComponent* HandleRef;
+	UPhysicsHandleComponent* HandleRef = nullptr;
 
 	UPROPERTY()
-	APawn* Player;
+	APawn* Player = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Grab")
 	float InteractDistance = 100.f;
+
+	FTimerHandle PushTimer;
+
+	UStaticMeshComponent* PushComponent = nullptr;
+
+	void StopPushing();
 };
 
 

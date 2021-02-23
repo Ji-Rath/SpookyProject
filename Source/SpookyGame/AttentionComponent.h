@@ -14,6 +14,8 @@ class SPOOKYGAME_API UAttentionComponent : public UActorComponent
 {
 	GENERATED_BODY()
 public:
+	UAttentionComponent();
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 

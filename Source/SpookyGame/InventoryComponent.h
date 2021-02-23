@@ -103,5 +103,5 @@ private:
 	UPROPERTY(EditAnywhere, meta = (UseComponentPicker))
 	FComponentReference ItemAttachParent;
 
-	int EquippedSlot = -1;
+	int EquippedSlot = 0;
 };
