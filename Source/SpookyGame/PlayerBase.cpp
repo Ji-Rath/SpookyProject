@@ -12,12 +12,14 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SpotLightComponent.h"
 #include "GameFramework/Controller.h"
+#include "PlayerControllerBase.h"
 #include "PlayerInteractComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AttentionComponent.h"
 #include "AdvCharacterMovementComponent.h"
 #include "PhysicsGrabComponent.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "PlayerEquipComponent.h"
 
 // Sets default values
 APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UAdvCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -38,6 +40,7 @@ APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	AttentionComp = CreateDefaultSubobject<UAttentionComponent>(TEXT("Attention Component"));
 	PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("Physics Handle"));
 	PhysicsGrab = CreateDefaultSubobject<UPhysicsGrabComponent>(TEXT("Physics Grab"));
+	PlayerEquip = CreateDefaultSubobject<UPlayerEquipComponent>(TEXT("Player Equip"));
 }
 
 // Called when the game starts or when spawned
@@ -49,7 +52,7 @@ void APlayerBase::BeginPlay()
 
 void APlayerBase::MovementForward(float AxisValue)
 {
-	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(GetControlRotation());
+	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(GetActorRotation());
 	AddMovementInput(ForwardVector, AxisValue);
 
 	FootstepDetection();
@@ -57,7 +60,7 @@ void APlayerBase::MovementForward(float AxisValue)
 
 void APlayerBase::MovementRight(float AxisValue)
 {
-	FVector RightVector = UKismetMathLibrary::GetRightVector(GetControlRotation());
+	FVector RightVector = UKismetMathLibrary::GetRightVector(GetActorRotation());
 	AddMovementInput(RightVector, AxisValue);
 
 	FootstepDetection();
@@ -89,6 +92,7 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, PlayerInteract, &UPlayerInteractComponent::Interact);
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, PhysicsGrab, &UPhysicsGrabComponent::Grab);
+	PlayerInputComponent->BindAction("Interact", IE_Released, PhysicsGrab, &UPhysicsGrabComponent::Grab);
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerBase::StartCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerBase::StopCrouch);
@@ -96,6 +100,12 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &APlayerBase::Sprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerBase::StopSprint);
 
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerBase::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerBase::StopJumping);
+
+	PlayerInputComponent->BindAction("Inventory", IE_Pressed, GetController<APlayerControllerBase>(), &APlayerControllerBase::ToggleInventory);
+
+	PlayerInputComponent->BindAction("DropItem", IE_Pressed, PlayerEquip, &UPlayerEquipComponent::DropEquippedItem);
 }
 
 void APlayerBase::StopSprint()
@@ -109,7 +119,7 @@ void APlayerBase::TriggerFootstep()
 	if(!ensure(WalkingScreenShake != nullptr || SoundFootstep != nullptr)) return;
 
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundFootstep, GetActorLocation());
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	APlayerController* PlayerController = GetController<APlayerController>();
 	PlayerController->PlayerCameraManager->StartCameraShake(WalkingScreenShake);
 }
 

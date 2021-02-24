@@ -20,7 +20,7 @@ public:
 	bool Initialize() override;
 
 	UFUNCTION()
-	void InventoryChange(bool bAdded);
+	void InventoryChange(bool bAdded, int SlotChanged);
 
 	UPROPERTY(meta = (BindWidget))
 	UHorizontalBox* NotificationHolder;

@@ -24,42 +24,24 @@ void UPhysicsGrabComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	if (HandleRef && HandleRef->GetGrabbedComponent() && Player)
 	{
-		FVector ForwardVector = UKismetMathLibrary::GetForwardVector(Player->GetControlRotation());
-		FVector Distance = ForwardVector * InteractDistance;
+		CurrentGrabDistance = UKismetMathLibrary::FInterpTo(CurrentGrabDistance, GrabRange, DeltaTime, 3.f);
 		APlayerController* PlayerController = Player->GetController<APlayerController>();
+		FVector ForwardVector = UKismetMathLibrary::GetForwardVector(Player->GetControlRotation());
+		FVector Distance = ForwardVector * CurrentGrabDistance;
 		FVector CameraLocation = PlayerController->PlayerCameraManager->GetCameraLocation();
+		FVector TargetLocation = CameraLocation + Distance;
 		
 		/** Update the target location to be in front of the players camera */
-		HandleRef->SetTargetLocationAndRotation(CameraLocation + Distance, FRotator::ZeroRotator);
+		HandleRef->SetTargetLocationAndRotation(TargetLocation, FRotator::ZeroRotator);
 
-		if (PushComponent)
+		/** Release grabbed component if it goes out of range */
+		bool bOutsideRange = FVector::Distance(TargetLocation, HandleRef->GetGrabbedComponent()->GetComponentLocation()) > MaxDistance;
+		if (bOutsideRange)
 		{
-			ForwardVector = UKismetMathLibrary::GetForwardVector(Player->GetActorRotation());
-			FHitResult Hit;
-			FVector GrabLocation = Player->GetActorLocation() + ForwardVector * InteractDistance;
-			FCollisionObjectQueryParams QueryParams = FCollisionObjectQueryParams(ECollisionChannel::ECC_WorldStatic);
-			bool bHit = GetWorld()->LineTraceSingleByObjectType(OUT Hit, GrabLocation, GrabLocation - FVector(0.f, 0.f, 100.f), QueryParams);
-			DrawDebugLine(GetWorld(), GrabLocation, GrabLocation - FVector(0.f, 0.f, 50.f), FColor::Red, false, 0.5f);
-			if (bHit)
-			{
-				HandleRef->SetTargetLocation(Hit.ImpactPoint);
-				DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 10.f, FColor::Red, false, 1.f);
-			}
-			else
-			{
-				HandleRef->ReleaseComponent();
-			}
-			
+			HandleRef->ReleaseComponent();
+			OnGrabUpdate.Broadcast(false, nullptr);
 		}
 	}
-
-	/*
-	if (IsValid(PushComponent))
-	{
-		FVector ForwardVector = UKismetMathLibrary::GetForwardVector(Player->GetActorRotation());
-		PushComponent->AddForce(ForwardVector * PushForce);
-	}
-	*/
 }
 
 void UPhysicsGrabComponent::BeginPlay()
@@ -79,7 +61,6 @@ void UPhysicsGrabComponent::Grab()
 		HandleRef->ReleaseComponent();
 		OnGrabUpdate.Broadcast(false, nullptr);
 		GrabMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
-		PushComponent = nullptr;
 	}
 	else
 	{
@@ -89,9 +70,10 @@ void UPhysicsGrabComponent::Grab()
 
 		FVector ForwardVector = UKismetMathLibrary::GetForwardVector(Player->GetControlRotation());
 		FVector Distance = ForwardVector * InteractDistance;
+		FVector CameraLocation = PlayerController->PlayerCameraManager->GetCameraLocation();
+
 		FCollisionObjectQueryParams QueryParams = FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody);
 		FHitResult Hit;
-		FVector CameraLocation = PlayerController->PlayerCameraManager->GetCameraLocation();
 		bool bTraced = GetWorld()->LineTraceSingleByObjectType(OUT Hit, CameraLocation, CameraLocation + Distance, QueryParams);
 
 		/** Ensure there was a trace and that we are not dragging something triggerable */
@@ -99,28 +81,19 @@ void UPhysicsGrabComponent::Grab()
 		if (bTraced && GrabMesh && !Hit.GetActor()->Implements<UTriggerInterface>())
 		{
 			/** Grab object if below threshhold or simply push it */
-			if (GrabMesh->GetMass() < GrabThreshhold)
+			if (GrabMesh->GetMass() < GrabWeightThreshhold)
 			{
 				HandleRef->GrabComponentAtLocationWithRotation(GrabMesh, Hit.BoneName, Hit.GetComponent()->GetComponentLocation(), Hit.GetComponent()->GetComponentRotation());
-				OnGrabUpdate.Broadcast(true, nullptr);
-
 				GrabMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+				OnGrabUpdate.Broadcast(true, nullptr);
+				HandleRef->SetTargetLocation(Hit.GetComponent()->GetComponentLocation());
+				CurrentGrabDistance = FVector::Distance(Hit.GetComponent()->GetComponentLocation(), CameraLocation);
 			}
-			else
+			else if (!GetWorld()->GetTimerManager().IsTimerActive(PushTimer))
 			{
-				HandleRef->GrabComponentAtLocation(GrabMesh, Hit.BoneName, Hit.ImpactPoint);
-				PushComponent = GrabMesh;
-
-				//GetOwner()->GetWorldTimerManager().SetTimer(PushTimer, this, &UPhysicsGrabComponent::StopPushing, PushDuration, false);
-				//ForwardVector = UKismetMathLibrary::GetForwardVector(Player->GetActorRotation());
-				//GrabMesh->AddForce(ForwardVector * InitialForce);
- 				//PushComponent = GrabMesh;
+				GrabMesh->AddImpulse(ForwardVector * PushImpulse);
+				GetWorld()->GetTimerManager().SetTimer(PushTimer, PushDelay, false);
 			}
 		}
 	}
-}
-
-void UPhysicsGrabComponent::StopPushing()
-{
-	PushComponent = nullptr;
 }

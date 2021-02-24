@@ -31,18 +31,6 @@ public:
 	UPROPERTY()
 	FGrabUpdate OnGrabUpdate;
 
-	UPROPERTY(EditDefaultsOnly)
-	float GrabThreshhold = 25.f;
-
-	UPROPERTY(EditDefaultsOnly)
-	float PushForce = 100000.f;
-
-	UPROPERTY(EditDefaultsOnly)
-	float InitialForce = 500.f;
-
-	UPROPERTY(EditDefaultsOnly)
-	float PushDuration = 0.5f;
-
 private:
 	UPROPERTY()
 	UPhysicsHandleComponent* HandleRef = nullptr;
@@ -50,14 +38,29 @@ private:
 	UPROPERTY()
 	APawn* Player = nullptr;
 
-	UPROPERTY(EditAnywhere, Category = "Grab")
+	UPROPERTY(EditAnywhere, Category = "Physics")
 	float InteractDistance = 100.f;
+
+	UPROPERTY(EditAnywhere, Category = "Physics|Grab")
+	float GrabRange = 100.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Physics|Grab")
+	float GrabWeightThreshhold = 25.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Physics|Push")
+	float PushImpulse = 100000.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Physics|Grab")
+	float MaxDistance = 100.f;
+
+	float CurrentGrabDistance = 0.f;
 
 	FTimerHandle PushTimer;
 
-	UStaticMeshComponent* PushComponent = nullptr;
-
 	void StopPushing();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Physics|Push")
+	float PushDelay = 1.f;
 };
 
 

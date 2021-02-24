@@ -6,7 +6,7 @@
 
 class UTextBlock;
 class UButton;
-class UInventoryComponent;
+class UPlayerEquipComponent;
 
 /**
  *
@@ -37,5 +37,5 @@ public:
 	void ToggleItem();
 private:
 	UPROPERTY()
-	UInventoryComponent* InventoryRef;
+	UPlayerEquipComponent* EquipCompRef;
 };

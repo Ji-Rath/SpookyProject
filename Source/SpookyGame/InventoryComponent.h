@@ -7,7 +7,7 @@
 #include "ItemData.h"
 #include "InventoryComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryChange, bool, bAdded); 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FInventoryChange, bool, bAdded, int, SlotUpdated);
 
 USTRUCT(Blueprintable)
 struct FInventoryContents
@@ -18,6 +18,12 @@ struct FInventoryContents
 	UItemData* ItemData;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int Count;
+
+	FInventoryContents()
+	{
+		ItemData = nullptr;
+		Count = 0;
+	}
 };
 
 /**
@@ -38,19 +44,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY()
 	FInventoryChange OnInventoryChange;
-
-	/** Equip the item that is in the slot */
-	UFUNCTION(BlueprintCallable)
-	void EquipSlot(int Slot);
-
-	/** Unequip any currently equipped items */
-	UFUNCTION(BlueprintCallable)
-	void UnequipItem();
 
 	/** Drop an item from selected slot */
 	UFUNCTION(BlueprintCallable)
@@ -69,20 +65,6 @@ public:
 	int FindItemSlot(UItemData* Item) const;
 
 	/**
-	 * Returns the currently equipped slot
-	 * @warning Will return -1 if there is no slot equipped
-	 */
-	UFUNCTION(BlueprintCallable)
-	int GetEquippedSlot() const;
-
-	/**
-	 * Returns the currently equipped slot item
-	 * @warning Will return -1 if there is no slot equipped
-	 */
-	UFUNCTION(BlueprintCallable)
-	void GetEquippedSlotItem(FInventoryContents& InventorySlot) const;
-
-	/**
 	 * Attempt to add an item to the inventory
 	 * @param Item - Item to add
 	 * @param Count - Amount of item
@@ -91,7 +73,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool AddToInventory(UItemData* Item, const int Count);
 
-	void GetInventory(TArray<FInventoryContents>& InvContents) const;
+	void GetInventory(TArray<FInventoryContents>& OutInventory) const;
 	
 private:
 	UPROPERTY(EditAnywhere)
@@ -99,9 +81,4 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	int InventorySize;
-
-	UPROPERTY(EditAnywhere, meta = (UseComponentPicker))
-	FComponentReference ItemAttachParent;
-
-	int EquippedSlot = 0;
 };

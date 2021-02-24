@@ -18,7 +18,7 @@ bool UNotificationManagerWidget::Initialize()
 	return true;
 }
 
-void UNotificationManagerWidget::InventoryChange(bool bAdded)
+void UNotificationManagerWidget::InventoryChange(bool bAdded, int SlotChanged)
 {
 	if (ensure(IconWidget) && bAdded)
 	{

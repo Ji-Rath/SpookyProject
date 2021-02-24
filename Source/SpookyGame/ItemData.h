@@ -24,6 +24,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	int MaxStack;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class APickupable> ActorClass;
+	UPROPERTY(EditAnywhere, meta = (AllowedClasses = "Pickupable"))
+	TSubclassOf<AActor> ActorClass;
 };

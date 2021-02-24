@@ -17,6 +17,7 @@ APickupable::APickupable()
 	ItemMesh->SetGenerateOverlapEvents(false);
 	ItemMesh->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
 	ItemMesh->SetSimulatePhysics(true);
+	ItemMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 }
 
 void APickupable::OnTrigger_Implementation(const AActor* Interactor)

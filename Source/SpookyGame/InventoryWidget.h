@@ -28,7 +28,7 @@ public:
 	TSubclassOf<class UUserWidget> ItemWidget;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateInventory(bool bItemAdded);
+	void UpdateInventory(bool bItemAdded, int SlotUpdated);
 
 	UPROPERTY(EditAnywhere)
 	UInventoryComponent* InventoryRef;

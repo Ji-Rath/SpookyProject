@@ -2,4 +2,9 @@
 
 
 #include "PlayerControllerBase.h"
+#include "MainUIBase.h"
 
+void APlayerControllerBase::ToggleInventory()
+{
+	MainUI->ToggleInventory();
+}

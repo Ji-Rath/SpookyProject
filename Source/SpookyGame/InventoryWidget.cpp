@@ -20,14 +20,14 @@ bool UInventoryWidget::Initialize()
 	return true;
 }
 
-void UInventoryWidget::UpdateInventory(bool bItemAdded)
+void UInventoryWidget::UpdateInventory(bool bItemAdded, int SlotUpdated)
 {
 	if (InventoryRef && ItemWidget)
 	{
 		InventoryDisplay->ClearChildren();
 		int CurrentSlot = 0;
 		TArray<FInventoryContents> Inventory;
-		InventoryRef->GetInventory(OUT Inventory);
+		InventoryRef->GetInventory(Inventory);
 		for (const FInventoryContents& InventoryItem : Inventory)
 		{
 			UInventoryItemWidget* ItemReference = CreateWidget<UInventoryItemWidget>(InventoryDisplay, ItemWidget);

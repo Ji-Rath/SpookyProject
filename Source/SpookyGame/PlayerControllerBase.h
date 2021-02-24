@@ -20,4 +20,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMainUIBase* MainUI;
 	
+	UFUNCTION(BlueprintCallable)
+	void ToggleInventory();
 };
