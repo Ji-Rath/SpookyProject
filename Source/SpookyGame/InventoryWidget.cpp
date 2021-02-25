@@ -20,7 +20,7 @@ bool UInventoryWidget::Initialize()
 	return true;
 }
 
-void UInventoryWidget::UpdateInventory(bool bItemAdded, int SlotUpdated)
+void UInventoryWidget::UpdateInventory(bool bItemAdded)
 {
 	if (InventoryRef && ItemWidget)
 	{

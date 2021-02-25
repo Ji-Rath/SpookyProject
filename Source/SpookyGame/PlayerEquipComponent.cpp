@@ -31,7 +31,7 @@ void UPlayerEquipComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (bEquippedItem && ItemAttachSpring)
+	if (EquippedItem && ItemAttachSpring)
 	{
 		float CurrentOffset = ItemAttachSpring->TargetOffset.Z;
 		if (!FMath::IsNearlyEqual(CurrentOffset, InitialSpringArmOffset))
@@ -39,21 +39,20 @@ void UPlayerEquipComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	}
 }
 
-void UPlayerEquipComponent::EquipSlot(int ItemSlot)
+void UPlayerEquipComponent::EquipItem(UItemData* Item)
 {
 	UnequipItem();
 
-	if (Inventory.IsValidIndex(ItemSlot))
+	if (Item)
 	{
-		AActor* Interactable = GetWorld()->SpawnActor<AActor>(Inventory[ItemSlot].ItemData->ActorClass, GetOwner()->GetTransform());
+		AActor* Interactable = GetWorld()->SpawnActor<AActor>(Item->ActorClass, GetOwner()->GetTransform());
 		FAttachmentTransformRules TransformRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true);
 
 		Interactable->AttachToComponent(Cast<USceneComponent>(ItemAttachParent.GetComponent(GetOwner())), TransformRules);
 		Interactable->SetActorEnableCollision(false);
 		if (auto* Mesh = Interactable->FindComponentByClass<UStaticMeshComponent>())
 			Mesh->SetSimulatePhysics(false);
-		EquippedSlot = ItemSlot;
-		bEquippedItem = true;
+		EquippedItem = Item;
 		if (ItemAttachSpring)
 			ItemAttachSpring->TargetOffset.Z = ItemUnequipOffset;
 	}
@@ -71,21 +70,20 @@ void UPlayerEquipComponent::UnequipItem()
 		{
 			Item->Destroy();
 		}
-		EquippedSlot = 0;
-		bEquippedItem = false;
+		EquippedItem = nullptr;
 		if (ItemAttachSpring)
 			ItemAttachSpring->TargetOffset.Z = InitialSpringArmOffset;
 	}
 }
 
-bool UPlayerEquipComponent::HasItemEquipped()
+UItemData* UPlayerEquipComponent::GetEquippedItem() const
 {
-	return bEquippedItem;
+	return EquippedItem;
 }
 
 void UPlayerEquipComponent::DropEquippedItem()
 {
-	if (bEquippedItem)
+	if (EquippedItem)
 	{
 		/** Unequip any items that were binded to the actor */
 		TArray<AActor*> ItemsAttached;
@@ -103,43 +101,20 @@ void UPlayerEquipComponent::DropEquippedItem()
 			}
 		}
 	}
-	InventoryCompRef->RemoveFromInventory(EquippedSlot, 1);
+	InventoryCompRef->RemoveFromInventory(EquippedItem, 1);
 }
 
-void UPlayerEquipComponent::UpdateEquip(bool bAdded, int SlotChanged)
+void UPlayerEquipComponent::UpdateEquip(bool bAdded)
 {
 	InventoryCompRef->GetInventory(OUT Inventory);
 	if (bAdded)
 	{
-		if (!bEquippedItem)
-			EquipSlot(Inventory.Num()-1);
+		if (!EquippedItem)
+			EquipItem(Inventory[Inventory.Num()-1].ItemData);
 	}
 	else
 	{
-		if (EquippedSlot == SlotChanged)
-		{
-			FInventoryContents InventorySlot;
-			GetEquippedSlotItem(OUT InventorySlot);
-			if (InventorySlot.Count == 0)
-				UnequipItem();
-		}
-			
+		if (InventoryCompRef->FindItemSlot(EquippedItem) == -1)
+			UnequipItem();
 	}
-}
-
-void UPlayerEquipComponent::GetEquippedSlotItem(FInventoryContents& OutInventorySlot) const
-{
-	if (Inventory.IsValidIndex(GetEquippedSlot()))
-	{
-		OutInventorySlot = Inventory[GetEquippedSlot()];
-	}
-	else
-	{
-		OutInventorySlot = FInventoryContents();
-	}
-}
-
-int UPlayerEquipComponent::GetEquippedSlot() const
-{
-	return EquippedSlot;
 }

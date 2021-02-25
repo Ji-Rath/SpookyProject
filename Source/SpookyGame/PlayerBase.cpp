@@ -50,6 +50,13 @@ void APlayerBase::BeginPlay()
 
 }
 
+void APlayerBase::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	
+	TriggerFootstep();
+}
+
 void APlayerBase::MovementForward(float AxisValue)
 {
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(GetActorRotation());
@@ -64,12 +71,6 @@ void APlayerBase::MovementRight(float AxisValue)
 	AddMovementInput(RightVector, AxisValue);
 
 	FootstepDetection();
-}
-
-void APlayerBase::Sprint()
-{
-	GetCharacterMovement()->SetMovementMode(MOVE_Custom, CUSTOM_Sprint);
-	bIsSprinting = true;
 }
 
 // Called every frame
@@ -92,13 +93,13 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, PlayerInteract, &UPlayerInteractComponent::Interact);
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, PhysicsGrab, &UPhysicsGrabComponent::Grab);
-	PlayerInputComponent->BindAction("Interact", IE_Released, PhysicsGrab, &UPhysicsGrabComponent::Grab);
+	PlayerInputComponent->BindAction("Interact", IE_Released, PhysicsGrab, &UPhysicsGrabComponent::Grab); // @TODO Create ReleaseGrab to prevent unexpected issues
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerBase::StartCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerBase::StopCrouch);
 
-	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &APlayerBase::Sprint);
-	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerBase::StopSprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, GetCharacterMovement(), &UAdvCharacterMovementComponent::Sprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, GetCharacterMovement(), &UAdvCharacterMovementComponent::StopSprint);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerBase::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerBase::StopJumping);
@@ -106,12 +107,6 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Inventory", IE_Pressed, GetController<APlayerControllerBase>(), &APlayerControllerBase::ToggleInventory);
 
 	PlayerInputComponent->BindAction("DropItem", IE_Pressed, PlayerEquip, &UPlayerEquipComponent::DropEquippedItem);
-}
-
-void APlayerBase::StopSprint()
-{
-	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	bIsSprinting = false;
 }
 
 void APlayerBase::TriggerFootstep()
@@ -126,7 +121,7 @@ void APlayerBase::TriggerFootstep()
 void APlayerBase::FootstepDetection()
 {
 	//Ensure player is moving
-	bool bWantsToMove = GetCharacterMovement()->IsWalking() || GetCharacterMovement()->CustomMovementMode == CUSTOM_Sprint;
+	bool bWantsToMove = !GetCharacterMovement()->IsFalling() && (GetCharacterMovement()->IsMovingOnGround());
 	if (bWantsToMove && GetVelocity().Size() > 0)
 	{
 		if (!GetWorldTimerManager().IsTimerActive(FootstepTimer))
@@ -143,27 +138,17 @@ void APlayerBase::FootstepDetection()
 	}
 }
 
-void APlayerBase::OnEndCrouch(float HeightAdjust, float ScaledHeightAdjust)
-{
-	Super::OnEndCrouch(HeightAdjust, HeightAdjust);
-
-	if (bIsSprinting)
-	{
-		GetCharacterMovement()->SetMovementMode(MOVE_Custom, CUSTOM_Sprint);
-	}
-}
-
-UAdvCharacterMovementComponent* APlayerBase::GetCharacterMovement()
+UAdvCharacterMovementComponent* APlayerBase::GetCharacterMovement() const
 {
 	return Cast<UAdvCharacterMovementComponent>(Super::GetCharacterMovement());
 }
 
 void APlayerBase::StopCrouch()
 {
-	GetCharacterMovement()->bWantsToCrouch = false;
+	UnCrouch();
 }
 
 void APlayerBase::StartCrouch()
 {
-	GetCharacterMovement()->bWantsToCrouch = true;
+	Crouch();
 }

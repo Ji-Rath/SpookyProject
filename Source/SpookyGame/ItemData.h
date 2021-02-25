@@ -26,4 +26,9 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (AllowedClasses = "Pickupable"))
 	TSubclassOf<AActor> ActorClass;
+
+	bool operator==(const UItemData& OtherItem) const
+	{
+		return GetClass() == OtherItem.GetClass();
+	}
 };

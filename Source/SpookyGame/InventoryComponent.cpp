@@ -26,36 +26,37 @@ void UInventoryComponent::BeginPlay()
 	
 }
 
-void UInventoryComponent::DropItemFromSlot(int Slot, int Count)
+void UInventoryComponent::DropItem(const UItemData* Item, const int Count /*= 1*/)
 {
 	APawn* Player = GetOwner<APawn>();
 	FActorSpawnParameters SpawnParams = FActorSpawnParameters();
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	APickupable* DroppedItem = GetWorld()->SpawnActor<APickupable>(Inventory[Slot].ItemData->ActorClass, GetOwner()->GetActorLocation(), FRotator::ZeroRotator);
+	APickupable* DroppedItem = GetWorld()->SpawnActor<APickupable>(Item->ActorClass, GetOwner()->GetActorLocation(), FRotator::ZeroRotator);
 
 	DroppedItem->Amount = Count;
 
-	RemoveFromInventory(Slot, Count);
+	RemoveFromInventory(Item, Count);
 }
 
-void UInventoryComponent::RemoveFromInventory(int ItemSlot, const int Count)
+void UInventoryComponent::RemoveFromInventory(const UItemData* Item, const int Count /*= 1*/)
 {
 	/** If there is an item at the slot, remove specified amount */
-	if (Inventory.IsValidIndex(ItemSlot))
+	int Slot = FindItemSlot(Item);
+	if (Inventory.IsValidIndex(Slot))
 	{
-		Inventory[ItemSlot].Count -= Count;
-		if (Inventory[ItemSlot].Count <= 0)
-			Inventory.RemoveAt(ItemSlot);
-		OnInventoryChange.Broadcast(false, ItemSlot);
+		Inventory[Slot].Count -= Count;
+		if (Inventory[Slot].Count <= 0)
+			Inventory.RemoveAt(Slot);
+		OnInventoryChange.Broadcast(false);
 	}
 }
 
-int UInventoryComponent::FindItemSlot(UItemData* Item) const
+int UInventoryComponent::FindItemSlot(const UItemData* Item) const
 {
 	/** Find slot with item in it */
 	for (int i = 0; i < Inventory.Num(); i++)
 	{
-		if (Item->Name.ToString() == Inventory[i].ItemData->Name.ToString())
+		if (Item == Inventory[i].ItemData)
 		{
 			return i;
 		}
@@ -64,19 +65,29 @@ int UInventoryComponent::FindItemSlot(UItemData* Item) const
 	return -1;
 }
 
+UItemData* UInventoryComponent::FindItem(const int Index) const
+{
+	if (Inventory.IsValidIndex(Index))
+	{
+		return Inventory[Index].ItemData;
+	}
+
+	return nullptr;
+}
+
 bool UInventoryComponent::AddToInventory(UItemData* Item, const int Count)
 {
 	for (int i=0;i<Inventory.Num();i++)
 	{
 		FInventoryContents& InventoryContent = Inventory[i];
 		/** Compare names to see if they are the same item */
-		if (InventoryContent.ItemData->Name.ToString() == Item->Name.ToString())
+		if (InventoryContent.ItemData == Item)
 		{
 			/** Ensure that adding the item will not exceed the max stack */
 			if (InventoryContent.Count + Count <= InventoryContent.ItemData->MaxStack)
 			{
 				InventoryContent.Count += Count;
-				OnInventoryChange.Broadcast(true, i);
+				OnInventoryChange.Broadcast(true);
 				return true;
 			}
 		}
@@ -90,7 +101,7 @@ bool UInventoryComponent::AddToInventory(UItemData* Item, const int Count)
 		InventoryItem.Count = Count;
 
 		int Slot = Inventory.Add(InventoryItem);
-		OnInventoryChange.Broadcast(true, Slot);
+		OnInventoryChange.Broadcast(true);
 
 		return true;
 	}

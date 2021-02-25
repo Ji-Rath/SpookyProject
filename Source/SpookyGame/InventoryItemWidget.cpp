@@ -3,6 +3,8 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "PlayerEquipComponent.h"
+#include "InventoryComponent.h"
+#include "ItemData.h"
 
 bool UInventoryItemWidget::Initialize()
 {
@@ -10,7 +12,10 @@ bool UInventoryItemWidget::Initialize()
 	if (!Success) { return false; }
 
 	if (GetOwningPlayerPawn())
+	{
 		EquipCompRef = GetOwningPlayerPawn()->FindComponentByClass<UPlayerEquipComponent>();
+		InventoryRef = GetOwningPlayerPawn()->FindComponentByClass<UInventoryComponent>();
+	}
 
 	if (ItemButton)
 		ItemButton->OnClicked.AddDynamic(this, &UInventoryItemWidget::ToggleItem);
@@ -28,19 +33,20 @@ void UInventoryItemWidget::ToggleItem()
 	if (EquipCompRef)
 	{
 		/** Equip current item in slot if not already done */
-		if (!EquipCompRef->HasItemEquipped())
+		UItemData* Item = InventoryRef->FindItem(ItemSlot);
+		if (!EquipCompRef->GetEquippedItem())
 		{
-			EquipCompRef->EquipSlot(ItemSlot);
+			EquipCompRef->EquipItem(Item);
 		}
 		else 
 		{
-			if (EquipCompRef->GetEquippedSlot() == ItemSlot)
+			if (InventoryRef->FindItem(ItemSlot) == EquipCompRef->GetEquippedItem())
 			{
 				EquipCompRef->UnequipItem();
 			}
 			else
 			{
-				EquipCompRef->EquipSlot(ItemSlot);
+				EquipCompRef->EquipItem(Item);
 			}
 		}
 	}

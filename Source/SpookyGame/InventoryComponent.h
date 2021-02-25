@@ -7,7 +7,7 @@
 #include "ItemData.h"
 #include "InventoryComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FInventoryChange, bool, bAdded, int, SlotUpdated);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryChange, bool, bAdded);
 
 USTRUCT(Blueprintable)
 struct FInventoryContents
@@ -23,6 +23,11 @@ struct FInventoryContents
 	{
 		ItemData = nullptr;
 		Count = 0;
+	}
+
+	bool operator==(const FInventoryContents& OtherSlot) const
+	{
+		return ItemData == OtherSlot.ItemData;
 	}
 };
 
@@ -50,11 +55,11 @@ public:
 
 	/** Drop an item from selected slot */
 	UFUNCTION(BlueprintCallable)
-	void DropItemFromSlot(int Slot, int Count);
+	void DropItem(const UItemData* Item, const int Count = 1);
 
 	/** Remove an item from current inventory */
 	UFUNCTION(BlueprintCallable)
-	void RemoveFromInventory(int ItemSlot, const int Count = 1);
+	void RemoveFromInventory(const UItemData* Item, const int Count = 1);
 
 	/**
 	 * Find the first slot containing Item
@@ -62,7 +67,15 @@ public:
 	 * @return Slot with containing item
 	*/
 	UFUNCTION(BlueprintCallable)
-	int FindItemSlot(UItemData* Item) const;
+	int FindItemSlot(const UItemData* Item) const;
+
+	/**
+	 * Find the first slot containing Item
+	 * @param Item - Item to find
+	 * @return Slot with containing item
+	*/
+	UFUNCTION(BlueprintCallable)
+	UItemData* FindItem(const int Index) const;
 
 	/**
 	 * Attempt to add an item to the inventory

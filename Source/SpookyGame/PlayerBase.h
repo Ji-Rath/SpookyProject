@@ -74,12 +74,16 @@ public:
 	//Called to begin crouching
 	void StartCrouch();
 
+	void Landed(const FHitResult& Hit) override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 private:
 	//Control player movement forward and backward
 	void MovementForward(float AxisValue);
+
 	//Control player movement right and left
 	void MovementRight(float AxisValue);
 
@@ -96,11 +100,6 @@ private:
 	//Handle footstep sound delay
 	FTimerHandle FootstepTimer;
 
-	//When true, player wants to sprint
-	bool bIsSprinting;
-
-	void OnEndCrouch(float HeightAdjust, float ScaledHeightAdjust) override;
-
 	/** Function to cast MovementComponent to custom CharacterMovementComponent */
-	UAdvCharacterMovementComponent* GetCharacterMovement();
+	UAdvCharacterMovementComponent* GetCharacterMovement() const;
 };

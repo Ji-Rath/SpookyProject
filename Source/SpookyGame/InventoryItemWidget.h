@@ -7,6 +7,7 @@
 class UTextBlock;
 class UButton;
 class UPlayerEquipComponent;
+class UInventoryComponent;
 
 /**
  *
@@ -38,4 +39,7 @@ public:
 private:
 	UPROPERTY()
 	UPlayerEquipComponent* EquipCompRef;
+
+	UPROPERTY()
+	UInventoryComponent* InventoryRef;
 };

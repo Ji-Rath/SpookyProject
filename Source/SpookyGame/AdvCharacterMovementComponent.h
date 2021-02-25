@@ -25,7 +25,18 @@ public:
 	void PhysSprinting(float deltaTime, int32 Iterations);
 
 	/** Returns whether the character is in the sprinting state */
-	bool IsSprinting();
+	UFUNCTION(BlueprintCallable)
+	bool IsSprinting() const;
+
+	bool IsMovingOnGround() const override;
+
+	UFUNCTION(BlueprintCallable)
+	void Sprint();
+
+	UFUNCTION(BlueprintCallable)
+	void StopSprint();
+
+	float GetMaxSpeed() const override;
 
 private:
 	/** The maximum ground speed when walking. Also determines maximum lateral speed when falling. */
