@@ -18,13 +18,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Name;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FText Description;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int MaxStack;
 
-	UPROPERTY(EditAnywhere, meta = (AllowedClasses = "Pickupable"))
+	UPROPERTY(EditAnywhere, meta = (AllowedClasses = "Pickupable"), BlueprintReadOnly)
 	TSubclassOf<AActor> ActorClass;
 
 	bool operator==(const UItemData& OtherItem) const

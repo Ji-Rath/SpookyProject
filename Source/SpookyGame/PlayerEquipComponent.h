@@ -58,5 +58,9 @@ private:
 	/** Called when there is an inventory update */
 	UFUNCTION()
 	void UpdateEquip(bool bAdded);
+
+	UFUNCTION()
+	void ItemInteract(AActor* Interactable);
+
 };
 

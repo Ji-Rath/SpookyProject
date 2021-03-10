@@ -32,6 +32,7 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 	APawn* Player = GetOwner<APawn>();
 	if (!Player) return;
 	APlayerController* PlayerController = Player->GetController<APlayerController>();
+	if (!PlayerController) return;
 
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(Player->GetControlRotation());
 	FVector Distance = ForwardVector * InteractDistance;
@@ -45,16 +46,20 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 	/** Return early if there is no change */
 	if (HitActor == InteractHover) { return; }
 
-	if (bHitInteractable && HitActor->Implements<UTriggerInterface>())
+	if (bHitInteractable && HitActor)
 	{
-		/** Set interact message when hovering over an interactable */
-		if (HitActor && ITriggerInterface::Execute_CanPlayerTrigger(Hit.GetActor()))
+		if (HitActor->Implements<UTriggerInterface>())
 		{
-			InteractHover = Hit.GetActor();
-			OnUpdateInteract.Broadcast(true, InteractHover);
-			return;
+			/** Set interact message when hovering over an interactable */
+			if (ITriggerInterface::Execute_CanPlayerTrigger(HitActor))
+			{
+				InteractHover = HitActor;
+				OnUpdateInteract.Broadcast(true, InteractHover);
+				return;
+			}
 		}
 	}
+	
 	
 	/** Send interaction update when there is no longer an interactable in view */
 	if (InteractHover && (!HitActor || (HitActor && !HitActor->Implements<UTriggerInterface>())))
@@ -69,8 +74,8 @@ void UPlayerInteractComponent::Interact()
 	if (InteractHover && ITriggerInterface::Execute_CanPlayerTrigger(InteractHover))
 	{
 		/** Trigger interacted actor */
-		if (InteractHover)
-			ITriggerInterface::Execute_OnTrigger(InteractHover, GetOwner());
+		OnInteract.Broadcast(InteractHover);
+		ITriggerInterface::Execute_OnTrigger(InteractHover, GetOwner());
 
 		/** Call trigger actors from component */
 		UTriggerComponent* TriggerComponent = InteractHover->FindComponentByClass<UTriggerComponent>();

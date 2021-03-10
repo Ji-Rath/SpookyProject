@@ -9,6 +9,7 @@
 class ITriggerInterface;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUpdateInteract, bool, bInteractable, TScriptInterface<ITriggerInterface>, Actor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteract, AActor*, Interactable);
 
 /**
  * Allows the player to interact with interactables, executing functionality based on what was interacted with
@@ -29,6 +30,9 @@ public:
 	//Delegate called when there is a change in InteractHover
 	UPROPERTY()
 	FUpdateInteract OnUpdateInteract;
+
+	UPROPERTY()
+	FInteract OnInteract;
 
 	/** Called when the player wants to interact with the currently viewed interactable */
 	UFUNCTION(BlueprintCallable)

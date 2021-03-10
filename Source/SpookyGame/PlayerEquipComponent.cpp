@@ -3,20 +3,29 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "InventoryComponent.h"
+#include "PlayerInteractComponent.h"
+#include "ItemUsable.h"
 
 void UPlayerEquipComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	/** Add spring arm component */
 	ItemAttachSpring = Cast<USpringArmComponent>(ItemAttachParent.GetComponent(GetOwner()));
 	if (ItemAttachSpring)
 		InitialSpringArmOffset = ItemAttachSpring->TargetOffset.Z;
 
+	/** Find inventory component */
 	InventoryCompRef = GetOwner()->FindComponentByClass<UInventoryComponent>();
 	if (InventoryCompRef)
 	{
 		InventoryCompRef->OnInventoryChange.AddDynamic(this, &UPlayerEquipComponent::UpdateEquip);
 		InventoryCompRef->GetInventory(OUT Inventory);
+	}
+	auto* InteractComp = GetOwner()->FindComponentByClass<UPlayerInteractComponent>();
+	if (InteractComp)
+	{
+		InteractComp->OnInteract.AddDynamic(this, &UPlayerEquipComponent::ItemInteract);
 	}
 }
 
@@ -31,6 +40,7 @@ void UPlayerEquipComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	/** Interp equipped item to move smoothly with camera rotation */
 	if (EquippedItem && ItemAttachSpring)
 	{
 		float CurrentOffset = ItemAttachSpring->TargetOffset.Z;
@@ -43,6 +53,7 @@ void UPlayerEquipComponent::EquipItem(UItemData* Item)
 {
 	UnequipItem();
 
+	/** Spawn item and attach it to the player */
 	if (Item)
 	{
 		AActor* Interactable = GetWorld()->SpawnActor<AActor>(Item->ActorClass, GetOwner()->GetTransform());
@@ -93,6 +104,8 @@ void UPlayerEquipComponent::DropEquippedItem()
 		{
 			Item->DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepWorld, false));
 			Item->SetActorEnableCollision(true);
+
+			/** Re-enable physics and add throwing impulse */
 			UStaticMeshComponent* Mesh = Item->FindComponentByClass<UStaticMeshComponent>();
 			if (Mesh)
 			{
@@ -101,6 +114,7 @@ void UPlayerEquipComponent::DropEquippedItem()
 			}
 		}
 	}
+	/** Remove item from inventory */
 	InventoryCompRef->RemoveFromInventory(EquippedItem, 1);
 }
 
@@ -109,12 +123,22 @@ void UPlayerEquipComponent::UpdateEquip(bool bAdded)
 	InventoryCompRef->GetInventory(OUT Inventory);
 	if (bAdded)
 	{
+		/** Equip the item that was just picked up if the player is empty handed */
 		if (!EquippedItem)
 			EquipItem(Inventory[Inventory.Num()-1].ItemData);
 	}
 	else
 	{
+		/** Ensure that equipped item still exists */
 		if (InventoryCompRef->FindItemSlot(EquippedItem) == -1)
 			UnequipItem();
+	}
+}
+
+void UPlayerEquipComponent::ItemInteract(AActor* Interactable)
+{
+	if (Interactable && Interactable->Implements<UItemUsable>())
+	{
+		IItemUsable::Execute_OnItemUse(Interactable, GetOwner(), GetEquippedItem());
 	}
 }

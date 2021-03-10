@@ -25,8 +25,6 @@ void AInteractableBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (Implements<UTriggerInterface>() && bIsOn)
-		ITriggerInterface::Execute_OnTrigger(this, this);
 }
 
 void AInteractableBase::ToggleOnStatus()
@@ -61,5 +59,10 @@ FText AInteractableBase::GetName_Implementation() const
 UItemData* AInteractableBase::GetItemData() const
 {
 	return ItemData;
+}
+
+bool AInteractableBase::GetCurrentState() const
+{
+	return bIsOn;
 }
 

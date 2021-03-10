@@ -30,7 +30,7 @@ public:
 	 * Toggle the status of the interactable
 	 * @warning Will not toggle more than once if bOneTimeInteraction is true
 	 */
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void ToggleOnStatus();
 
 	/** Returns whether the interactable can be interacted with */
@@ -52,6 +52,9 @@ public:
 	/** Returns the item data */
 	UFUNCTION(BlueprintCallable)
 	UItemData* GetItemData() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool GetCurrentState() const;
 
 protected:
 	//Determine whether anything can interact with the actor
@@ -77,7 +80,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	bool bOneTimeInteraction = false;
 
-	/** Sets the default state of the interactable */
+	/** Sets the initial state of the interactable */
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	bool bIsOn = false;
 
