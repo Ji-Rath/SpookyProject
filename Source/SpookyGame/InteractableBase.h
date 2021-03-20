@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "TriggerInterface.h"
+#include "Interaction.h"
 #include "InteractableBase.generated.h"
 
 class UItemData;
 
 UCLASS()
-class SPOOKYGAME_API AInteractableBase : public AActor, public ITriggerInterface
+class SPOOKYGAME_API AInteractableBase : public AActor, public IInteraction
 {
 	GENERATED_BODY()
 	
@@ -34,12 +34,12 @@ public:
 	void ToggleOnStatus();
 
 	/** Returns whether the interactable can be interacted with */
-	bool CanTrigger() const;
-	bool CanTrigger_Implementation() const override;
+	bool CanInteract() const;
+	bool CanInteract_Implementation() const override;
 
 	/** Returns whether the player can interact with the actor */
-	bool CanPlayerTrigger() const;
-	bool CanPlayerTrigger_Implementation() const override;
+	bool CanPlayerInteract() const;
+	bool CanPlayerInteract_Implementation() const override;
 
 	/** Returns the name of the interactable */
 	FText GetName() const;
@@ -81,7 +81,7 @@ protected:
 	bool bOneTimeInteraction = false;
 
 	/** Sets the initial state of the interactable */
-	UPROPERTY(EditAnywhere, Category = "Interaction")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	bool bIsOn = false;
 
 	UPROPERTY(EditAnywhere, Category = "Data", meta = (EditCondition = "bUseData"))

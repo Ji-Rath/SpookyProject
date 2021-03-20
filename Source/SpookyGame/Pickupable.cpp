@@ -20,7 +20,7 @@ APickupable::APickupable()
 	ItemMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 }
 
-void APickupable::OnTrigger_Implementation(const AActor* Interactor)
+void APickupable::OnInteract_Implementation(const AActor* Interactor)
 {
 	UInventoryComponent* InventoryRef = Interactor->FindComponentByClass<UInventoryComponent>();
 

@@ -2,7 +2,7 @@
 
 
 #include "TriggerComponent.h"
-#include "TriggerInterface.h"
+#include "Interaction.h"
 
 // Sets default values for this component's properties
 UTriggerComponent::UTriggerComponent()
@@ -23,20 +23,39 @@ void UTriggerComponent::BeginPlay()
 
 void UTriggerComponent::TriggerActors(AActor* Instigator)
 {
+	FTimerDelegate TimerDel;
+	TimerDel.BindUObject(this, &UTriggerComponent::ExecuteInteraction, Instigator);
+
+	bool bCanTrigger = TriggerCount < TriggerAmount || TriggerAmount == 0;
+	if (bCanTrigger)
+	{
+		FTimerManager TimeManager = GetOwner()->GetWorldTimerManager();
+		if (TriggerDelay > 0.f)
+		{
+			/** Only apply timer if its not already set */
+			if (!TimeManager.IsTimerActive(DelayHandle))
+				TimeManager.SetTimer(DelayHandle, TimerDel, TriggerDelay, false);
+		}
+		else
+		{
+			/** Trigger actors instantly if there is no delay set */
+			TimerDel.ExecuteIfBound();
+		}
+
+		TriggerCount++;
+	}
+}
+
+void UTriggerComponent::ExecuteInteraction(AActor* Instigator)
+{
 	for (AActor* Actor : ActorsToTrigger)
 	{
 		/** Call trigger function for all actors in array if they implement the trigger interface */
-		if (IsValid(Actor) && Actor->Implements<UTriggerInterface>())
+		if (IsValid(Actor) && Actor->Implements<UInteraction>())
 		{
-			if (ITriggerInterface::Execute_CanTrigger(Actor))
+			if (IInteraction::Execute_CanInteract(Actor))
 			{
-				ITriggerInterface::Execute_OnTrigger(Actor, Instigator);
-				// InteractActor->ToggleOnStatus();
-			}
-			else
-			{
-				/** Handle cases where the object is not a child of AInteractableBase */
-				ITriggerInterface::Execute_OnTrigger(Actor, Instigator);
+				IInteraction::Execute_OnInteract(Actor, Instigator);
 			}
 		}
 	}

@@ -2,7 +2,7 @@
 
 
 #include "InteractableBase.h"
-#include "TriggerInterface.h"
+#include "Interaction.h"
 #include "ItemData.h"
 
 // Sets default values
@@ -36,12 +36,12 @@ void AInteractableBase::ToggleOnStatus()
 		SetInteractable(false);
 }
 
-bool AInteractableBase::CanTrigger_Implementation() const
+bool AInteractableBase::CanInteract_Implementation() const
 {
 	return bCanInteract;
 }
 
-bool AInteractableBase::CanPlayerTrigger_Implementation() const
+bool AInteractableBase::CanPlayerInteract_Implementation() const
 {
 	return bCanInteract && bPlayerInteract;
 }

@@ -21,11 +21,30 @@ protected:
 
 public:	
 
-	//TArray of actors to trigger when TriggerActors() function is called
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	/** TArray of actors to trigger when TriggerActors() function is called */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trigger", meta = (AllowedClasses = "Interaction"))
 	TArray<AActor*> ActorsToTrigger;
 
-	//Function to be called to trigger actors in ActorsToTrigger array
+	/** Function to be called to trigger actors in ActorsToTrigger array */
 	UFUNCTION(BlueprintCallable)
 	void TriggerActors(AActor* Instigator);
+
+	/** Delay before triggering actors, 0 for no delay */
+	UPROPERTY(EditAnywhere, Category = "Trigger|Advanced")
+	float TriggerDelay = 0.f;
+
+	/** Times to allow triggering */
+	UPROPERTY(EditAnywhere, Category = "Trigger|Advanced")
+	int TriggerAmount = 0;
+
+private:
+	/** Internal variable for tracking times triggered */
+	int TriggerCount = 0;
+
+	/** Handle trigger delay timer */
+	FTimerHandle DelayHandle;
+
+	/** Actual functionality for triggering actors */
+	UFUNCTION()
+	void ExecuteInteraction(AActor* Instigator);
 };

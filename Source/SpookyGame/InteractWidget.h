@@ -22,7 +22,7 @@ public:
 	UTextBlock* InteractText;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateUI(bool bShowCursor, TScriptInterface<ITriggerInterface> Interactable);
+	void UpdateUI(bool bShowCursor, TScriptInterface<IInteraction> Interactable);
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void PlayInteractAnim(EUMGSequencePlayMode::Type PlayMode);
@@ -36,5 +36,5 @@ public:
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* MessageFade;
 private:
-	TScriptInterface<ITriggerInterface> CurrentInteractable = nullptr;
+	TScriptInterface<IInteraction> CurrentInteractable = nullptr;
 };

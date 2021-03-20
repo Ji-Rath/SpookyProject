@@ -7,7 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerBase.generated.h"
 
-class ITriggerInterface;
+class IInteraction;
 class AInteractableBase;
 class UCameraComponent;
 class USpringArmComponent;

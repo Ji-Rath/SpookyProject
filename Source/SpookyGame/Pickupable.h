@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "InteractableBase.h"
-#include "TriggerInterface.h"
+#include "Interaction.h"
 #include "Pickupable.generated.h"
 
 class UTriggerComponent;
@@ -16,8 +16,8 @@ class SPOOKYGAME_API APickupable : public AInteractableBase
 public:
 	APickupable();
 
-	void OnTrigger(const AActor* Interactor);
-	void OnTrigger_Implementation(const AActor* Interactor) override;
+	void OnInteract(const AActor* Interactor);
+	void OnInteract_Implementation(const AActor* Interactor) override;
 
 	UPROPERTY(EditAnywhere, Category = "Pickupable")
 	int Amount;

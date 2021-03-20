@@ -6,9 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "PlayerInteractComponent.generated.h"
 
-class ITriggerInterface;
+class IInteraction;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUpdateInteract, bool, bInteractable, TScriptInterface<ITriggerInterface>, Actor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUpdateInteract, bool, bInteractable, TScriptInterface<IInteraction>, Actor);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteract, AActor*, Interactable);
 
 /**

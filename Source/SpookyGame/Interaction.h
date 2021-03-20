@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "TriggerInterface.generated.h"
+#include "Interaction.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UTriggerInterface : public UInterface
+class UInteraction : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,7 +16,7 @@ class UTriggerInterface : public UInterface
 /**
  * 
  */
-class SPOOKYGAME_API ITriggerInterface
+class SPOOKYGAME_API IInteraction
 {
 	GENERATED_BODY()
 
@@ -25,13 +25,13 @@ public:
 	
 	/** Called from a trigger component to change the state of the actor */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnTrigger(const AActor* Interactor);
+	void OnInteract(const AActor* Interactor);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	bool CanTrigger() const;
+	bool CanInteract() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	bool CanPlayerTrigger() const;
+	bool CanPlayerInteract() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	FText GetName() const;

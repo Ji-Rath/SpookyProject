@@ -4,7 +4,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
-#include "TriggerInterface.h"
+#include "Interaction.h"
 #include "DrawDebugHelpers.h"
 #include "AttentionComponent.h"
 
@@ -78,7 +78,7 @@ void UPhysicsGrabComponent::Grab()
 
 		/** Ensure there was a trace and that we are not dragging something triggerable */
 		GrabMesh = Cast<UStaticMeshComponent>(Hit.GetComponent());
-		if (bTraced && GrabMesh && !Hit.GetActor()->Implements<UTriggerInterface>())
+		if (bTraced && GrabMesh && !Hit.GetActor()->Implements<UInteraction>())
 		{
 			/** Grab object if below threshhold or simply push it */
 			if (GrabMesh->GetMass() < GrabWeightThreshhold)

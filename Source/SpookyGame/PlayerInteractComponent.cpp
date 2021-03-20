@@ -5,7 +5,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerController.h"
 #include "TriggerComponent.h"
-#include "TriggerInterface.h"
+#include "Interaction.h"
 
 
 // Sets default values for this component's properties
@@ -48,10 +48,10 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 
 	if (bHitInteractable && HitActor)
 	{
-		if (HitActor->Implements<UTriggerInterface>())
+		if (HitActor->Implements<UInteraction>())
 		{
 			/** Set interact message when hovering over an interactable */
-			if (ITriggerInterface::Execute_CanPlayerTrigger(HitActor))
+			if (IInteraction::Execute_CanPlayerInteract(HitActor))
 			{
 				InteractHover = HitActor;
 				OnUpdateInteract.Broadcast(true, InteractHover);
@@ -62,7 +62,7 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 	
 	
 	/** Send interaction update when there is no longer an interactable in view */
-	if (InteractHover && (!HitActor || (HitActor && !HitActor->Implements<UTriggerInterface>())))
+	if (InteractHover && (!HitActor || (HitActor && !HitActor->Implements<UInteraction>())))
 	{
 		InteractHover = nullptr;
 		OnUpdateInteract.Broadcast(false, nullptr);
@@ -71,11 +71,11 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 
 void UPlayerInteractComponent::Interact()
 {
-	if (InteractHover && ITriggerInterface::Execute_CanPlayerTrigger(InteractHover))
+	if (InteractHover && IInteraction::Execute_CanPlayerInteract(InteractHover))
 	{
 		/** Trigger interacted actor */
 		OnInteract.Broadcast(InteractHover);
-		ITriggerInterface::Execute_OnTrigger(InteractHover, GetOwner());
+		IInteraction::Execute_OnInteract(InteractHover, GetOwner());
 
 		/** Call trigger actors from component */
 		UTriggerComponent* TriggerComponent = InteractHover->FindComponentByClass<UTriggerComponent>();

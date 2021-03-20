@@ -3,7 +3,7 @@
 
 #include "PlayerBase.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "TriggerInterface.h"
+#include "Interaction.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "Camera/PlayerCameraManager.h"
@@ -62,7 +62,7 @@ void APlayerBase::MovementForward(float AxisValue)
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(GetActorRotation());
 	AddMovementInput(ForwardVector, AxisValue);
 
-	FootstepDetection();
+	FootstepDetection();  
 }
 
 void APlayerBase::MovementRight(float AxisValue)
