@@ -5,6 +5,7 @@
 #include "InventoryComponent.h"
 #include "PlayerInteractComponent.h"
 #include "ItemUsable.h"
+#include "Interactable.h"
 
 void UPlayerEquipComponent::BeginPlay()
 {
@@ -135,7 +136,7 @@ void UPlayerEquipComponent::UpdateEquip(bool bAdded)
 	}
 }
 
-void UPlayerEquipComponent::ItemInteract(AActor* Interactable)
+void UPlayerEquipComponent::ItemInteract(AInteractable* Interactable)
 {
 	if (Interactable && Interactable->Implements<UItemUsable>())
 	{

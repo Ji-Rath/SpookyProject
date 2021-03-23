@@ -2,7 +2,7 @@
 
 
 #include "TriggerComponent.h"
-#include "Interaction.h"
+#include "Interactable.h"
 
 // Sets default values for this component's properties
 UTriggerComponent::UTriggerComponent()
@@ -29,12 +29,11 @@ void UTriggerComponent::TriggerActors(AActor* Instigator)
 	bool bCanTrigger = TriggerCount < TriggerAmount || TriggerAmount == 0;
 	if (bCanTrigger)
 	{
-		FTimerManager TimeManager = GetOwner()->GetWorldTimerManager();
 		if (TriggerDelay > 0.f)
 		{
 			/** Only apply timer if its not already set */
-			if (!TimeManager.IsTimerActive(DelayHandle))
-				TimeManager.SetTimer(DelayHandle, TimerDel, TriggerDelay, false);
+			if (!GetOwner()->GetWorldTimerManager().IsTimerActive(DelayHandle))
+				GetOwner()->GetWorldTimerManager().SetTimer(DelayHandle, TimerDel, TriggerDelay, false);
 		}
 		else
 		{
@@ -48,16 +47,10 @@ void UTriggerComponent::TriggerActors(AActor* Instigator)
 
 void UTriggerComponent::ExecuteInteraction(AActor* Instigator)
 {
-	for (AActor* Actor : ActorsToTrigger)
+	for (AInteractable* Interactable : ActorsToTrigger)
 	{
 		/** Call trigger function for all actors in array if they implement the trigger interface */
-		if (IsValid(Actor) && Actor->Implements<UInteraction>())
-		{
-			if (IInteraction::Execute_CanInteract(Actor))
-			{
-				IInteraction::Execute_OnInteract(Actor, Instigator);
-			}
-		}
+		Interactable->Interact(Instigator);
 	}
 }
 

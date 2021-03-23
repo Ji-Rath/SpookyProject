@@ -7,6 +7,7 @@
 #include "InteractWidget.generated.h"
 
 class UTextBlock;
+class AInteractable;
 
 /**
  * 
@@ -22,7 +23,7 @@ public:
 	UTextBlock* InteractText;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateUI(bool bShowCursor, TScriptInterface<IInteraction> Interactable);
+	void UpdateUI(bool bShowCursor, AInteractable* Interactable);
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void PlayInteractAnim(EUMGSequencePlayMode::Type PlayMode);
@@ -36,5 +37,5 @@ public:
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* MessageFade;
 private:
-	TScriptInterface<IInteraction> CurrentInteractable = nullptr;
+	AInteractable* CurrentInteractable = nullptr;
 };

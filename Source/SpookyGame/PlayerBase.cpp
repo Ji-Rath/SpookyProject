@@ -3,7 +3,6 @@
 
 #include "PlayerBase.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Interaction.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "Camera/PlayerCameraManager.h"

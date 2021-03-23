@@ -12,7 +12,6 @@ APickupable::APickupable()
 	TriggerComp = CreateDefaultSubobject<UTriggerComponent>(TEXT("Trigger Comp"));
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Item Mesh"));
 
-	bPlayerInteract = true;
 	bUseData = true;
 	ItemMesh->SetGenerateOverlapEvents(false);
 	ItemMesh->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
@@ -20,7 +19,7 @@ APickupable::APickupable()
 	ItemMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 }
 
-void APickupable::OnInteract_Implementation(const AActor* Interactor)
+void APickupable::OnInteract_Implementation(AActor* Interactor)
 {
 	UInventoryComponent* InventoryRef = Interactor->FindComponentByClass<UInventoryComponent>();
 

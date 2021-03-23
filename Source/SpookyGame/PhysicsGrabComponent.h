@@ -6,8 +6,9 @@
 
 class IInteraction;
 class UPhysicsHandleComponent;
+class AInteractable;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGrabUpdate, bool, bGrab, TScriptInterface<IInteraction>, Actor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGrabUpdate, bool, bGrab, AInteractable*, Actor);
 
 /**
  * Allows a pawn to grab a physics body through the use of a physics handle component

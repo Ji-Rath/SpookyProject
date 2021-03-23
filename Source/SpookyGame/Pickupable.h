@@ -1,23 +1,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "InteractableBase.h"
-#include "Interaction.h"
+#include "Interactable.h"
 #include "Pickupable.generated.h"
 
 class UTriggerComponent;
 class UStaticMeshComponent;
 
 UCLASS()
-class SPOOKYGAME_API APickupable : public AInteractableBase
+class SPOOKYGAME_API APickupable : public AInteractable
 {
 	GENERATED_BODY()
 	
 public:
 	APickupable();
 
-	void OnInteract(const AActor* Interactor);
-	void OnInteract_Implementation(const AActor* Interactor) override;
+	void OnInteract_Implementation(AActor* Interactor) override;
 
 	UPROPERTY(EditAnywhere, Category = "Pickupable")
 	int Amount;

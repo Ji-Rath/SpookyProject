@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "TriggerComponent.generated.h"
 
+class AInteractable;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPOOKYGAME_API UTriggerComponent : public UActorComponent
 {
@@ -22,8 +24,8 @@ protected:
 public:	
 
 	/** TArray of actors to trigger when TriggerActors() function is called */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trigger", meta = (AllowedClasses = "Interaction"))
-	TArray<AActor*> ActorsToTrigger;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trigger")
+	TArray<AInteractable*> ActorsToTrigger;
 
 	/** Function to be called to trigger actors in ActorsToTrigger array */
 	UFUNCTION(BlueprintCallable)

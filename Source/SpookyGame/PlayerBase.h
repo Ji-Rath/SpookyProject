@@ -8,7 +8,7 @@
 #include "PlayerBase.generated.h"
 
 class IInteraction;
-class AInteractableBase;
+class AInteractable;
 class UCameraComponent;
 class USpringArmComponent;
 class UMatineeCameraShake;

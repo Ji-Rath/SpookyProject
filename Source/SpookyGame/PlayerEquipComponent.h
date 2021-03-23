@@ -5,6 +5,7 @@
 #include "PlayerEquipComponent.generated.h"
 
 class USpringArmComponent;
+class AInteractable;
 
 UCLASS(Blueprintable)
 class SPOOKYGAME_API UPlayerEquipComponent : public UActorComponent
@@ -60,7 +61,7 @@ private:
 	void UpdateEquip(bool bAdded);
 
 	UFUNCTION()
-	void ItemInteract(AActor* Interactable);
+	void ItemInteract(AInteractable* Interactable);
 
 };
 

@@ -5,7 +5,7 @@
 #include "InteractWidget.h"
 #include "Components/TextBlock.h"
 #include "PlayerInteractComponent.h"
-#include "Interaction.h"
+#include "Interactable.h"
 #include "PhysicsGrabComponent.h"
 
 bool UInteractWidget::Initialize()
@@ -26,7 +26,7 @@ bool UInteractWidget::Initialize()
 	return true;
 }
 
-void UInteractWidget::UpdateUI(bool bShowCursor, TScriptInterface<IInteraction> Interactable)
+void UInteractWidget::UpdateUI(bool bShowCursor, AInteractable* Interactable)
 {
 	if (bShowCursor)
 	{
@@ -46,7 +46,7 @@ void UInteractWidget::UpdateUI(bool bShowCursor, TScriptInterface<IInteraction> 
 	{
 		if (Interactable)
 		{
-			InteractText->SetText(IInteraction::Execute_GetName(Interactable.GetObject()));
+			InteractText->SetText(CurrentInteractable->GetName());
 			PlayAnimation(MessageFade, 0.0f, 1, EUMGSequencePlayMode::Forward);
 		}
 		else

@@ -1,0 +1,17 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "InteractionSystem",
+	"Description": "A collection of classes to help develop interactables, pickupables, inventory system, and usables.",
+	"Category": "Other",
+	"CreatedBy": "JiRath",
+	"CreatedByURL": "https://github.com/Ji-Rath",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false
+}

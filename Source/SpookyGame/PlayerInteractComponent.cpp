@@ -5,7 +5,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerController.h"
 #include "TriggerComponent.h"
-#include "Interaction.h"
+#include "Interactable.h"
 
 
 // Sets default values for this component's properties
@@ -41,28 +41,25 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 	FVector CameraLocation = PlayerController->PlayerCameraManager->GetCameraLocation();
 
 	bool bHitInteractable = GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, CameraLocation + Distance, ECC_Visibility, QueryParams);
-	AActor* HitActor = Hit.GetActor();
+	AInteractable* HitActor = Cast<AInteractable>(Hit.GetActor());
 
 	/** Return early if there is no change */
 	if (HitActor == InteractHover) { return; }
 
 	if (bHitInteractable && HitActor)
 	{
-		if (HitActor->Implements<UInteraction>())
+		/** Set interact message when hovering over an interactable */
+		if (HitActor->Interact(GetOwner()))
 		{
-			/** Set interact message when hovering over an interactable */
-			if (IInteraction::Execute_CanPlayerInteract(HitActor))
-			{
-				InteractHover = HitActor;
-				OnUpdateInteract.Broadcast(true, InteractHover);
-				return;
-			}
+			InteractHover = HitActor;
+			OnUpdateInteract.Broadcast(true, InteractHover);
+			return;
 		}
 	}
 	
 	
 	/** Send interaction update when there is no longer an interactable in view */
-	if (InteractHover && (!HitActor || (HitActor && !HitActor->Implements<UInteraction>())))
+	if (InteractHover && !HitActor)
 	{
 		InteractHover = nullptr;
 		OnUpdateInteract.Broadcast(false, nullptr);
@@ -71,11 +68,11 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 
 void UPlayerInteractComponent::Interact()
 {
-	if (InteractHover && IInteraction::Execute_CanPlayerInteract(InteractHover))
+	if (InteractHover)
 	{
 		/** Trigger interacted actor */
 		OnInteract.Broadcast(InteractHover);
-		IInteraction::Execute_OnInteract(InteractHover, GetOwner());
+		InteractHover->Interact(GetOwner());
 
 		/** Call trigger actors from component */
 		UTriggerComponent* TriggerComponent = InteractHover->FindComponentByClass<UTriggerComponent>();
