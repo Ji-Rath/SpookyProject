@@ -33,7 +33,7 @@ void AInteractable::OnInteract_Implementation(AActor* Interactor)
 
 bool AInteractable::Interact(AActor* Interactor)
 {
-	bool bReachedInteractLimit = InteractAmount <= 0 || (InteractCount < InteractAmount);
+	bool bReachedInteractLimit = InteractAmount == -1 || (InteractCount < InteractAmount);
 	if (bCanInteract && CanInteract(Interactor) && bReachedInteractLimit)
 	{
 		OnInteract(Interactor);
@@ -41,6 +41,11 @@ bool AInteractable::Interact(AActor* Interactor)
 		return true;
 	}
 	return false;
+}
+
+bool AInteractable::CanInteract_Implementation(AActor* Interactor) const
+{
+	return true;
 }
 
 void AInteractable::SetInteractable(bool bInteractable)

@@ -27,8 +27,15 @@ public:
 	UPROPERTY(EditAnywhere, meta = (AllowedClasses = "Pickupable"), BlueprintReadOnly)
 	TSubclassOf<AActor> ActorClass;
 
+	/** Compare classes when comparing ItemData */
 	bool operator==(const UItemData& OtherItem) const
 	{
 		return GetClass() == OtherItem.GetClass();
+	}
+
+	UItemData() {
+		Name = FText::FromString("NoName");
+		Description = FText::FromString("NoDesc");
+		MaxStack = 1;
 	}
 };

@@ -37,7 +37,7 @@ public:
 	bool Interact(AActor* Interactor);
 
 	/** Returns whether the interactable can be interacted with */
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Interaction")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	bool CanInteract(AActor* Interactor) const;
 
 	/** Change the ability of the actor to be interacted with */
@@ -59,7 +59,7 @@ protected:
 
 	/** Amount of times the actor can be interacted, 0 for no limit */
 	UPROPERTY(EditAnywhere, Category = "Interaction")
-	int InteractAmount = 0.f;
+	int InteractAmount = -1.f;
 
 	/** Determines whether the interactable will use a DataAsset for primary info */
 	UPROPERTY(EditAnywhere, Category = "Interaction|Data")
@@ -70,10 +70,10 @@ protected:
 	 * @warning overrided by DataAsset name if bUseData is true
 	 */
 	UPROPERTY(EditAnywhere, Category = "Interaction|Data", meta = (EditCondition = "!bUseData"))
-	FText Name = FText();
+	FText Name = FText::FromString("NoName");
 
 	UPROPERTY(EditAnywhere, Category = "Interaction|Data", meta = (EditCondition = "bUseData"))
-	UItemData* ItemData = nullptr;
+	UItemData* ItemData = new UItemData();
 
 private:
 	int InteractCount = 0;

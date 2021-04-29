@@ -25,13 +25,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	bool GetState() const;
 
+	/** The current state of the interactable */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	bool bIsOn = false;
 protected:
 	UFUNCTION(BlueprintNativeEvent, Category = "Interaction")
 	void ConstructInteractable();
-
-private:
-	/** The current state of the interactable */
-	UPROPERTY(EditAnywhere, Category = "Interaction")
-	bool bIsOn = false;
 };
 
