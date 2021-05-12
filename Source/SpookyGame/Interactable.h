@@ -24,7 +24,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	/** Implementation of interaction */
+	/** Implementation of interaction, call Interact() to trigger function */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnInteract(AActor* Interactor);
 
@@ -59,6 +59,7 @@ protected:
 
 	/** Amount of times the actor can be interacted, 0 for no limit */
 	UPROPERTY(EditAnywhere, Category = "Interaction")
+
 	int InteractAmount = -1.f;
 
 	/** Determines whether the interactable will use a DataAsset for primary info */
@@ -73,7 +74,7 @@ protected:
 	FText Name = FText::FromString("NoName");
 
 	UPROPERTY(EditAnywhere, Category = "Interaction|Data", meta = (EditCondition = "bUseData"))
-	UItemData* ItemData = new UItemData();
+	UItemData* ItemData;
 
 private:
 	int InteractCount = 0;

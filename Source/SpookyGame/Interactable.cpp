@@ -3,6 +3,7 @@
 
 #include "Interactable.h"
 #include "ItemData.h"
+#include "TriggerComponent.h"
 
 // Sets default values
 AInteractable::AInteractable()
@@ -15,8 +16,10 @@ void AInteractable::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	if (bUseData && ItemData)
+	if (bUseData && IsValid(ItemData))
+	{
 		Name = ItemData->Name;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -28,16 +31,22 @@ void AInteractable::BeginPlay()
 
 void AInteractable::OnInteract_Implementation(AActor* Interactor)
 {
-
+	//Blank implementation
 }
 
 bool AInteractable::Interact(AActor* Interactor)
 {
-	bool bReachedInteractLimit = InteractAmount == -1 || (InteractCount < InteractAmount);
-	if (bCanInteract && CanInteract(Interactor) && bReachedInteractLimit)
+	bool bReachedInteractLimit = !(InteractAmount == -1 || (InteractCount < InteractAmount));
+	if (bCanInteract && CanInteract(Interactor) && !bReachedInteractLimit)
 	{
 		OnInteract(Interactor);
 		InteractCount++;
+
+		/** Call trigger actors from component */
+		auto* TriggerComponent = FindComponentByClass<UTriggerComponent>();
+		if (TriggerComponent)
+			TriggerComponent->TriggerActors(Interactor);
+
 		return true;
 	}
 	return false;

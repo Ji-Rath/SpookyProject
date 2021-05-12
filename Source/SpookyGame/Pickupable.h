@@ -17,8 +17,15 @@ public:
 
 	void OnInteract_Implementation(AActor* Interactor) override;
 
+	/**
+	 * Called when using item on self
+	 * @return void
+	*/
+	UFUNCTION(BlueprintNativeEvent)
+	void OnUseItem();
+
 	UPROPERTY(EditAnywhere, Category = "Pickupable")
-	int Amount;
+	int Amount = 1;
 
 	UFUNCTION(BlueprintCallable)
 	UStaticMeshComponent* GetItemMesh() const { return ItemMesh ? ItemMesh : nullptr; };

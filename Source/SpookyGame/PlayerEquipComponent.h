@@ -6,6 +6,7 @@
 
 class USpringArmComponent;
 class AInteractable;
+class APickupable;
 
 UCLASS(Blueprintable)
 class SPOOKYGAME_API UPlayerEquipComponent : public UActorComponent
@@ -30,7 +31,10 @@ public:
 	void UnequipItem();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	UItemData* GetEquippedItem() const;
+	UItemData* GetEquippedItemData() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	APickupable* GetEquippedItem() const;
 
 	UFUNCTION(BlueprintCallable)
 	void DropEquippedItem();
@@ -39,7 +43,7 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	FComponentReference ItemAttachParent;
 
-	UItemData* EquippedItem = nullptr;
+	APickupable* EquippedItem = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	float ItemUnequipOffset = -25.f;

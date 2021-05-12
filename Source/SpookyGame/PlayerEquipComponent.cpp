@@ -57,14 +57,14 @@ void UPlayerEquipComponent::EquipItem(UItemData* Item)
 	/** Spawn item and attach it to the player */
 	if (Item)
 	{
-		AActor* Interactable = GetWorld()->SpawnActor<AActor>(Item->ActorClass, GetOwner()->GetTransform());
+		APickupable* Pickupable = GetWorld()->SpawnActor<APickupable>(Item->ActorClass, GetOwner()->GetTransform());
 		FAttachmentTransformRules TransformRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true);
 
-		Interactable->AttachToComponent(Cast<USceneComponent>(ItemAttachParent.GetComponent(GetOwner())), TransformRules);
-		Interactable->SetActorEnableCollision(false);
-		if (auto* Mesh = Interactable->FindComponentByClass<UStaticMeshComponent>())
+		Pickupable->AttachToComponent(Cast<USceneComponent>(ItemAttachParent.GetComponent(GetOwner())), TransformRules);
+		Pickupable->SetActorEnableCollision(false);
+		if (auto* Mesh = Pickupable->FindComponentByClass<UStaticMeshComponent>())
 			Mesh->SetSimulatePhysics(false);
-		EquippedItem = Item;
+		EquippedItem = Pickupable;
 		if (ItemAttachSpring)
 			ItemAttachSpring->TargetOffset.Z = ItemUnequipOffset;
 	}
@@ -88,7 +88,12 @@ void UPlayerEquipComponent::UnequipItem()
 	}
 }
 
-UItemData* UPlayerEquipComponent::GetEquippedItem() const
+UItemData* UPlayerEquipComponent::GetEquippedItemData() const
+{
+	return EquippedItem->GetItemData();
+}
+
+APickupable* UPlayerEquipComponent::GetEquippedItem() const
 {
 	return EquippedItem;
 }
@@ -116,7 +121,7 @@ void UPlayerEquipComponent::DropEquippedItem()
 		}
 	}
 	/** Remove item from inventory */
-	InventoryCompRef->RemoveFromInventory(EquippedItem, 1);
+	InventoryCompRef->RemoveFromInventory(GetEquippedItemData(), 1);
 }
 
 void UPlayerEquipComponent::UpdateEquip(bool bAdded)
@@ -131,7 +136,7 @@ void UPlayerEquipComponent::UpdateEquip(bool bAdded)
 	else
 	{
 		/** Ensure that equipped item still exists */
-		if (InventoryCompRef->FindItemSlot(EquippedItem) == -1)
+		if (InventoryCompRef->FindItemSlot(GetEquippedItemData()) == -1)
 			UnequipItem();
 	}
 }
@@ -140,6 +145,16 @@ void UPlayerEquipComponent::ItemInteract(AInteractable* Interactable)
 {
 	if (Interactable && Interactable->Implements<UItemUsable>())
 	{
-		IItemUsable::Execute_OnItemUse(Interactable, GetOwner(), GetEquippedItem());
+		/** Attempt to use item on viewed object */
+		IItemUsable::Execute_OnItemUse(Interactable, GetOwner(), GetEquippedItemData());
+	}
+	else
+	{
+		/** Attempt to use the item in hand */
+		APickupable* Item = GetEquippedItem();
+		if (Item)
+		{
+			Item->OnUseItem();
+		}
 	}
 }

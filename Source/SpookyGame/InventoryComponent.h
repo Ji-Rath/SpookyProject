@@ -25,6 +25,12 @@ struct FInventoryContents
 		Count = 0;
 	}
 
+	FInventoryContents(UItemData* Data, int Amount)
+	{
+		ItemData = Data;
+		Count = Amount;
+	}
+
 	bool operator==(const FInventoryContents& OtherSlot) const
 	{
 		return ItemData == OtherSlot.ItemData;

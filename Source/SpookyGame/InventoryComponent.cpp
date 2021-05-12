@@ -96,11 +96,9 @@ bool UInventoryComponent::AddToInventory(UItemData* Item, const int Count)
 	if (Inventory.Num() < InventorySize)
 	{
 		/** Just add the item to a new slot */
-		FInventoryContents InventoryItem;
-		InventoryItem.ItemData = Item;
-		InventoryItem.Count = Count;
+		FInventoryContents* InventoryItem = new FInventoryContents(Item, Count);
 
-		int Slot = Inventory.Add(InventoryItem);
+		int Slot = Inventory.Add(*InventoryItem);
 		OnInventoryChange.Broadcast(true);
 
 		return true;

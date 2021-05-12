@@ -24,8 +24,11 @@ bool UInventoryItemWidget::Initialize()
 
 void UInventoryItemWidget::UpdateDisplay(const FText& Name, const int& Amount)
 {
-	ItemName->SetText(Name);
-	ItemAmount->SetText(FText::AsNumber(Amount));
+	if (ensure(ItemName && ItemAmount))
+	{
+		ItemName->SetText(Name);
+		ItemAmount->SetText(FText::AsNumber(Amount));
+	}
 }
 
 void UInventoryItemWidget::ToggleItem()
@@ -40,7 +43,7 @@ void UInventoryItemWidget::ToggleItem()
 		}
 		else 
 		{
-			if (InventoryRef->FindItem(ItemSlot) == EquipCompRef->GetEquippedItem())
+			if (InventoryRef->FindItem(ItemSlot) == EquipCompRef->GetEquippedItemData())
 			{
 				EquipCompRef->UnequipItem();
 			}

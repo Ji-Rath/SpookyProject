@@ -22,7 +22,7 @@ bool UInventoryWidget::Initialize()
 
 void UInventoryWidget::UpdateInventory(bool bItemAdded)
 {
-	if (InventoryRef && ItemWidget)
+	if (ensure(InventoryRef && ItemWidget))
 	{
 		InventoryDisplay->ClearChildren();
 		int CurrentSlot = 0;
@@ -30,11 +30,14 @@ void UInventoryWidget::UpdateInventory(bool bItemAdded)
 		InventoryRef->GetInventory(Inventory);
 		for (const FInventoryContents& InventoryItem : Inventory)
 		{
-			UInventoryItemWidget* ItemReference = CreateWidget<UInventoryItemWidget>(InventoryDisplay, ItemWidget);
-			ItemReference->UpdateDisplay(InventoryItem.ItemData->Name, InventoryItem.Count);
-			InventoryDisplay->AddChild(ItemReference);
-			ItemReference->ItemSlot = CurrentSlot;
-			CurrentSlot++;
+			if (ensure(InventoryItem.ItemData && InventoryDisplay))
+			{
+				UInventoryItemWidget* ItemReference = CreateWidget<UInventoryItemWidget>(InventoryDisplay, ItemWidget);
+				ItemReference->UpdateDisplay(InventoryItem.ItemData->Name, InventoryItem.Count);
+				InventoryDisplay->AddChild(ItemReference);
+				ItemReference->ItemSlot = CurrentSlot;
+				CurrentSlot++;
+			}
 		}
 	}
 }

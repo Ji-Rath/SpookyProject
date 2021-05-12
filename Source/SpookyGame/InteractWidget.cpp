@@ -44,6 +44,7 @@ void UInteractWidget::UpdateUI(bool bShowCursor, AInteractable* Interactable)
 
 	if (CurrentInteractable != Interactable)
 	{
+		CurrentInteractable = Interactable;
 		if (Interactable)
 		{
 			InteractText->SetText(CurrentInteractable->GetName());
@@ -53,6 +54,5 @@ void UInteractWidget::UpdateUI(bool bShowCursor, AInteractable* Interactable)
 		{
 			PlayAnimation(MessageFade, 0.0f, 1, EUMGSequencePlayMode::Reverse);
 		}
-		CurrentInteractable = Interactable;
 	}
 }
