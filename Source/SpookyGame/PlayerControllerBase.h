@@ -22,6 +22,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMainUIBase* MainUI;
 	
+	/** Toggle the inventory UI */
 	UFUNCTION(BlueprintCallable)
 	void ToggleInventory();
 
@@ -29,6 +30,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetMouseState(bool bLocked);
 
+	/** Toggle the state of the mouse input */
 	UFUNCTION(BlueprintCallable)
 	void ToggleMouseState();
 

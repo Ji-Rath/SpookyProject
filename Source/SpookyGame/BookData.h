@@ -12,10 +12,6 @@ class SPOOKYGAME_API UBookData : public UItemData
 public:
 	/** Text to display when interacted with */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FText Text;
-
-	UBookData() {
-		Text = FText::FromString("Text Body");
-	}
+	TArray<FText> Text;
 };
 

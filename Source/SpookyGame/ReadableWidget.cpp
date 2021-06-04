@@ -48,12 +48,26 @@ void UReadableWidget::SetWidgetVisibility(bool bNewVisibility)
 	}
 }
 
+int UReadableWidget::GetPageIndex()
+{
+	return CurrentPage;
+}
+
+void UReadableWidget::IncrementPage(int Num)
+{
+	if (BookData)
+	{
+		CurrentPage = FMath::Clamp(Num + CurrentPage, 0, BookData->Text.Num());
+		TextBody->SetText(BookData->Text[CurrentPage]);
+	}
+}
+
 void UReadableWidget::OnUseItem(UItemData* ItemData)
 {
-	UBookData* BookData = Cast<UBookData>(ItemData);
+	BookData = Cast<UBookData>(ItemData);
 	if (BookData && !GetWidgetVisibility())
 	{
-		TextBody->SetText(BookData->Text);
+		IncrementPage(0);
 		SetWidgetVisibility(true);
 		PlayerController->SetMouseState(false);
 	}

@@ -7,6 +7,7 @@
 class UItemData;
 class UTextBlock;
 class APlayerControllerBase;
+class UBookData;
 
 UCLASS()
 class SPOOKYGAME_API UReadableWidget : public UUserWidget
@@ -24,6 +25,17 @@ public:
 	/** Set the widget to the specified state by playing widget animation forwards/backwards */
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetVisibility(bool bNewVisibility);
+
+	UFUNCTION(BlueprintCallable)
+	int GetPageIndex();
+
+	/**
+	 * Increment the page index and display the new text
+	 * @param Num How many pages to increment
+	 * @return void
+	*/
+	UFUNCTION(BlueprintCallable)
+	void IncrementPage(int Num);
 
 protected:
 	bool Initialize() override;
@@ -46,4 +58,10 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	APlayerControllerBase* PlayerController;
+
+	UPROPERTY()
+	int CurrentPage = 0;
+
+	UPROPERTY()
+	UBookData* BookData = nullptr;
 };
