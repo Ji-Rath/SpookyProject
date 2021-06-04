@@ -7,6 +7,9 @@
 class USpringArmComponent;
 class AInteractable;
 class APickupable;
+class UItemData;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUseItem, UItemData*, ItemData);
 
 UCLASS(Blueprintable)
 class SPOOKYGAME_API UPlayerEquipComponent : public UActorComponent
@@ -39,6 +42,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DropEquippedItem();
 
+	UPROPERTY()
+	FUseItem OnItemUse;
+
 private:
 	UPROPERTY(EditDefaultsOnly)
 	FComponentReference ItemAttachParent;
@@ -64,6 +70,7 @@ private:
 	UFUNCTION()
 	void UpdateEquip(bool bAdded);
 
+	/** Called to use an item on an interactable */
 	UFUNCTION()
 	void ItemInteract(AInteractable* Interactable);
 

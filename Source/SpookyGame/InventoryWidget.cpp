@@ -11,9 +11,11 @@ bool UInventoryWidget::Initialize()
 	bool Success = Super::Initialize();
 	if (!Success) { return false; }
 
-	if (APawn* Player = GetOwningPlayerPawn<APawn>())
+	if (APawn* Player = GetOwningPlayerPawn())
 	{
 		InventoryRef = Player->FindComponentByClass<UInventoryComponent>();
+
+		// Bind UpdateInventory to OnInventoryChange so it is called everytime there is an inventory update
 		if (InventoryRef)
 			InventoryRef->OnInventoryChange.AddDynamic(this, &UInventoryWidget::UpdateInventory);
 	}
@@ -24,10 +26,15 @@ void UInventoryWidget::UpdateInventory(bool bItemAdded)
 {
 	if (ensure(InventoryRef && ItemWidget))
 	{
+		// Clear all items from display
 		InventoryDisplay->ClearChildren();
+
+		// Get player inventory contents
 		int CurrentSlot = 0;
 		TArray<FInventoryContents> Inventory;
 		InventoryRef->GetInventory(Inventory);
+
+		// Loop through all current items in player inventory and display them to UI
 		for (const FInventoryContents& InventoryItem : Inventory)
 		{
 			if (ensure(InventoryItem.ItemData && InventoryDisplay))

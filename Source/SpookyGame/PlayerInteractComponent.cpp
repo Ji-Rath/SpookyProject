@@ -70,7 +70,9 @@ void UPlayerInteractComponent::Interact()
 	if (InteractHover)
 	{
 		/** Trigger interacted actor */
-		OnInteract.Broadcast(InteractHover);
 		InteractHover->Interact(GetOwner());
 	}
+
+	// Allows functions to use OnInteract without player looking at interactable (ex. using equipped item)
+	OnInteract.Broadcast(InteractHover);
 }

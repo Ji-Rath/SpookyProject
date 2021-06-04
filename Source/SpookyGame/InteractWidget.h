@@ -6,8 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "InteractWidget.generated.h"
 
-class UTextBlock;
 class AInteractable;
+class UTextBlock;
 
 /**
  * 
@@ -24,9 +24,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateUI(bool bShowCursor, AInteractable* Interactable);
-
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
-	void PlayInteractAnim(EUMGSequencePlayMode::Type PlayMode);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TEnumAsByte<EUMGSequencePlayMode::Type> CurrentPlayMode;

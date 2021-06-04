@@ -17,12 +17,16 @@ public:
 
 	void OnInteract_Implementation(AActor* Interactor) override;
 
+	/** Add item to interactors inventory */
+	UFUNCTION()
+	void PickupItem(AActor* Interactor);
+
 	/**
 	 * Called when using item on self
 	 * @return void
 	*/
 	UFUNCTION(BlueprintNativeEvent)
-	void OnUseItem();
+	void OnUseItem(AActor* User);
 
 	UPROPERTY(EditAnywhere, Category = "Pickupable")
 	int Amount = 1;
@@ -31,9 +35,6 @@ public:
 	UStaticMeshComponent* GetItemMesh() const { return ItemMesh ? ItemMesh : nullptr; };
 
 protected:
-	UPROPERTY(VisibleAnywhere)
-	UTriggerComponent* TriggerComp;
-
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* ItemMesh;
 };

@@ -57,10 +57,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	bool bCanInteract = true;
 
-	/** Amount of times the actor can be interacted, 0 for no limit */
+	/** Amount of times the actor can be interacted, -1 for no limit */
 	UPROPERTY(EditAnywhere, Category = "Interaction")
-
-	int InteractAmount = -1.f;
+	int InteractAmount = -1;
 
 	/** Determines whether the interactable will use a DataAsset for primary info */
 	UPROPERTY(EditAnywhere, Category = "Interaction|Data")
@@ -74,7 +73,7 @@ protected:
 	FText Name = FText::FromString("NoName");
 
 	UPROPERTY(EditAnywhere, Category = "Interaction|Data", meta = (EditCondition = "bUseData"))
-	UItemData* ItemData;
+	UItemData* ItemData = nullptr;
 
 private:
 	int InteractCount = 0;

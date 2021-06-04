@@ -10,9 +10,11 @@
 
 bool UInteractWidget::Initialize()
 {
+	// Dont continue if initialization failed
 	bool Success = Super::Initialize();
 	if (!Success) { return false; }
 	
+	// Attempt to bind delegates to functions to update UI
 	if (APawn* Player = GetOwningPlayerPawn())
 	{
 		UPlayerInteractComponent* InteractComponent = Player->FindComponentByClass<UPlayerInteractComponent>();
