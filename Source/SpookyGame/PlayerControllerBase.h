@@ -8,6 +8,8 @@
 
 class UMainUIBase;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseLock, bool, bLocked);
+
 /**
  * 
  */
@@ -22,4 +24,13 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void ToggleInventory();
+
+	/** Set the state of the mouse input (For UI related purposes) */
+	UFUNCTION(BlueprintCallable)
+	void SetMouseState(bool bLocked);
+
+	UFUNCTION(BlueprintCallable)
+	void ToggleMouseState();
+
+	FMouseLock OnMouseLock;
 };

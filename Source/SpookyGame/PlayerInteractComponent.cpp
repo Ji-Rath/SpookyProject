@@ -67,12 +67,12 @@ void UPlayerInteractComponent::HoverInteraction(float DeltaTime)
 
 void UPlayerInteractComponent::Interact()
 {
+	// Allows functions to use OnInteract without player looking at interactable (ex. using equipped item)
+	OnInteract.Broadcast(InteractHover);
+
 	if (InteractHover)
 	{
 		/** Trigger interacted actor */
 		InteractHover->Interact(GetOwner());
 	}
-
-	// Allows functions to use OnInteract without player looking at interactable (ex. using equipped item)
-	OnInteract.Broadcast(InteractHover);
 }

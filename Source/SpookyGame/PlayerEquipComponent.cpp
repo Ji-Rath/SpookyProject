@@ -156,10 +156,11 @@ void UPlayerEquipComponent::ItemInteract(AInteractable* Interactable)
 		UItemData* ItemData = Item->GetItemData();
 		if (ItemData)
 		{
-			if (Interactable && Interactable->Implements<UItemUsable>())
+			if (Interactable)
 			{
 				/** Attempt to use item on viewed object */
-				IItemUsable::Execute_OnItemUse(Interactable, GetOwner(), ItemData);
+				if (Interactable->Implements<UItemUsable>())
+					IItemUsable::Execute_OnItemUse(Interactable, GetOwner(), ItemData);
 			}
 			else
 			{
@@ -171,3 +172,4 @@ void UPlayerEquipComponent::ItemInteract(AInteractable* Interactable)
 	}
 	
 }
+ 

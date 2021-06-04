@@ -3,45 +3,58 @@
 #include "BookData.h"
 #include "ItemData.h"
 #include "Components/TextBlock.h"
+#include "PlayerControllerBase.h"
+
+bool UReadableWidget::GetWidgetVisibility()
+{
+	return bVisible;
+}
 
 bool UReadableWidget::Initialize()
 {
 	bool bSuccess = Super::Initialize();
 	if (!bSuccess) { return false; }
 
-	if (APawn* Player = GetOwningPlayerPawn())
+	PlayerController = GetOwningPlayer<APlayerControllerBase>();
+	if (PlayerController)
 	{
-		auto* EquipComponent = Player->FindComponentByClass<UPlayerEquipComponent>();
-		if (EquipComponent)
+		APawn* Player = PlayerController->GetPawn();
+		if (Player)
 		{
-			EquipComponent->OnItemUse.AddDynamic(this, &UReadableWidget::OnUseItem);
+			auto* EquipComponent = Player->FindComponentByClass<UPlayerEquipComponent>();
+			if (EquipComponent)
+			{
+				EquipComponent->OnItemUse.AddDynamic(this, &UReadableWidget::OnUseItem);
+			}
 		}
 	}
 
 	return true;
 }
 
-void UReadableWidget::ToggleAnimation()
+void UReadableWidget::ToggleVisibility()
 {
-	auto PlayMode = CurrentPlayMode == EUMGSequencePlayMode::Forward ? EUMGSequencePlayMode::Reverse : EUMGSequencePlayMode::Forward;
-	SetAnimationState(PlayMode);
+	SetWidgetVisibility(!bVisible);
 }
 
-void UReadableWidget::SetAnimationState(EUMGSequencePlayMode::Type PlayMode)
+void UReadableWidget::SetWidgetVisibility(bool bNewVisibility)
 {
-	if (CurrentPlayMode != PlayMode)
+	auto PlayMode = bNewVisibility ? EUMGSequencePlayMode::Reverse : EUMGSequencePlayMode::Forward;
+
+	if (bVisible != bNewVisibility)
 	{
 		PlayAnimation(FadeAnimation, 0.0f, 1, PlayMode);
-		CurrentPlayMode = PlayMode;
+		bVisible = bNewVisibility;
 	}
 }
 
 void UReadableWidget::OnUseItem(UItemData* ItemData)
 {
 	UBookData* BookData = Cast<UBookData>(ItemData);
-	if (BookData)
+	if (BookData && !GetWidgetVisibility())
 	{
 		TextBody->SetText(BookData->Text);
-		ToggleAnimation();
+		SetWidgetVisibility(true);
+		PlayerController->SetMouseState(false);
 	}
 }
