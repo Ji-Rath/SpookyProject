@@ -4,6 +4,8 @@
 #include "ItemData.h"
 #include "Components/TextBlock.h"
 #include "PlayerControllerBase.h"
+#include "PlayerInteractComponent.h"
+#include "Viewable.h"
 
 bool UReadableWidget::GetWidgetVisibility()
 {
@@ -26,6 +28,12 @@ bool UReadableWidget::Initialize()
 			{
 				EquipComponent->OnItemUse.AddDynamic(this, &UReadableWidget::OnUseItem);
 			}
+
+			UPlayerInteractComponent* InteractComponent = Player->FindComponentByClass<UPlayerInteractComponent>();
+			if (InteractComponent)
+			{
+				InteractComponent->OnInteract.AddDynamic(this, &UReadableWidget::OnItemInteract);
+			}
 		}
 	}
 
@@ -46,6 +54,10 @@ void UReadableWidget::SetWidgetVisibility(bool bNewVisibility)
 		PlayAnimation(FadeAnimation, 0.0f, 1, PlayMode);
 		bVisible = bNewVisibility;
 	}
+
+	// Reset page index
+	if (bNewVisibility == true)
+		CurrentPage = 0;
 }
 
 int UReadableWidget::GetPageIndex()
@@ -55,9 +67,9 @@ int UReadableWidget::GetPageIndex()
 
 void UReadableWidget::IncrementPage(int Num)
 {
-	if (BookData)
+	if (BookData && BookData->Text.Num() > 0)
 	{
-		CurrentPage = FMath::Clamp(Num + CurrentPage, 0, BookData->Text.Num());
+		CurrentPage = FMath::Clamp(CurrentPage + Num, 0, BookData->Text.Num()-1);
 		TextBody->SetText(BookData->Text[CurrentPage]);
 	}
 }
@@ -65,10 +77,19 @@ void UReadableWidget::IncrementPage(int Num)
 void UReadableWidget::OnUseItem(UItemData* ItemData)
 {
 	BookData = Cast<UBookData>(ItemData);
-	if (BookData && !GetWidgetVisibility())
+	if (BookData && !GetWidgetVisibility() && ensure(BookData->Text.Num() > 0))
 	{
 		IncrementPage(0);
 		SetWidgetVisibility(true);
 		PlayerController->SetMouseState(false);
+	}
+}
+
+void UReadableWidget::OnItemInteract(AInteractable* Interactable)
+{
+	/** Ensure interacted object is a viewable item */
+	if (Cast<AViewable>(Interactable))
+	{
+		OnUseItem(Interactable->GetItemData());
 	}
 }

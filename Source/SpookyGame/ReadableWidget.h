@@ -8,6 +8,7 @@ class UItemData;
 class UTextBlock;
 class APlayerControllerBase;
 class UBookData;
+class AInteractable;
 
 UCLASS()
 class SPOOKYGAME_API UReadableWidget : public UUserWidget
@@ -55,6 +56,10 @@ protected:
 	/** Called whenever the player uses an item (on self) */
 	UFUNCTION()
 	void OnUseItem(UItemData* ItemData);
+
+	/** Called whenever the player interacts with an item in the world */
+	UFUNCTION()
+	void OnItemInteract(AInteractable* Interactable);
 
 	UPROPERTY(BlueprintReadOnly)
 	APlayerControllerBase* PlayerController;
