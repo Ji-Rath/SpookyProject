@@ -2,11 +2,26 @@
 
 
 #include "PlayerControllerBase.h"
+#include "Components/WidgetSwitcher.h"
 #include "MainUIBase.h"
+#include "Kismet/GameplayStatics.h"
 
 void APlayerControllerBase::ToggleInventory()
 {
-	MainUI->ToggleInventory();
+	if (MainUI)
+	{
+		MainUI->ToggleInventory();
+	}
+}
+
+void APlayerControllerBase::PauseGame()
+{
+	if (MainUI && MainUI->WidgetSelector)
+	{
+		MainUI->WidgetSelector->SetActiveWidgetIndex(1);
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
+		SetMouseState(false);
+	}
 }
 
 void APlayerControllerBase::SetMouseState(bool bLocked)

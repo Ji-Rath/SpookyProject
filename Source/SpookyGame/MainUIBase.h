@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "MainUIBase.generated.h"
 
+class UWidgetSwitcher;
+
 /**
  * 
  */
@@ -19,4 +21,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void ToggleInventory();
+
+	UPROPERTY(meta = (BindWidget))
+	UWidgetSwitcher* WidgetSelector;
 };

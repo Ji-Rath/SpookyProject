@@ -105,6 +105,8 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Inventory", IE_Pressed, GetController<APlayerControllerBase>(), &APlayerControllerBase::ToggleInventory);
 
+	PlayerInputComponent->BindAction("Escape", IE_Pressed, GetController<APlayerControllerBase>(), &APlayerControllerBase::PauseGame);
+
 	PlayerInputComponent->BindAction("DropItem", IE_Pressed, PlayerEquip, &UPlayerEquipComponent::DropEquippedItem);
 }
 

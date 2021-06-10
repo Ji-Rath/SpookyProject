@@ -26,6 +26,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ToggleInventory();
 
+	UFUNCTION(BlueprintCallable)
+	void PauseGame();
+
 	/** Set the state of the mouse input (For UI related purposes) */
 	UFUNCTION(BlueprintCallable)
 	void SetMouseState(bool bLocked);
