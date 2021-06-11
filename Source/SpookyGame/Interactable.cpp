@@ -27,6 +27,7 @@ void AInteractable::BeginPlay()
 {
 	Super::BeginPlay();
 
+	OnInteracted.AddDynamic(this, &AInteractable::OnInteract);
 }
 
 void AInteractable::OnInteract_Implementation(AActor* Interactor)
@@ -39,13 +40,8 @@ bool AInteractable::Interact(AActor* Interactor)
 	bool bReachedInteractLimit = !(InteractAmount == -1 || (InteractCount < InteractAmount));
 	if (bCanInteract && CanInteract(Interactor) && !bReachedInteractLimit)
 	{
-		OnInteract(Interactor);
 		InteractCount++;
-
-		/** Call trigger actors from component */
-		auto* TriggerComponent = FindComponentByClass<UTriggerComponent>();
-		if (TriggerComponent)
-			TriggerComponent->TriggerActors(Interactor);
+		OnInteracted.Broadcast(Interactor);
 
 		return true;
 	}

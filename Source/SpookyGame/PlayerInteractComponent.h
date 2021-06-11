@@ -9,7 +9,7 @@
 class AInteractable;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUpdateInteract, bool, bInteractable, AInteractable*, Interactable);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteract, AInteractable*, Interactable);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerInteract, AInteractable*, Interactable);
 
 /**
  * Allows the player to interact with interactables, executing functionality based on what was interacted with
@@ -32,7 +32,7 @@ public:
 	FUpdateInteract OnUpdateInteract;
 
 	UPROPERTY()
-	FInteract OnInteract;
+	FPlayerInteract OnInteract;
 
 	/** Called when the player wants to interact with the currently viewed interactable */
 	UFUNCTION(BlueprintCallable)

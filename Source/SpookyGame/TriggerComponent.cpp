@@ -19,6 +19,11 @@ UTriggerComponent::UTriggerComponent()
 void UTriggerComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (AInteractable* Owner = GetOwner<AInteractable>())
+	{
+		Owner->OnInteracted.AddDynamic(this, &UTriggerComponent::TriggerActors);
+	}
 }
 
 void UTriggerComponent::TriggerActors(AActor* Instigator)

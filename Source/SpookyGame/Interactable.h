@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "Interactable.generated.h"
 
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteract, AActor*, Interactor);
+
 class UItemData;
 
 UCLASS()
@@ -51,6 +54,9 @@ public:
 	/** Returns the name of the interactable */
 	UFUNCTION(BlueprintCallable, Category = "Interaction|Data")
 	FText GetName() const;
+
+	UPROPERTY(BlueprintAssignable)
+	FInteract OnInteracted;
 
 protected:
 	/** Determine whether the player can interact with the actor */
