@@ -7,7 +7,7 @@
 #include "Interactable.generated.h"
 
 UDELEGATE()
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteract, AActor*, Interactor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteract, AActor *, Interactor);
 
 class UItemData;
 

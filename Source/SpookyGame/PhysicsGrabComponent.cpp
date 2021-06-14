@@ -78,7 +78,7 @@ void UPhysicsGrabComponent::Grab()
 
 		/** Ensure there was a trace and that we are not dragging something triggerable */
 		GrabMesh = Cast<UStaticMeshComponent>(Hit.GetComponent());
-		if (bTraced && GrabMesh && !(Cast<AInteractable>(Hit.GetActor())))
+		if (bTraced && GrabMesh)
 		{
 			/** Grab object if below threshhold or simply push it */
 			if (GrabMesh->GetMass() < GrabWeightThreshhold)
