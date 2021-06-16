@@ -12,22 +12,32 @@ float ULightSenseComponent::CalculateLightLevel(TArray<ULightComponent*> Lights,
 	float LightVisibility = 0.f;
 	bool RebuildLightArray = false;
 
+	// Loop through ALL light components in the level
+	// TODO: Make this scalable
 	for (ULightComponent* Light : Lights)
 	{
+		// Ensure Light component is valid
 		if (Light)
 		{
-			// Attempt to loop through only relevant lights
-			bool bWithinDistance = FVector::Distance(SurfacePos, Light->GetComponentLocation()) < TraceDistance;
+			// Make sure light component is emitting light
 			bool bIsOn = !FMath::IsNearlyEqual(Light->Intensity, 0.f);
-			if (bIsOn && (bWithinDistance || Cast<UDirectionalLightComponent>(Light)))
+			if (bIsOn)
 			{
-				if (auto* SpotLight = Cast<USpotLightComponent>(Light))
+				// Attempt to loop through only relevant lights based on type and distance
+				if (auto* LocalLight = Cast<ULocalLightComponent>(Light))
 				{
-					LightVisibility += GetSpotLightLevel(SpotLight, SurfacePos);
-				}
-				else if (auto* PointLight = Cast<UPointLightComponent>(Light))
-				{
-					LightVisibility += GetPointLightLevel(PointLight, SurfacePos);
+					bool bWithinDistance = FVector::Distance(SurfacePos, Light->GetComponentLocation()) < LocalLight->AttenuationRadius;
+					if (bWithinDistance)
+					{
+						if (auto* SpotLight = Cast<USpotLightComponent>(Light))
+						{
+							LightVisibility += GetSpotLightLevel(SpotLight, SurfacePos);
+						}
+						else if (auto* PointLight = Cast<UPointLightComponent>(Light))
+						{
+							LightVisibility += GetPointLightLevel(PointLight, SurfacePos);
+						}
+					}
 				}
 				else if (auto* DirectionalLight = Cast<UDirectionalLightComponent>(Light))
 				{
@@ -74,7 +84,7 @@ void ULightSenseComponent::BeginPlay()
 	FindLightComponents(LightArray);
 }
 
-void ULightSenseComponent::FindLightComponents(TArray<ULightComponent>& OutLightArray)
+void ULightSenseComponent::FindLightComponents(TArray<ULightComponent*>& OutLightArray)
 {
 	Lights.Empty();
 

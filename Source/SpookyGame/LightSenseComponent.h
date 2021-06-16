@@ -37,7 +37,7 @@ public:
 	 * @return void
 	*/
 	UFUNCTION()
-	void FindLightComponents(TArray<ULightComponent>& OutLightArray);
+	void FindLightComponents(TArray<ULightComponent*>& OutLightArray);
 
 	/**
 	 * Gets the current light level of the actor
@@ -62,10 +62,6 @@ private:
 
 	UFUNCTION()
 	float GetDirectionalLightLevel(UDirectionalLightComponent* Light, const FVector& SurfacePos) const;
-
-	/** Distance to line trace when doing light check */
-	UPROPERTY(EditDefaultsOnly)
-	float TraceDistance = 1500.f;
 
 	UPROPERTY()
 	float LightLevel = 0.f;
