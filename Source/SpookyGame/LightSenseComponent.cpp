@@ -7,59 +7,65 @@
 #include "DrawDebugHelpers.h"
 #include "Components/LocalLightComponent.h"
 
-float ULightSenseComponent::CalculateLightLevel(TArray<ULightComponent*> Lights, const FVector& SurfacePos) const
+float ULightSenseComponent::CalculateLightLevel(const FVector& SurfacePos) const
 {
 	float LightVisibility = 0.f;
-	bool RebuildLightArray = false;
 
 	// Loop through ALL light components in the level
 	// TODO: Make this scalable
-	for (ULightComponent* Light : Lights)
+	const UWorld* MyWorld = GetWorld();
+	for (TObjectIterator<ULightComponent> ObjectItr; ObjectItr; ++ObjectItr)
 	{
-		// Ensure Light component is valid
-		if (Light)
+		if (ObjectItr->GetWorld() != MyWorld)
 		{
-			// Make sure light component is emitting light
-			bool bIsOn = !FMath::IsNearlyEqual(Light->Intensity, 0.f);
-			if (bIsOn)
-			{
-				// Attempt to loop through only relevant lights based on type and distance
-				if (auto* LocalLight = Cast<ULocalLightComponent>(Light))
-				{
-					bool bWithinDistance = FVector::Distance(SurfacePos, Light->GetComponentLocation()) < LocalLight->AttenuationRadius;
-					if (bWithinDistance)
-					{
-						if (auto* SpotLight = Cast<USpotLightComponent>(Light))
-						{
-							LightVisibility += GetSpotLightLevel(SpotLight, SurfacePos);
-						}
-						else if (auto* PointLight = Cast<UPointLightComponent>(Light))
-						{
-							LightVisibility += GetPointLightLevel(PointLight, SurfacePos);
-						}
-					}
-				}
-				else if (auto* DirectionalLight = Cast<UDirectionalLightComponent>(Light))
-				{
-					LightVisibility += GetDirectionalLightLevel(DirectionalLight, SurfacePos);
-				}
-			}
+			continue;
 		}
-		else
+
+		ULightComponent* Light = *ObjectItr;
+		if (Light->GetOwner() != GetOwner())
 		{
-			// If there is a nullptr in the array, we should update the array with a new set of lights
-			RebuildLightArray = true;
+			LightVisibility += GetSingleLightLevel(Light, SurfacePos);
 		}
 	}
-
-	// Find lights in level
-	if (RebuildLightArray)
-		FindLightComponents(LightArray);
 
 	return LightVisibility;
 }
 
-float ULightSenseComponent::GetLightLevel() const
+float ULightSenseComponent::GetSingleLightLevel(ULightComponent* Light, const FVector& SurfacePos) const
+{
+	// Ensure Light component is valid
+	if (Light)
+	{
+		// Make sure light component is emitting light
+		bool bIsOn = !FMath::IsNearlyEqual(Light->Intensity, 0.f);
+		if (bIsOn)
+		{
+			// Attempt to loop through only relevant lights based on type and distance
+			if (auto* LocalLight = Cast<ULocalLightComponent>(Light))
+			{
+				bool bWithinDistance = FVector::Distance(SurfacePos, Light->GetComponentLocation()) < LocalLight->AttenuationRadius;
+				if (bWithinDistance)
+				{
+					if (auto* SpotLight = Cast<USpotLightComponent>(Light))
+					{
+						return GetSpotLightLevel(SpotLight, SurfacePos);
+					}
+					else if (auto* PointLight = Cast<UPointLightComponent>(Light))
+					{
+						return GetPointLightLevel(PointLight, SurfacePos);
+					}
+				}
+			}
+			else if (auto* DirectionalLight = Cast<UDirectionalLightComponent>(Light))
+			{
+				return GetDirectionalLightLevel(DirectionalLight, SurfacePos);
+			}
+		}
+	}
+	return 0.f;
+}
+
+float ULightSenseComponent::GetCurrentLightLevel() const
 {
 	return LightLevel;
 }
@@ -74,34 +80,12 @@ void ULightSenseComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	LightLevel = CalculateLightLevel(LightArray, GetOwner()->GetActorLocation());
+	LightLevel = CalculateLightLevel(GetOwner()->GetActorLocation());
 }
 
 void ULightSenseComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	FindLightComponents(LightArray);
-}
-
-void ULightSenseComponent::FindLightComponents(TArray<ULightComponent*>& OutLightArray)
-{
-	Lights.Empty();
-
-	// Get ALL LightComponents in the level
-	const UWorld* MyWorld = GetWorld();
-	for (TObjectIterator<ULightComponent> ObjectItr; ObjectItr; ++ObjectItr)
-	{
-		if (ObjectItr->GetWorld() != MyWorld)
-		{
-			continue;
-		}
-
-		ULightComponent* Object = *ObjectItr;
-
-		if (Object->GetOwner() != GetOwner())
-			Lights.Add(Object);
-	}
 }
 
 float ULightSenseComponent::GetSpotLightLevel(USpotLightComponent* Light, const FVector& SurfacePos) const 
@@ -148,7 +132,6 @@ float ULightSenseComponent::GetPointLightLevel(UPointLightComponent* Light, cons
 	{
 		FHitResult Hit;
 		FVector LightDirection = UKismetMathLibrary::GetForwardVector(Light->GetComponentRotation());
-		FVector EndPos = SurfacePos + (LightDirection * TraceDistance);
 		bool bTraced = GetWorld()->LineTraceSingleByChannel(Hit, SurfacePos, Light->GetComponentLocation(), ECC_Visibility);
 		
 		// Determine light level based on distance to light
@@ -173,7 +156,7 @@ float ULightSenseComponent::GetDirectionalLightLevel(UDirectionalLightComponent*
 	{
 		FHitResult Hit;
 		FVector LightDirection = UKismetMathLibrary::GetForwardVector(Light->GetComponentRotation()) * -1;
-		FVector EndPos = SurfacePos + (LightDirection * TraceDistance);
+		FVector EndPos = SurfacePos + (LightDirection * LightTraceDistance);
 
 		bTraced = GetWorld()->LineTraceSingleByChannel(Hit, SurfacePos, EndPos, ECC_Visibility);
 		if (bTraced)

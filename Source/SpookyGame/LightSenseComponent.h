@@ -25,32 +25,29 @@ public:
 	 * @return float LightLevel, 0 - Not visible,  > 1 - Fully visible
 	*/
 	UFUNCTION(BlueprintCallable)
-	float CalculateLightLevel(TArray<ULightComponent*> Lights, const FVector& SurfacePos) const;
+	float CalculateLightLevel(const FVector& SurfacePos) const;
+
+	/**
+	 * Calculate the light level of the surface for one light component
+	 * @param Light component
+	 * @param SurfacePos
+	 * @return float Light level
+	*/
+	UFUNCTION()
+	float GetSingleLightLevel(ULightComponent* Light, const FVector& SurfacePos) const;
 
 	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void BeginPlay() override;
 
 	/**
-	 * Loop through ALL light components in the level and return them
-	 * @param Lights OUT light array
-	 * @return void
-	*/
-	UFUNCTION()
-	void FindLightComponents(TArray<ULightComponent*>& OutLightArray);
-
-	/**
 	 * Gets the current light level of the actor
 	 * @return float
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	float GetLightLevel() const;
+	float GetCurrentLightLevel() const;
 
 	ULightSenseComponent();
-	
-	/** Contains all light components in the level */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<ULightComponent*> LightArray;
 
 private:
 	
@@ -65,4 +62,8 @@ private:
 
 	UPROPERTY()
 	float LightLevel = 0.f;
+
+	/** Distance to trace for blocking objects while calculating for directional light level */
+	UPROPERTY(EditDefaultsOnly)
+	float LightTraceDistance = 2000.f;
 };
