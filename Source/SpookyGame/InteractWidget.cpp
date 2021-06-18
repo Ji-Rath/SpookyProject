@@ -4,9 +4,9 @@
 
 #include "InteractWidget.h"
 #include "Components/TextBlock.h"
-#include "PlayerInteractComponent.h"
-#include "Interactable.h"
-#include "PhysicsGrabComponent.h"
+#include "Interaction/PlayerInteractComponent.h"
+#include "Interaction/Interactable.h"
+#include "Interaction/PhysicsGrabComponent.h"
 
 bool UInteractWidget::Initialize()
 {

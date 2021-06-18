@@ -49,6 +49,10 @@ public:
 
 	ULightSenseComponent();
 
+	/** Light component to search for */
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ULightComponent> LightComponent;
+
 private:
 	
 	UFUNCTION()
@@ -60,6 +64,7 @@ private:
 	UFUNCTION()
 	float GetDirectionalLightLevel(UDirectionalLightComponent* Light, const FVector& SurfacePos) const;
 
+	/** The current light level */
 	UPROPERTY()
 	float LightLevel = 0.f;
 

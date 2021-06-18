@@ -3,7 +3,7 @@
 
 #include "NotificationManagerWidget.h"
 #include "Components/HorizontalBox.h"
-#include "InventoryComponent.h"
+#include "Inventory/InventoryComponent.h"
 
 bool UNotificationManagerWidget::Initialize()
 {

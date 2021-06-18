@@ -12,13 +12,13 @@
 #include "Components/SpotLightComponent.h"
 #include "GameFramework/Controller.h"
 #include "PlayerControllerBase.h"
-#include "PlayerInteractComponent.h"
+#include "Interaction/PlayerInteractComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AttentionComponent.h"
 #include "AdvCharacterMovementComponent.h"
-#include "PhysicsGrabComponent.h"
+#include "Interaction/PhysicsGrabComponent.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
-#include "PlayerEquipComponent.h"
+#include "Inventory/PlayerEquipComponent.h"
 
 // Sets default values
 APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UAdvCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))

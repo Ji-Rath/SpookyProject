@@ -1,10 +1,10 @@
 #include "ReadableWidget.h"
-#include "PlayerEquipComponent.h"
+#include "Inventory/PlayerEquipComponent.h"
 #include "BookData.h"
-#include "ItemData.h"
+#include "Interaction/ItemData.h"
 #include "Components/TextBlock.h"
 #include "PlayerControllerBase.h"
-#include "PlayerInteractComponent.h"
+#include "Interaction/PlayerInteractComponent.h"
 #include "Viewable.h"
 
 bool UReadableWidget::GetWidgetVisibility()

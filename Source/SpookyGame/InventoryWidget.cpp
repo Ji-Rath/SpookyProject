@@ -3,7 +3,7 @@
 
 #include "InventoryWidget.h"
 #include "Components/ScrollBox.h"
-#include "InventoryComponent.h"
+#include "Inventory/InventoryComponent.h"
 #include "InventoryItemWidget.h"
 
 bool UInventoryWidget::Initialize()

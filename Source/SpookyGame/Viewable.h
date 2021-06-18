@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interactable.h"
+#include "Interaction/Interactable.h"
 #include "Viewable.generated.h"
 
 UCLASS()

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ItemData.h"
+#include "Interaction/ItemData.h"
 #include "BookData.generated.h"
 
 UCLASS()

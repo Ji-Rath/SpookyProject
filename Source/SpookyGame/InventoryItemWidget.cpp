@@ -2,9 +2,9 @@
 #include "InventoryItemWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
-#include "PlayerEquipComponent.h"
-#include "InventoryComponent.h"
-#include "ItemData.h"
+#include "Inventory/PlayerEquipComponent.h"
+#include "Inventory/InventoryComponent.h"
+#include "Interaction/ItemData.h"
 
 bool UInventoryItemWidget::Initialize()
 {
