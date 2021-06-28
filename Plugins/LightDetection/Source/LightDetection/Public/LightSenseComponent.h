@@ -12,7 +12,7 @@ class UShapeComponent;
 class ALight;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class SPOOKYGAME_API ULightSenseComponent : public UActorComponent
+class LIGHTDETECTION_API ULightSenseComponent : public UActorComponent
 {
 	GENERATED_BODY()
 	
@@ -24,8 +24,8 @@ public:
 	 * @param SurfacePos Surface to get light level of
 	 * @return float LightLevel, 0 - Not visible,  > 1 - Fully visible
 	*/
-	UFUNCTION(BlueprintCallable)
-	float CalculateLightLevel(const FVector& SurfacePos) const;
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category=LightSense, meta = (WorldContext = "World"))
+	static float CalculateLightLevel(UWorld* World, const FVector& SurfacePos, const TArray<TSubclassOf<AActor>> ActorLights, const float TraceDistance = 2000.f);
 
 	/**
 	 * Calculate the light level of the surface for one light component
@@ -34,7 +34,7 @@ public:
 	 * @return float Light level
 	*/
 	UFUNCTION()
-	float GetSingleLightLevel(ULightComponent* Light, const FVector& SurfacePos) const;
+	static float GetSingleLightLevel(const UWorld* World, const ULightComponent* Light, const FVector& SurfacePos, const float TraceDistance = 2000.f);
 
 	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -49,20 +49,20 @@ public:
 
 	ULightSenseComponent();
 
-	/** Light component to search for */
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ULightComponent> LightComponent;
+	/** Actors to get light components from */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<TSubclassOf<AActor>> LightActors;
 
 private:
 	
 	UFUNCTION()
-	float GetSpotLightLevel(USpotLightComponent* Light, const FVector& SurfacePos) const;
+	static float GetSpotLightLevel(const UWorld* World, const USpotLightComponent* Light, const FVector& SurfacePos);
 
 	UFUNCTION()
-	float GetPointLightLevel(UPointLightComponent* Light, const FVector& SurfacePos) const;
+	static float GetPointLightLevel(const UWorld* World, const UPointLightComponent* Light, const FVector& SurfacePos);
 
 	UFUNCTION()
-	float GetDirectionalLightLevel(UDirectionalLightComponent* Light, const FVector& SurfacePos) const;
+	static float GetDirectionalLightLevel(const UWorld* World, const UDirectionalLightComponent* Light, const FVector& SurfacePos, const float TraceDistance = 2000.f);
 
 	/** The current light level */
 	UPROPERTY()
