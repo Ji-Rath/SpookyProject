@@ -1,0 +1,3 @@
+[submodule "Plugins/UEInteractSystem"]
+	path = Plugins/UEInteractSystem
+	url = https://github.com/Ji-Rath/UEInteractSystem
