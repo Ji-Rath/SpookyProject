@@ -14,7 +14,7 @@ enum ECustomMovementMode
  * Custom movement component that includes additional functionality like sprinting
  */
 UCLASS()
-class SPOOKYGAME_API UAdvCharacterMovementComponent : public UCharacterMovementComponent
+class MOREMOVEMENT_API UAdvCharacterMovementComponent : public UCharacterMovementComponent
 {
 	GENERATED_BODY()
 

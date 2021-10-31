@@ -15,7 +15,7 @@
 #include "Interaction/PlayerInteractComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AttentionComponent.h"
-#include "AdvCharacterMovementComponent.h"
+#include "MoreMovement/Public/AdvCharacterMovementComponent.h"
 #include "Interaction/PhysicsGrabComponent.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Inventory/PlayerEquipComponent.h"
@@ -90,7 +90,7 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookRight", this, &APawn::AddControllerYawInput);
 
-	PlayerInputComponent->BindAction("Interact", IE_Pressed, PlayerInteract, &UPlayerInteractComponent::Interact);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, PlayerInteract, &UPlayerInteractComponent::InteractAction);
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, PhysicsGrab, &UPhysicsGrabComponent::Grab);
 	PlayerInputComponent->BindAction("Interact", IE_Released, PhysicsGrab, &UPhysicsGrabComponent::Grab); // @TODO Create ReleaseGrab to prevent unexpected issues
 

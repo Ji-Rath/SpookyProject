@@ -12,6 +12,11 @@
 				"Engine",
 				"UMG"
 			]
+		},
+		{
+			"name": "AdvMovement",
+			"type": "Runtime",
+			"loadingPhase": "Default"
 		}
 	],
 	"Plugins": [
