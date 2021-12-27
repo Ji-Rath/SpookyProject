@@ -1,3 +1,4 @@
+using System.IO;
 using UnrealBuildTool;
  
 public class LightDetection : ModuleRules
@@ -8,7 +9,7 @@ public class LightDetection : ModuleRules
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine"});
  
-		PublicIncludePaths.AddRange(new string[] {"LightDetection/Public"});
-		PrivateIncludePaths.AddRange(new string[] {"LightDetection/Private"});
+		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
+		PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private"));
 	}
 }

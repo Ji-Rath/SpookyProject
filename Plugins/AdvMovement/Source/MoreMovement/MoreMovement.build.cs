@@ -1,3 +1,4 @@
+using System.IO;
 using UnrealBuildTool;
  
 public class MoreMovement : ModuleRules
@@ -8,7 +9,7 @@ public class MoreMovement : ModuleRules
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine"});
  
-		PublicIncludePaths.AddRange(new string[] {"MoreMovement/Public"});
-		PrivateIncludePaths.AddRange(new string[] {"MoreMovement/Private"});
+		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
+		PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private"));
 	}
 }
