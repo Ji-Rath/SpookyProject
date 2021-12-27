@@ -15,7 +15,7 @@
 #include "Interaction/PlayerInteractComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AttentionComponent.h"
-#include "MoreMovement/Public/AdvCharacterMovementComponent.h"
+#include "AdvCharacterMovementComponent.h"
 #include "Interaction/PhysicsGrabComponent.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Inventory/PlayerEquipComponent.h"
@@ -121,6 +121,8 @@ void APlayerBase::TriggerFootstep()
 
 void APlayerBase::FootstepDetection()
 {
+	if (!GetCharacterMovement()) { return; }
+
 	//Ensure player is moving
 	bool bWantsToMove = !GetCharacterMovement()->IsFalling() && (GetCharacterMovement()->IsMovingOnGround());
 	if (bWantsToMove && GetVelocity().Size() > 0)

@@ -56,7 +56,7 @@ public:
 	UPlayerEquipComponent* PlayerEquip;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Footsteps")
-	TSubclassOf<UMatineeCameraShake> WalkingScreenShake;
+	TSubclassOf<UCameraShakeBase> WalkingScreenShake;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Footsteps|Sounds")
 	USoundBase* SoundFootstep;

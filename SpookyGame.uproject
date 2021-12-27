@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.26",
+	"EngineAssociation": "4.27",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -12,11 +12,6 @@
 				"Engine",
 				"UMG"
 			]
-		},
-		{
-			"name": "AdvMovement",
-			"type": "Runtime",
-			"loadingPhase": "Default"
 		}
 	],
 	"Plugins": [
@@ -24,6 +19,15 @@
 			"Name": "ModuleGenerator",
 			"Enabled": true,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/ec36ec6e94f74075819e2a04f7cb97f3"
+		},
+		{
+			"Name": "SteamVR",
+			"Enabled": false,
+			"SupportedTargetPlatforms": [
+				"Win32",
+				"Win64",
+				"Linux"
+			]
 		}
 	],
 	"TargetPlatforms": [
