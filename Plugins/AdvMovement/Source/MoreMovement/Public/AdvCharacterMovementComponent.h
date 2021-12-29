@@ -19,7 +19,7 @@ class MOREMOVEMENT_API UAdvCharacterMovementComponent : public UCharacterMovemen
 	GENERATED_BODY()
 
 public:
-	void PhysCustom(float deltaTime, int32 Iterations) override;
+	virtual void PhysCustom(float deltaTime, int32 Iterations) override;
 
 	/** Sprinting functionality */
 	void PhysSprinting(float deltaTime, int32 Iterations);
@@ -28,7 +28,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsSprinting() const;
 
-	bool IsMovingOnGround() const override;
+	virtual bool IsMovingOnGround() const override;
 
 	UFUNCTION(BlueprintCallable)
 	void Sprint();
@@ -36,11 +36,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopSprint();
 
-	float GetMaxSpeed() const override;
+	virtual float GetMaxSpeed() const override;
 
-private:
 	/** The maximum ground speed when walking. Also determines maximum lateral speed when falling. */
-	UPROPERTY(Category="Character Movement: Walking", EditAnywhere, meta=(ClampMin="0", UIMin="0"))
+	UPROPERTY(Category="Character Movement: Walking", EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0", UIMin="0"))
 	float MaxSprintSpeed;
+
+	/** Multiplier for the players max speed */
+	UPROPERTY(Category="Character Movement: Walking", EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0", UIMin="0"))
+	float SpeedMultiplier = 1.f;
 };
 

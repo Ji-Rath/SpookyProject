@@ -28,6 +28,18 @@
 				"Win64",
 				"Linux"
 			]
+		},
+		{
+			"Name": "InteractionSystem",
+			"Enabled": true
+		},
+		{
+			"Name": "AdvMovement",
+			"Enabled": true
+		},
+		{
+			"Name": "LightDetection",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [

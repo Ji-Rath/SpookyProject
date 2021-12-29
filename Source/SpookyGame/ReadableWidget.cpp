@@ -88,8 +88,8 @@ void UReadableWidget::OnUseItem(UItemData* ItemData)
 void UReadableWidget::OnItemInteract(AInteractable* Interactable)
 {
 	/** Ensure interacted object is a viewable item */
-	if (Cast<AViewable>(Interactable))
+	if (const auto* Viewable = Cast<AViewable>(Interactable))
 	{
-		OnUseItem(Interactable->GetItemData());
+		OnUseItem(Viewable->GetBookData());
 	}
 }

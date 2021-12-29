@@ -40,15 +40,18 @@ void UAdvCharacterMovementComponent::StopSprint()
 
 float UAdvCharacterMovementComponent::GetMaxSpeed() const
 {
-	float DefaultSpeed = Super::GetMaxSpeed();
-	float Speed = IsCrouching() ? MaxWalkSpeedCrouched : MaxWalkSpeed;
+	float MaxSpeed = Super::GetMaxSpeed();
+	const float Speed = IsCrouching() ? MaxWalkSpeedCrouched : MaxWalkSpeed;
 
 	switch(MovementMode)
 	{
 	case MOVE_Custom:
-		return IsSprinting() ? MaxSprintSpeed : Speed;
+		MaxSpeed = IsSprinting() ? MaxSprintSpeed : Speed;
+		break;
 	default:
-		return DefaultSpeed;
+		break;
 	}
+
+	return MaxSpeed * SpeedMultiplier;
 }
 

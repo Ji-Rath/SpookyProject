@@ -54,6 +54,7 @@ void APlayerBase::Landed(const FHitResult& Hit)
 	Super::Landed(Hit);
 	
 	TriggerFootstep();
+	GetWorldTimerManager().ClearTimer(FootstepTimer);
 }
 
 void APlayerBase::MovementForward(float AxisValue)
@@ -91,8 +92,8 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookRight", this, &APawn::AddControllerYawInput);
 
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, PlayerInteract, &UPlayerInteractComponent::InteractAction);
-	PlayerInputComponent->BindAction("Interact", IE_Pressed, PhysicsGrab, &UPhysicsGrabComponent::Grab);
-	PlayerInputComponent->BindAction("Interact", IE_Released, PhysicsGrab, &UPhysicsGrabComponent::Grab); // @TODO Create ReleaseGrab to prevent unexpected issues
+	PlayerInputComponent->BindAction("Grab/Push", IE_Pressed, PhysicsGrab, &UPhysicsGrabComponent::PhysicsInteract);
+	PlayerInputComponent->BindAction("Grab/Push", IE_Released, PhysicsGrab, &UPhysicsGrabComponent::ReleaseComponent);
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerBase::StartCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerBase::StopCrouch);
@@ -125,19 +126,22 @@ void APlayerBase::FootstepDetection()
 
 	//Ensure player is moving
 	bool bWantsToMove = !GetCharacterMovement()->IsFalling() && (GetCharacterMovement()->IsMovingOnGround());
-	if (bWantsToMove && GetVelocity().Size() > 0)
+	if (bWantsToMove && GetVelocity().Size() > 0.f)
 	{
-		if (!GetWorldTimerManager().IsTimerActive(FootstepTimer))
+		if (!GetWorldTimerManager().IsTimerActive(FootstepTimer) && !GetWorldTimerManager().IsTimerPaused(FootstepTimer))
 		{
-			float Timer = WalkFootstepRate;
-			if (GetCharacterMovement()->IsSprinting()) Timer = RunFootstepRate;
-			if (GetCharacterMovement()->IsCrouching()) Timer = CrouchFootstepRate;
+			const float VelocityRatio = GetVelocity().Size() / GetCharacterMovement()->MaxWalkSpeed;
+			float Timer = FMath::Clamp(WalkFootstepRate / VelocityRatio, 0.1f, 0.8f);
 			GetWorldTimerManager().SetTimer(FootstepTimer, this, &APlayerBase::TriggerFootstep, Timer);
+		}
+		else if (GetWorldTimerManager().IsTimerPaused(FootstepTimer))
+		{
+			GetWorldTimerManager().UnPauseTimer(FootstepTimer);
 		}
 	}
 	else
 	{
-		GetWorldTimerManager().ClearTimer(FootstepTimer);
+		GetWorldTimerManager().PauseTimer(FootstepTimer);
 	}
 }
 

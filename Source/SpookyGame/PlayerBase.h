@@ -61,12 +61,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Footsteps|Sounds")
 	USoundBase* SoundFootstep;
 
+	/** Rate of footsteps while walking. Rate is proportional to the current speed of the pawn */
 	UPROPERTY(EditDefaultsOnly, Category = "Footsteps")
 	float WalkFootstepRate = 1.f;
-	UPROPERTY(EditDefaultsOnly, Category = "Footsteps")
-	float RunFootstepRate = 1.f;
-	UPROPERTY(EditDefaultsOnly, Category = "Footsteps")
-	float CrouchFootstepRate = 1.f;
 
 	//Called when player no longer wants to crouch
 	void StopCrouch();
