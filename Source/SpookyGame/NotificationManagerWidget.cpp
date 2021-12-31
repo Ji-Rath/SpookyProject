@@ -18,11 +18,21 @@ bool UNotificationManagerWidget::Initialize()
 	return true;
 }
 
-void UNotificationManagerWidget::InventoryChange(bool bAdded)
+void UNotificationManagerWidget::CreateNotification_Implementation(TSubclassOf<UUserWidget> NotificationWidget)
 {
-	if (ensure(IconWidget) && bAdded)
+	if (ensure(IsValid(NotificationWidget)))
 	{
 		UWidget* Icon = CreateWidget(NotificationHolder, IconWidget);
 		NotificationHolder->AddChild(Icon);
+	}
+	
+	
+}
+
+void UNotificationManagerWidget::InventoryChange(bool bAdded)
+{
+	if (bAdded)
+	{
+		CreateNotification(IconWidget);
 	}
 }

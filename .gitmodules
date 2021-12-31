@@ -1,3 +1,6 @@
 [submodule "Plugins/UEInteractSystem"]
 	path = Plugins/UEInteractSystem
 	url = https://github.com/Ji-Rath/UEInteractSystem
+[submodule "Plugins/SUQS"]
+	path = Plugins/SUQS
+	url = https://github.com/sinbad/SUQS

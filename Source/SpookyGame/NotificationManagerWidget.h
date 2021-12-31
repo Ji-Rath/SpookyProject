@@ -17,12 +17,15 @@ class SPOOKYGAME_API UNotificationManagerWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	bool Initialize() override;
+	virtual bool Initialize() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Notification")
+	void CreateNotification(TSubclassOf<UUserWidget> NotificationWidget);
 
 	UFUNCTION()
 	void InventoryChange(bool bAdded);
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UHorizontalBox* NotificationHolder;
 
 	UPROPERTY(EditAnywhere)
