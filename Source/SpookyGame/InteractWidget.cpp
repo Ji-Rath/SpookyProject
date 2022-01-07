@@ -49,12 +49,17 @@ void UInteractWidget::UpdateUI(bool bShowCursor, AInteractable* Interactable)
 		CurrentInteractable = Interactable;
 		if (Interactable)
 		{
-			InteractText->SetText(CurrentInteractable->GetName());
-			PlayAnimation(MessageFade, 0.0f, 1, EUMGSequencePlayMode::Forward);
+			if (!CurrentInteractable->GetName().IsEmpty())
+			{
+				InteractText->SetText(CurrentInteractable->GetName());
+				PlayAnimation(MessageFade, 0.0f, 1, EUMGSequencePlayMode::Forward);
+				CurrentPlayModeMessage = EUMGSequencePlayMode::Forward;
+			}
 		}
-		else
+		else if (CurrentPlayModeMessage != EUMGSequencePlayMode::Reverse)
 		{
 			PlayAnimation(MessageFade, 0.0f, 1, EUMGSequencePlayMode::Reverse);
+			CurrentPlayModeMessage = EUMGSequencePlayMode::Reverse;
 		}
 	}
 }

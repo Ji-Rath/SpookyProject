@@ -26,7 +26,10 @@ public:
 	void UpdateUI(bool bShowCursor, AInteractable* Interactable);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TEnumAsByte<EUMGSequencePlayMode::Type> CurrentPlayMode;
+	TEnumAsByte<EUMGSequencePlayMode::Type> CurrentPlayMode = EUMGSequencePlayMode::PingPong;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EUMGSequencePlayMode::Type> CurrentPlayModeMessage = EUMGSequencePlayMode::PingPong;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* InteractionFade;

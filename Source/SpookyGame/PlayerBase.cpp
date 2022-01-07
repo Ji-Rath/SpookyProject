@@ -92,8 +92,9 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookRight", this, &APawn::AddControllerYawInput);
 
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, PlayerInteract, &UPlayerInteractComponent::InteractAction);
-	PlayerInputComponent->BindAction("Grab/Push", IE_Pressed, PhysicsGrab, &UPhysicsGrabComponent::PhysicsInteract);
-	PlayerInputComponent->BindAction("Grab/Push", IE_Released, PhysicsGrab, &UPhysicsGrabComponent::ReleaseComponent);
+	PlayerInputComponent->BindAction("Grab", IE_Pressed, PhysicsGrab, &UPhysicsGrabComponent::PhysicsInteract);
+	PlayerInputComponent->BindAction("Grab", IE_Released, PhysicsGrab, &UPhysicsGrabComponent::ReleaseComponent);
+	PlayerInputComponent->BindAction("Push", IE_Pressed, PhysicsGrab, &UPhysicsGrabComponent::PushComponent);
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerBase::StartCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerBase::StopCrouch);
