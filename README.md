@@ -14,3 +14,7 @@ setting the correct mass is extremely important to prevent sudden movements in t
 the air. This can be mitigated by disabling CanCharacterStepUpOn and adjusting 'Perch' and 'Ledge' settings in the Character Movement Component.
 - Disabling pawn collision while the player is grabbing an object is the only solution I found to prevent
 flying while grabbing a physics object under you. A better solution may be possible.
+
+##External Assets Currently Used
+- https://elbolilloduro.itch.io/paquete-de-modelos-low-poly-estilo-psx-2
+- https://chilly-durango.itch.io/medieval-building-parts
