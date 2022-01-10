@@ -53,6 +53,10 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TextBody;
 
+	/** Textblock to display item contents */
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* TextTitle;
+
 	/** Called whenever the player uses an item (on self) */
 	UFUNCTION()
 	void OnUseItem(UItemData* ItemData);
@@ -61,12 +65,18 @@ protected:
 	UFUNCTION()
 	void OnItemInteract(AInteractable* Interactable);
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	APlayerControllerBase* PlayerController;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int CurrentPage = 0;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UBookData* BookData = nullptr;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool DoesPageExist(int Page, bool bRelative);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void UpdatePageArrows();
 };

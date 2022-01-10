@@ -19,4 +19,6 @@ public:
 	/** Returns the item data */
 	UFUNCTION(BlueprintCallable, Category = "Interaction|Data")
 	UBookData* GetBookData() const;
+
+	virtual FText GetName() const override;
 };

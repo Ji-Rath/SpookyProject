@@ -71,6 +71,7 @@ void UReadableWidget::IncrementPage(int Num)
 	{
 		CurrentPage = FMath::Clamp(CurrentPage + Num, 0, BookData->Text.Num()-1);
 		TextBody->SetText(BookData->Text[CurrentPage]);
+		UpdatePageArrows();
 	}
 }
 
@@ -82,6 +83,7 @@ void UReadableWidget::OnUseItem(UItemData* ItemData)
 		IncrementPage(0);
 		SetWidgetVisibility(true);
 		PlayerController->SetMouseState(false);
+		TextTitle->SetText(BookData->Name);
 	}
 }
 
@@ -92,4 +94,22 @@ void UReadableWidget::OnItemInteract(AInteractable* Interactable)
 	{
 		OnUseItem(Viewable->GetBookData());
 	}
+}
+
+bool UReadableWidget::DoesPageExist(int Page, bool bRelative)
+{
+	bool bPageExists = false;
+	
+	if (ensure(BookData))
+	{
+		int Pages = BookData->Text.Num();
+		int PageToCheck = 0;
+		if (bRelative)
+		{
+			PageToCheck = CurrentPage;
+		}
+		PageToCheck += Page;
+		bPageExists = BookData->Text.IsValidIndex(PageToCheck);
+	}
+	return bPageExists;
 }
