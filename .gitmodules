@@ -7,3 +7,6 @@
 [submodule "Plugins/MoreMovement"]
 	path = Plugins/MoreMovement
 	url = https://github.com/Ji-Rath/MoreMovementPlugin
+[submodule "Plugins/InteractSystem"]
+	path = Plugins/InteractSystem
+	url = https://github.com/Ji-Rath/UEInteractSystem
