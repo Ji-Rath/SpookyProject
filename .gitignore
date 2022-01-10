@@ -89,3 +89,5 @@ LocalDerivedDataCache/*
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+Content/Assets/Licensed/*
