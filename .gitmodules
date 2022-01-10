@@ -4,3 +4,6 @@
 [submodule "Plugins/SUQS"]
 	path = Plugins/SUQS
 	url = https://github.com/sinbad/SUQS
+[submodule "Plugins/MoreMovement"]
+	path = Plugins/MoreMovement
+	url = https://github.com/Ji-Rath/MoreMovementPlugin
