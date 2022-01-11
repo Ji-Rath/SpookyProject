@@ -2,7 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Plugins/InteractSystem" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Plugins/MoreMovement" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Plugins/SUQS" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Plugins/UEInteractSystem" vcs="Git" />
   </component>
 </project>
