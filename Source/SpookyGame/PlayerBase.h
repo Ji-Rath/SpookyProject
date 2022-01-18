@@ -42,18 +42,6 @@ public:
 	//Spring arm component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USpringArmComponent* CameraSpringArm;
-	//Handles player interaction with the world
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UPlayerInteractComponent* PlayerInteract;
-	//Handles camera control to specific objects
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UAttentionComponent* AttentionComp;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UPhysicsHandleComponent* PhysicsHandle;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UPhysicsGrabComponent* PhysicsGrab;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UPlayerEquipComponent* PlayerEquip;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Footsteps")
 	TSubclassOf<UCameraShakeBase> WalkingScreenShake;

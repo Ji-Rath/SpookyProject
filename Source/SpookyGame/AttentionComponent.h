@@ -9,7 +9,7 @@
 /**
  * Allows a possessed pawn to 'forcefully' look in a specific direction or actor
  */
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SPOOKYGAME_API UAttentionComponent : public UActorComponent
 {
 	GENERATED_BODY()

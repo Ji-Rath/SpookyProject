@@ -5,7 +5,10 @@
 #include "Components/TextBlock.h"
 #include "PlayerControllerBase.h"
 #include "Interaction/PlayerInteractComponent.h"
-#include "Viewable.h"
+#include "ViewableComponent.h"
+#include "Inventory/ItemDataComponent.h"
+
+class UItemDataComponent;
 
 bool UReadableWidget::GetWidgetVisibility()
 {
@@ -87,12 +90,14 @@ void UReadableWidget::OnUseItem(UItemData* ItemData)
 	}
 }
 
-void UReadableWidget::OnItemInteract(AInteractable* Interactable)
+void UReadableWidget::OnItemInteract(UInteractableComponent* Interactable)
 {
+	if (!Interactable) { return; }
 	/** Ensure interacted object is a viewable item */
-	if (const auto* Viewable = Cast<AViewable>(Interactable))
+	if (const auto* Viewable = Interactable->GetOwner()->FindComponentByClass<UViewableComponent>())
 	{
-		OnUseItem(Viewable->GetBookData());
+		if (UItemDataComponent* ItemDataComponent = Interactable->GetOwner()->FindComponentByClass<UItemDataComponent>())
+			OnUseItem(ItemDataComponent->GetItemData());
 	}
 }
 

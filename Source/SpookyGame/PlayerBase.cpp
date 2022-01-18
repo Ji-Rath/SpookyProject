@@ -34,12 +34,6 @@ APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) : Super(Ob
 
 	ItemSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
 	ItemSpringArm->SetupAttachment(Camera);
-
-	PlayerInteract = CreateDefaultSubobject<UPlayerInteractComponent>(TEXT("Player Interact"));
-	AttentionComp = CreateDefaultSubobject<UAttentionComponent>(TEXT("Attention Component"));
-	PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("Physics Handle"));
-	PhysicsGrab = CreateDefaultSubobject<UPhysicsGrabComponent>(TEXT("Physics Grab"));
-	PlayerEquip = CreateDefaultSubobject<UPlayerEquipComponent>(TEXT("Player Equip"));
 }
 
 // Called when the game starts or when spawned
@@ -91,25 +85,18 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookRight", this, &APawn::AddControllerYawInput);
 
-	PlayerInputComponent->BindAction("Interact", IE_Pressed, PlayerInteract, &UPlayerInteractComponent::InteractAction);
-	PlayerInputComponent->BindAction("Grab", IE_Pressed, PhysicsGrab, &UPhysicsGrabComponent::PhysicsInteract);
-	PlayerInputComponent->BindAction("Grab", IE_Released, PhysicsGrab, &UPhysicsGrabComponent::ReleaseComponent);
-	PlayerInputComponent->BindAction("Push", IE_Pressed, PhysicsGrab, &UPhysicsGrabComponent::PushComponent);
-
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerBase::StartCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerBase::StopCrouch);
 
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, GetCharacterMovement(), &UAdvCharacterMovementComponent::Sprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, GetCharacterMovement(), &UAdvCharacterMovementComponent::StopSprint);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerBase::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerBase::StopJumping);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	PlayerInputComponent->BindAction("Inventory", IE_Pressed, GetController<APlayerControllerBase>(), &APlayerControllerBase::ToggleInventory);
 
 	PlayerInputComponent->BindAction("Escape", IE_Pressed, GetController<APlayerControllerBase>(), &APlayerControllerBase::PauseGame);
-
-	PlayerInputComponent->BindAction("DropItem", IE_Pressed, PlayerEquip, &UPlayerEquipComponent::DropEquippedItem);
 }
 
 void APlayerBase::TriggerFootstep()

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Interaction/InteractableComponent.h"
 #include "InteractWidget.generated.h"
 
 class AInteractable;
@@ -23,7 +24,7 @@ public:
 	UTextBlock* InteractText;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateUI(bool bShowCursor, AInteractable* Interactable);
+	void UpdateUI(bool bShowCursor, UInteractableComponent* Interactable);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TEnumAsByte<EUMGSequencePlayMode::Type> CurrentPlayMode = EUMGSequencePlayMode::PingPong;
@@ -36,6 +37,7 @@ public:
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* MessageFade;
-private:
-	AInteractable* CurrentInteractable = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UInteractableComponent* CurrentInteractable = nullptr;
 };

@@ -5,7 +5,6 @@
 #include "InteractWidget.h"
 #include "Components/TextBlock.h"
 #include "Interaction/PlayerInteractComponent.h"
-#include "Interaction/Interactable.h"
 #include "Interaction/PhysicsGrabComponent.h"
 
 bool UInteractWidget::Initialize()
@@ -28,7 +27,7 @@ bool UInteractWidget::Initialize()
 	return true;
 }
 
-void UInteractWidget::UpdateUI(bool bShowCursor, AInteractable* Interactable)
+void UInteractWidget::UpdateUI(bool bShowCursor, UInteractableComponent* Interactable)
 {
 	if (bShowCursor)
 	{

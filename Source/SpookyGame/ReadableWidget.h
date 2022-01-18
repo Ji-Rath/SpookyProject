@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Interaction/InteractableComponent.h"
 #include "ReadableWidget.generated.h"
 
 class UItemData;
@@ -63,7 +64,7 @@ protected:
 
 	/** Called whenever the player interacts with an item in the world */
 	UFUNCTION()
-	void OnItemInteract(AInteractable* Interactable);
+	void OnItemInteract(UInteractableComponent* Interactable);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	APlayerControllerBase* PlayerController;

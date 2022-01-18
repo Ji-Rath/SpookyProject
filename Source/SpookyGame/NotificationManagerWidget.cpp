@@ -8,14 +8,13 @@
 bool UNotificationManagerWidget::Initialize()
 {
 	bool Success = Super::Initialize();
-	if (!Success) { return false; }
 
 	if (GetOwningPlayerPawn())
 	{
 		UInventoryComponent* InventoryComponent = GetOwningPlayerPawn()->FindComponentByClass<UInventoryComponent>();
 		InventoryComponent->OnInventoryChange.AddDynamic(this, &UNotificationManagerWidget::InventoryChange);
 	}
-	return true;
+	return Success;
 }
 
 void UNotificationManagerWidget::CreateNotification_Implementation(TSubclassOf<UUserWidget> NotificationWidget)

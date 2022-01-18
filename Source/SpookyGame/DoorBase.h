@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interaction/Interactable.h"
+#include "GameFramework/Actor.h"
 #include "DoorBase.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SPOOKYGAME_API ADoorBase : public AInteractable
+class SPOOKYGAME_API ADoorBase : public AActor
 {
 	GENERATED_BODY()
 	
