@@ -10,3 +10,6 @@
 [submodule "Plugins/InteractSystem"]
 	path = Plugins/InteractSystem
 	url = https://github.com/Ji-Rath/UEInteractSystem
+[submodule "Plugins/UEGitPlugin"]
+	path = Plugins/UEGitPlugin
+	url = https://github.com/ProjectBorealis/UEGitPlugin
