@@ -13,3 +13,9 @@
 [submodule "Plugins/UEGitPlugin"]
 	path = Plugins/UEGitPlugin
 	url = https://github.com/ProjectBorealis/UEGitPlugin
+[submodule "Plugins/SPUD"]
+	path = Plugins/SPUD
+	url = https://github.com/sinbad/SPUD
+[submodule "Plugins/AINodes"]
+	path = Plugins/AINodes
+	url = https://github.com/Ji-Rath/AINodes
