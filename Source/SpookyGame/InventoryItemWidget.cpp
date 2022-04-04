@@ -36,8 +36,8 @@ void UInventoryItemWidget::ToggleItem()
 	if (EquipCompRef)
 	{
 		/** Equip current item in slot if not already done */
-		UItemData* Item = InventoryRef->FindItem(ItemSlot);
-		if (!EquipCompRef->GetEquippedItem())
+		FDataTableRowHandle Item = InventoryRef->FindItem(ItemSlot);
+		if (!EquipCompRef->GetEquippedItemData().IsNull())
 		{
 			EquipCompRef->EquipItem(Item);
 		}

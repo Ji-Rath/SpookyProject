@@ -2,6 +2,8 @@
 
 
 #include "InventoryWidget.h"
+
+#include "InteractionSystem_Settings.h"
 #include "Components/ScrollBox.h"
 #include "Inventory/InventoryComponent.h"
 #include "InventoryItemWidget.h"
@@ -37,10 +39,11 @@ void UInventoryWidget::UpdateInventory(bool bItemAdded)
 		// Loop through all current items in player inventory and display them to UI
 		for (const FInventoryContents& InventoryItem : Inventory)
 		{
-			if (ensure(InventoryItem.ItemData && InventoryDisplay))
+			const FItemInfo* ItemInfo = InventoryItem.ItemData.GetRow<FItemInfo>("");
+			if (ensure(!InventoryItem.ItemData.IsNull() && InventoryDisplay))
 			{
 				UInventoryItemWidget* ItemReference = CreateWidget<UInventoryItemWidget>(InventoryDisplay, ItemWidget);
-				ItemReference->UpdateDisplay(InventoryItem.ItemData->Name, InventoryItem.Count);
+				ItemReference->UpdateDisplay(ItemInfo->DisplayName, InventoryItem.Count);
 				InventoryDisplay->AddChild(ItemReference);
 				ItemReference->ItemSlot = CurrentSlot;
 				CurrentSlot++;

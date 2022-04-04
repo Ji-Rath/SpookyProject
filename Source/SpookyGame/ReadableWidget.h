@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Interaction/InteractableComponent.h"
+#include "Interaction/ItemData.h"
 #include "ReadableWidget.generated.h"
 
 class UItemData;
@@ -60,7 +61,7 @@ protected:
 
 	/** Called whenever the player uses an item (on self) */
 	UFUNCTION()
-	void OnUseItem(UItemData* ItemData);
+	void OnUseItem(FDataTableRowHandle ItemName);
 
 	/** Called whenever the player interacts with an item in the world */
 	UFUNCTION()
@@ -73,7 +74,7 @@ protected:
 	int CurrentPage = 0;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UBookData* BookData = nullptr;
+	FItemInfo BookData;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool DoesPageExist(int Page, bool bRelative);

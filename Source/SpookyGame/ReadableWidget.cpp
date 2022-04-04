@@ -1,6 +1,7 @@
 #include "ReadableWidget.h"
 #include "Inventory/PlayerEquipComponent.h"
 #include "BookData.h"
+#include "InteractionSystem_Settings.h"
 #include "Interaction/ItemData.h"
 #include "Components/TextBlock.h"
 #include "PlayerControllerBase.h"
@@ -70,34 +71,36 @@ int UReadableWidget::GetPageIndex()
 
 void UReadableWidget::IncrementPage(int Num)
 {
-	if (BookData && BookData->Text.Num() > 0)
+	if (BookData.PageData.Num() > 0)
 	{
-		CurrentPage = FMath::Clamp(CurrentPage + Num, 0, BookData->Text.Num()-1);
-		TextBody->SetText(BookData->Text[CurrentPage]);
+		CurrentPage = FMath::Clamp(CurrentPage + Num, 0, BookData.PageData.Num()-1);
+		TextBody->SetText(BookData.PageData[CurrentPage]);
 		UpdatePageArrows();
 	}
 }
 
-void UReadableWidget::OnUseItem(UItemData* ItemData)
+void UReadableWidget::OnUseItem(FDataTableRowHandle ItemName)
 {
-	BookData = Cast<UBookData>(ItemData);
-	if (BookData && !GetWidgetVisibility() && ensure(BookData->Text.Num() > 0))
+	if (const FItemInfo* BookInfo = ItemName.GetRow<FItemInfo>(""))
+		BookData = *BookInfo;
+	
+	if (!GetWidgetVisibility() && ensure(BookData.PageData.Num() > 0))
 	{
 		IncrementPage(0);
 		SetWidgetVisibility(true);
 		PlayerController->SetMouseState(false);
-		TextTitle->SetText(BookData->Name);
+		TextTitle->SetText(BookData.DisplayName);
 	}
 }
 
 void UReadableWidget::OnItemInteract(UInteractableComponent* Interactable)
 {
 	if (!Interactable) { return; }
+	
 	/** Ensure interacted object is a viewable item */
 	if (const auto* Viewable = Interactable->GetOwner()->FindComponentByClass<UViewableComponent>())
 	{
-		if (UItemDataComponent* ItemDataComponent = Interactable->GetOwner()->FindComponentByClass<UItemDataComponent>())
-			OnUseItem(ItemDataComponent->GetItemData());
+		OnUseItem(Viewable->ItemData);
 	}
 }
 
@@ -105,16 +108,13 @@ bool UReadableWidget::DoesPageExist(int Page, bool bRelative)
 {
 	bool bPageExists = false;
 	
-	if (ensure(BookData))
+	int Pages = BookData.PageData.Num();
+	int PageToCheck = 0;
+	if (bRelative)
 	{
-		int Pages = BookData->Text.Num();
-		int PageToCheck = 0;
-		if (bRelative)
-		{
-			PageToCheck = CurrentPage;
-		}
-		PageToCheck += Page;
-		bPageExists = BookData->Text.IsValidIndex(PageToCheck);
+		PageToCheck = CurrentPage;
 	}
+	PageToCheck += Page;
+	bPageExists = BookData.PageData.IsValidIndex(PageToCheck);
 	return bPageExists;
 }
