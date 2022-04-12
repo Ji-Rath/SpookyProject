@@ -4,6 +4,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Interaction/InteractableComponent.h"
 #include "Interaction/ItemData.h"
+#include "Inventory/InventoryInfo.h"
 #include "ReadableWidget.generated.h"
 
 class UItemData;
@@ -61,7 +62,7 @@ protected:
 
 	/** Called whenever the player uses an item (on self) */
 	UFUNCTION()
-	void OnUseItem(FDataTableRowHandle ItemName);
+	void OnUseItem(FInventoryContents ItemName);
 
 	/** Called whenever the player interacts with an item in the world */
 	UFUNCTION()

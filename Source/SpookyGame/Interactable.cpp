@@ -3,6 +3,8 @@
 
 #include "Interactable.h"
 
+#include "Components/StaticMeshComponent.h"
+
 FName AInteractable::InteractableComponentName(TEXT("InteractableComponent"));
 
 // Sets default values
@@ -12,6 +14,7 @@ AInteractable::AInteractable(const FObjectInitializer& ObjectInitializer) : Supe
 	PrimaryActorTick.bCanEverTick = true;
 
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(AInteractable::InteractableComponentName);
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
 }
 
 // Called when the game starts or when spawned

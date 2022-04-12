@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ISpudObject.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerBase.generated.h"
@@ -20,7 +21,7 @@ class UPhysicsGrabComponent;
 class UPlayerEquipComponent;
 
 UCLASS()
-class SPOOKYGAME_API APlayerBase : public ACharacter
+class SPOOKYGAME_API APlayerBase : public ACharacter, public ISpudObject, public ISpudObjectCallback
 {
 	GENERATED_BODY()
 public:
@@ -60,6 +61,12 @@ public:
 	void StartCrouch();
 
 	void Landed(const FHitResult& Hit) override;
+
+	virtual void SpudStoreCustomData_Implementation(const USpudState* State, USpudStateCustomData* CustomData) override;
+
+	virtual void SpudRestoreCustomData_Implementation(USpudState* State, USpudStateCustomData* CustomData) override;
+
+	virtual void SpudPreStore_Implementation(const USpudState* State) override;
 
 protected:
 	// Called when the game starts or when spawned

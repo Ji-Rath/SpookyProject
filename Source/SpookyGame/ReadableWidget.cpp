@@ -79,12 +79,12 @@ void UReadableWidget::IncrementPage(int Num)
 	}
 }
 
-void UReadableWidget::OnUseItem(FDataTableRowHandle ItemName)
+void UReadableWidget::OnUseItem(FInventoryContents ItemName)
 {
 	if (const FItemInfo* BookInfo = ItemName.GetRow<FItemInfo>(""))
 		BookData = *BookInfo;
 	
-	if (!GetWidgetVisibility() && ensure(BookData.PageData.Num() > 0))
+	if (!GetWidgetVisibility() && BookData.ItemType == EItemType::Readable && BookData.PageData.Num() > 0)
 	{
 		IncrementPage(0);
 		SetWidgetVisibility(true);

@@ -39,8 +39,8 @@ void UInventoryWidget::UpdateInventory(bool bItemAdded)
 		// Loop through all current items in player inventory and display them to UI
 		for (const FInventoryContents& InventoryItem : Inventory)
 		{
-			const FItemInfo* ItemInfo = InventoryItem.ItemData.GetRow<FItemInfo>("");
-			if (ensure(!InventoryItem.ItemData.IsNull() && InventoryDisplay))
+			const FItemInfo* ItemInfo = InventoryItem.GetRow<FItemInfo>("");
+			if (ensure(ItemInfo && InventoryDisplay))
 			{
 				UInventoryItemWidget* ItemReference = CreateWidget<UInventoryItemWidget>(InventoryDisplay, ItemWidget);
 				ItemReference->UpdateDisplay(ItemInfo->DisplayName, InventoryItem.Count);

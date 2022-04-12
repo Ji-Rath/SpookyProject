@@ -36,6 +36,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Interactable")
 	UInteractableComponent* GetInteractableComponent() const;
+
+	UPROPERTY(VisibleAnywhere, SaveGame)
+	UStaticMeshComponent* StaticMesh = nullptr;
 private:
 	UPROPERTY(SaveGame)
 	TArray< TSubclassOf<AActor> > ActorFilters;

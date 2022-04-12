@@ -2,6 +2,8 @@
 
 
 #include "PlayerBase.h"
+
+#include "AdvCharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
@@ -49,6 +51,42 @@ void APlayerBase::Landed(const FHitResult& Hit)
 	
 	TriggerFootstep();
 	GetWorldTimerManager().ClearTimer(FootstepTimer);
+}
+
+void APlayerBase::SpudStoreCustomData_Implementation(const USpudState* State, USpudStateCustomData* CustomData)
+{
+	ISpudObjectCallback::SpudStoreCustomData_Implementation(State, CustomData);
+
+	if (auto* InventoryComponent = FindComponentByClass<UInventoryComponent>())
+	{
+		TArray<FInventoryContents> Inventory;
+		InventoryComponent->GetInventory(Inventory);
+		CustomData->Write<TArray < FInventoryContents > >(Inventory);
+		//UE_LOG(LogTemp, Error, TEXT("SAVED INVENTORY DATA!"));
+	}
+}
+
+void APlayerBase::SpudRestoreCustomData_Implementation(USpudState* State, USpudStateCustomData* CustomData)
+{
+	ISpudObjectCallback::SpudRestoreCustomData_Implementation(State, CustomData);
+	
+	if (auto* InventoryComponent = FindComponentByClass<UInventoryComponent>())
+	{
+		TArray<FInventoryContents> Inventory;
+		CustomData->Read<TArray < FInventoryContents > >(Inventory);
+		InventoryComponent->SetInventory(Inventory);
+		//UE_LOG(LogTemp, Error, TEXT("LOADED INVENTORY DATA!"));
+	}
+}
+
+void APlayerBase::SpudPreStore_Implementation(const USpudState* State)
+{
+	ISpudObjectCallback::SpudPreStore_Implementation(State);
+
+	if (auto* EquipComp = FindComponentByClass<UPlayerEquipComponent>())
+	{
+		EquipComp->UnequipItem();
+	}
 }
 
 void APlayerBase::MovementForward(float AxisValue)
