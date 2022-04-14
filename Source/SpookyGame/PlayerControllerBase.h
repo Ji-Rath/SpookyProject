@@ -8,6 +8,8 @@
 
 class UMainUIBase;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseLock, bool, bLocked);
+
 /**
  * 
  */
@@ -20,4 +22,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMainUIBase* MainUI;
 	
+	/** Toggle the inventory UI */
+	UFUNCTION(BlueprintCallable)
+	void ToggleInventory();
+
+	UFUNCTION(BlueprintCallable)
+	void PauseGame();
+
+	/** Set the state of the mouse input (For UI related purposes) */
+	UFUNCTION(BlueprintCallable)
+	void SetMouseState(bool bLocked);
+
+	/** Toggle the state of the mouse input */
+	UFUNCTION(BlueprintCallable)
+	void ToggleMouseState();
+
+	FMouseLock OnMouseLock;
 };

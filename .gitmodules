@@ -1,0 +1,21 @@
+[submodule "Plugins/UEInteractSystem"]
+	path = Plugins/UEInteractSystem
+	url = https://github.com/Ji-Rath/UEInteractSystem
+[submodule "Plugins/SUQS"]
+	path = Plugins/SUQS
+	url = https://github.com/sinbad/SUQS
+[submodule "Plugins/MoreMovement"]
+	path = Plugins/MoreMovement
+	url = https://github.com/Ji-Rath/MoreMovementPlugin
+[submodule "Plugins/InteractSystem"]
+	path = Plugins/InteractSystem
+	url = https://github.com/Ji-Rath/UEInteractSystem
+[submodule "Plugins/UEGitPlugin"]
+	path = Plugins/UEGitPlugin
+	url = https://github.com/ProjectBorealis/UEGitPlugin
+[submodule "Plugins/SPUD"]
+	path = Plugins/SPUD
+	url = https://github.com/sinbad/SPUD
+[submodule "Plugins/AINodes"]
+	path = Plugins/AINodes
+	url = https://github.com/Ji-Rath/AINodes
