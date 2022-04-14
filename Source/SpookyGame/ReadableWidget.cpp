@@ -79,7 +79,7 @@ void UReadableWidget::IncrementPage(int Num)
 	}
 }
 
-void UReadableWidget::OnUseItem(FInventoryContents ItemName)
+void UReadableWidget::OnUseItem(const FInventoryContents& ItemName)
 {
 	if (const FItemInfo* BookInfo = ItemName.GetRow<FItemInfo>(""))
 		BookData = *BookInfo;

@@ -43,7 +43,7 @@ void UInventoryItemWidget::ToggleItem()
 		}
 		else 
 		{
-			if (InventoryRef->FindItem(ItemSlot) == EquipCompRef->GetEquippedItemData())
+			if (Item == EquipCompRef->GetEquippedItemData())
 			{
 				EquipCompRef->UnequipItem();
 			}

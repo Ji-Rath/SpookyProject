@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "Interaction/InteractableComponent.h"
+#include "Inventory/InventoryInfo.h"
 #include "ViewableComponent.generated.h"
 
 
@@ -28,5 +29,5 @@ public:
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(EditAnywhere, Category = "Viewable")
-	FDataTableRowHandle ItemData;
+	FInventoryContents ItemData;
 };

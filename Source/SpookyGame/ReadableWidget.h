@@ -62,7 +62,7 @@ protected:
 
 	/** Called whenever the player uses an item (on self) */
 	UFUNCTION()
-	void OnUseItem(FInventoryContents ItemName);
+	void OnUseItem(const FInventoryContents& ItemName);
 
 	/** Called whenever the player interacts with an item in the world */
 	UFUNCTION()
