@@ -16,12 +16,4 @@ class SPOOKYGAME_API UMainUIBase : public UUserWidget
 {
 	GENERATED_BODY()
 	
-
-public:
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void ToggleInventory();
-
-	UPROPERTY(meta = (BindWidget))
-	UWidgetSwitcher* WidgetSelector;
 };

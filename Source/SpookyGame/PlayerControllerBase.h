@@ -21,13 +21,6 @@ class SPOOKYGAME_API APlayerControllerBase : public APlayerController
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMainUIBase* MainUI;
-	
-	/** Toggle the inventory UI */
-	UFUNCTION(BlueprintCallable)
-	void ToggleInventory();
-
-	UFUNCTION(BlueprintCallable)
-	void PauseGame();
 
 	/** Set the state of the mouse input (For UI related purposes) */
 	UFUNCTION(BlueprintCallable)

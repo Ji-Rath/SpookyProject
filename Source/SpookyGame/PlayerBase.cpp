@@ -131,10 +131,6 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-
-	PlayerInputComponent->BindAction("Inventory", IE_Pressed, GetController<APlayerControllerBase>(), &APlayerControllerBase::ToggleInventory);
-
-	PlayerInputComponent->BindAction("Escape", IE_Pressed, GetController<APlayerControllerBase>(), &APlayerControllerBase::PauseGame);
 }
 
 void APlayerBase::TriggerFootstep()
