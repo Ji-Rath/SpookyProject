@@ -37,7 +37,7 @@ void APickupable::SpudPostRestore_Implementation(const USpudState* State)
 	Super::SpudPostRestore_Implementation(State);
 	
 	FItemInfo* ItemInfo = GetPickupableComponent()->ItemData.GetRow<FItemInfo>("");
-	if (ItemInfo && StaticMesh)
+	if (ItemInfo && StaticMesh && ItemInfo->ItemMesh)
 		StaticMesh->SetStaticMesh(ItemInfo->ItemMesh.Get());
 }
 
