@@ -7,20 +7,28 @@
 #include "Components/ScrollBox.h"
 #include "Inventory/InventoryComponent.h"
 #include "InventoryItemWidget.h"
+#include "Inventory/PlayerEquipComponent.h"
 
 bool UInventoryWidget::Initialize()
 {
 	bool Success = Super::Initialize();
 	if (!Success) { return false; }
 
-	if (APawn* Player = GetOwningPlayerPawn())
+	if (!InventoryRef)
 	{
-		InventoryRef = Player->FindComponentByClass<UInventoryComponent>();
-
-		// Bind UpdateInventory to OnInventoryChange so it is called everytime there is an inventory update
-		if (InventoryRef)
-			InventoryRef->OnInventoryChange.AddDynamic(this, &UInventoryWidget::UpdateInventory);
+		if (APawn* Player = GetOwningPlayerPawn())
+		{
+			InventoryRef = Player->FindComponentByClass<UInventoryComponent>();
+		}	
 	}
+
+	// Bind UpdateInventory to OnInventoryChange so it is called everytime there is an inventory update
+	if (InventoryRef)
+	{
+		InventoryRef->OnInventoryChange.AddDynamic(this, &UInventoryWidget::UpdateInventory);
+		UpdateInventory(false);
+	}
+	
 	return true;
 }
 
@@ -46,8 +54,46 @@ void UInventoryWidget::UpdateInventory(bool bItemAdded)
 				ItemReference->UpdateDisplay(ItemInfo->DisplayName, InventoryItem.Count);
 				InventoryDisplay->AddChild(ItemReference);
 				ItemReference->ItemSlot = CurrentSlot;
+				ItemReference->OnClick.AddDynamic(this, &UInventoryWidget::ClickedOnItem);
 				CurrentSlot++;
 			}
 		}
 	}
 }
+
+void UInventoryWidget::ClickedOnItem(int ItemIndex)
+{
+	OnItemClick.Broadcast(ItemIndex, InventoryRef);
+}
+
+void UInventoryWidget::ToggleItem(int ItemSlot)
+{
+	UPlayerEquipComponent* EquipCompRef = nullptr;
+	
+	if (GetOwningPlayerPawn())
+	{
+		EquipCompRef = GetOwningPlayerPawn()->FindComponentByClass<UPlayerEquipComponent>();
+	}
+	
+	if (EquipCompRef)
+	{
+		/** Equip current item in slot if not already done */
+		const FInventoryContents Item = InventoryRef->FindItem(ItemSlot);
+		if (EquipCompRef->GetEquippedItemData().IsNull())
+		{
+			EquipCompRef->EquipItem(Item);
+		}
+		else 
+		{
+			if (Item == EquipCompRef->GetEquippedItemData())
+			{
+				EquipCompRef->UnequipItem();
+			}
+			else
+			{
+				EquipCompRef->EquipItem(Item);
+			}
+		}
+	}
+}
+

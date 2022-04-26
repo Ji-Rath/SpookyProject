@@ -9,6 +9,8 @@
 class UInventoryComponent;
 class UScrollBox;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FItemClick, int, ItemIndex, UInventoryComponent*, Inventory);
+
 /**
  * 
  */
@@ -30,6 +32,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateInventory(bool bItemAdded);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn=true))
 	UInventoryComponent* InventoryRef;
+
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FItemClick OnItemClick;
+
+	UFUNCTION()
+	void ClickedOnItem(int ItemIndex);
+
+	UFUNCTION()
+	void ToggleItem(int ItemSlot);
 };

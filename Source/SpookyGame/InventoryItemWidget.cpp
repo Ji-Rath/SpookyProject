@@ -11,14 +11,8 @@ bool UInventoryItemWidget::Initialize()
 	bool Success = Super::Initialize();
 	if (!Success) { return false; }
 
-	if (GetOwningPlayerPawn())
-	{
-		EquipCompRef = GetOwningPlayerPawn()->FindComponentByClass<UPlayerEquipComponent>();
-		InventoryRef = GetOwningPlayerPawn()->FindComponentByClass<UInventoryComponent>();
-	}
-
 	if (ItemButton)
-		ItemButton->OnClicked.AddDynamic(this, &UInventoryItemWidget::ToggleItem);
+		ItemButton->OnClicked.AddDynamic(this, &UInventoryItemWidget::ClickItem);
 	return true;
 }
 
@@ -31,26 +25,7 @@ void UInventoryItemWidget::UpdateDisplay(const FText& Name, const int& Amount)
 	}
 }
 
-void UInventoryItemWidget::ToggleItem()
+void UInventoryItemWidget::ClickItem()
 {
-	if (EquipCompRef)
-	{
-		/** Equip current item in slot if not already done */
-		const FInventoryContents Item = InventoryRef->FindItem(ItemSlot);
-		if (EquipCompRef->GetEquippedItemData().IsNull())
-		{
-			EquipCompRef->EquipItem(Item);
-		}
-		else 
-		{
-			if (Item == EquipCompRef->GetEquippedItemData())
-			{
-				EquipCompRef->UnequipItem();
-			}
-			else
-			{
-				EquipCompRef->EquipItem(Item);
-			}
-		}
-	}
+	OnClick.Broadcast(ItemSlot);
 }

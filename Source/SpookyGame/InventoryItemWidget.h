@@ -9,6 +9,8 @@ class UButton;
 class UPlayerEquipComponent;
 class UInventoryComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClick, int, ItemSlot);
+
 /**
  *
  */
@@ -31,15 +33,12 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UButton* ItemButton;
 
-	UPROPERTY();
+	UPROPERTY(BlueprintReadOnly);
 	int ItemSlot = 0;
 
 	UFUNCTION()
-	void ToggleItem();
-private:
-	UPROPERTY()
-	UPlayerEquipComponent* EquipCompRef;
+	void ClickItem();
 
-	UPROPERTY()
-	UInventoryComponent* InventoryRef;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnClick OnClick;
 };
