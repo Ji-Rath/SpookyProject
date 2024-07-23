@@ -9,4 +9,4 @@ on an already established codebase.
 - Quest system using [SUQS](https://github.com/sinbad/SUQS)
 - Save system using [SPUD](https://github.com/sinbad/SPUD)
 
-Current UE version: 4.27.2
+Current UE version: 5.4.4
