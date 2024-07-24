@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "MainUIBase.generated.h"
 
+class UWidgetSwitcher;
+
 /**
  * 
  */
@@ -14,11 +16,4 @@ class SPOOKYGAME_API UMainUIBase : public UUserWidget
 {
 	GENERATED_BODY()
 	
-
-public:
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
-	void PlayInteractAnim(EUMGSequencePlayMode::Type PlayMode);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TEnumAsByte<EUMGSequencePlayMode::Type> CurrentPlayMode;
 };

@@ -3,26 +3,39 @@
 
 #include "PlayerBase.h"
 
+#include "AdvCharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "TriggerInterface.h"
-#include "InteractableBase.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "Camera/PlayerCameraManager.h"
-#include "PlayerControllerBase.h"
-#include "MainUIBase.h"
-#include "TriggerComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Components/SpotLightComponent.h"
+#include "GameFramework/Controller.h"
+#include "PlayerControllerBase.h"
+#include "Interaction/PlayerInteractComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "AttentionComponent.h"
+#include "AdvCharacterMovementComponent.h"
+#include "Interaction/PhysicsGrabComponent.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "Inventory/PlayerEquipComponent.h"
 
 // Sets default values
-APlayerBase::APlayerBase()
+APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UAdvCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Spring Arm"));
+	CameraSpringArm->SetupAttachment(RootComponent);
+
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	Camera->SetupAttachment(RootComponent);
+	Camera->SetupAttachment(CameraSpringArm);
+
+	ItemSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
+	ItemSpringArm->SetupAttachment(Camera);
 }
 
 // Called when the game starts or when spawned
@@ -30,69 +43,66 @@ void APlayerBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitialCapsuleHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+}
+
+void APlayerBase::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	
+	TriggerFootstep();
+	GetWorldTimerManager().ClearTimer(FootstepTimer);
+}
+
+void APlayerBase::SpudStoreCustomData_Implementation(const USpudState* State, USpudStateCustomData* CustomData)
+{
+	ISpudObjectCallback::SpudStoreCustomData_Implementation(State, CustomData);
+
+	if (auto* InventoryComponent = FindComponentByClass<UInventoryComponent>())
+	{
+		TArray<FInventoryContents> Inventory;
+		InventoryComponent->GetInventory(Inventory);
+		CustomData->Write<TArray < FInventoryContents > >(Inventory);
+		//UE_LOG(LogTemp, Error, TEXT("SAVED INVENTORY DATA!"));
+	}
+}
+
+void APlayerBase::SpudRestoreCustomData_Implementation(USpudState* State, USpudStateCustomData* CustomData)
+{
+	ISpudObjectCallback::SpudRestoreCustomData_Implementation(State, CustomData);
+	
+	if (auto* InventoryComponent = FindComponentByClass<UInventoryComponent>())
+	{
+		TArray<FInventoryContents> Inventory;
+		CustomData->Read<TArray < FInventoryContents > >(Inventory);
+		InventoryComponent->SetInventory(Inventory);
+		//UE_LOG(LogTemp, Error, TEXT("LOADED INVENTORY DATA!"));
+	}
+}
+
+void APlayerBase::SpudPreStore_Implementation(const USpudState* State)
+{
+	ISpudObjectCallback::SpudPreStore_Implementation(State);
+
+	if (auto* EquipComp = FindComponentByClass<UPlayerEquipComponent>())
+	{
+		EquipComp->UnequipItem();
+	}
 }
 
 void APlayerBase::MovementForward(float AxisValue)
 {
-	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(GetControlRotation());
+	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(GetActorRotation());
 	AddMovementInput(ForwardVector, AxisValue);
 
-	if(!GetWorldTimerManager().IsTimerActive(FootstepTimer))
-		GetWorldTimerManager().SetTimer(FootstepTimer, this, &APlayerBase::HandleFootsteps, 1.f);
+	FootstepDetection();  
 }
 
 void APlayerBase::MovementRight(float AxisValue)
 {
-	FVector RightVector = UKismetMathLibrary::GetRightVector(GetControlRotation());
+	FVector RightVector = UKismetMathLibrary::GetRightVector(GetActorRotation());
 	AddMovementInput(RightVector, AxisValue);
 
-	if (!GetWorldTimerManager().IsTimerActive(FootstepTimer))
-		GetWorldTimerManager().SetTimer(FootstepTimer, this, &APlayerBase::HandleFootsteps, 1.f);
-}
-
-void APlayerBase::HoverInteraction(float DeltaTime)
-{
-	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(GetControlRotation());
-	FVector Distance = ForwardVector * InteractDistance;
-	FCollisionQueryParams QueryParams = FCollisionQueryParams(FName(TEXT("Interaction Actor")), false, this);
-	FHitResult Hit;
-	FVector CameraLocation = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetCameraLocation();
-	APlayerControllerBase* PlayerController = Cast<APlayerControllerBase>(GetController());
-
-	//Line trace for interactable objects
-	if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, CameraLocation + Distance, ECC_Visibility, QueryParams))
-	{
-		if (ensure(Hit.GetActor()) && Cast<AInteractableBase>(Hit.GetActor()))
-		{
-			InteractHover = Cast<AInteractableBase>(Hit.GetActor());
-			PlayerController->MainUI->PlayInteractAnim(EUMGSequencePlayMode::Forward);
-		}
-		else
-		{
-			InteractHover = nullptr;
-			PlayerController->MainUI->PlayInteractAnim(EUMGSequencePlayMode::Reverse);
-		}
-	}
-	else
-	{
-		InteractHover = nullptr;
-		PlayerController->MainUI->PlayInteractAnim(EUMGSequencePlayMode::Reverse);
-	}
-}
-
-void APlayerBase::Interact()
-{
-	if (IsValid(InteractHover) && InteractHover->bCanInteract)
-	{
-		UTriggerComponent* TriggerComponent = InteractHover->FindComponentByClass<UTriggerComponent>();
-		if (TriggerComponent != nullptr)
-		{
-			TriggerComponent->TriggerActors();
-		}
-
-	}
+	FootstepDetection();
 }
 
 // Called every frame
@@ -100,10 +110,6 @@ void APlayerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//Get actors in front of player that are interactable
-	HoverInteraction(DeltaTime);
-
-	HandleCrouching(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -117,44 +123,61 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookRight", this, &APawn::AddControllerYawInput);
 
-	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerBase::Interact);
-
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerBase::StartCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerBase::StopCrouch);
 
-	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &APlayerBase::Sprint);
-	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerBase::StopSprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, GetCharacterMovement(), &UAdvCharacterMovementComponent::Sprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, GetCharacterMovement(), &UAdvCharacterMovementComponent::StopSprint);
 
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 }
 
-void APlayerBase::HandleCrouching(float DeltaTime)
+void APlayerBase::TriggerFootstep()
 {
-	UCharacterMovementComponent* MoveComponent = GetCharacterMovement();
-	FHitResult Hit;
-	float SmoothCrouch = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
-	if (bIsCrouching && GetMovementComponent()->IsMovingOnGround())
-	{
-		SmoothCrouch = FMath::FInterpTo(SmoothCrouch, MoveComponent->CrouchedHalfHeight, DeltaTime, CrouchSpeed);
-		MoveComponent->MaxWalkSpeed = MoveComponent->MaxWalkSpeedCrouched;
+	if(!ensure(WalkingScreenShake != nullptr || SoundFootstep != nullptr)) return;
 
-		GetCapsuleComponent()->SetCapsuleHalfHeight(SmoothCrouch);
-
-	}
-	else if (GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight() != InitialCapsuleHeight && !GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), GetActorLocation() + (GetActorLocation().UpVector * InitialCapsuleHeight), ECC_Visibility, FCollisionQueryParams(NAME_None, false, this)))
-	{
-		SmoothCrouch = FMath::FInterpTo(SmoothCrouch, InitialCapsuleHeight, DeltaTime, CrouchSpeed);
-
-		GetCapsuleComponent()->SetCapsuleHalfHeight(SmoothCrouch);
-
-		if(bIsSprinting)
-			MoveComponent->MaxWalkSpeed = SprintSpeed;
-		else
-			MoveComponent->MaxWalkSpeed = WalkSpeed;
-	}
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundFootstep, GetActorLocation());
+	APlayerController* PlayerController = GetController<APlayerController>();
+	PlayerController->PlayerCameraManager->StartCameraShake(WalkingScreenShake);
 }
 
-void APlayerBase::HandleFootsteps()
+void APlayerBase::FootstepDetection()
 {
-	UE_LOG(LogTemp, Log, TEXT("Test"));
+	if (!GetCharacterMovement()) { return; }
+
+	//Ensure player is moving
+	bool bWantsToMove = !GetCharacterMovement()->IsFalling() && (GetCharacterMovement()->IsMovingOnGround());
+	if (bWantsToMove && GetVelocity().Size() > 0.f)
+	{
+		if (!GetWorldTimerManager().IsTimerActive(FootstepTimer) && !GetWorldTimerManager().IsTimerPaused(FootstepTimer))
+		{
+			const float VelocityRatio = GetVelocity().Size() / GetCharacterMovement()->MaxWalkSpeed;
+			float Timer = FMath::Clamp(WalkFootstepRate / VelocityRatio, 0.1f, 0.8f);
+			GetWorldTimerManager().SetTimer(FootstepTimer, this, &APlayerBase::TriggerFootstep, Timer);
+		}
+		else if (GetWorldTimerManager().IsTimerPaused(FootstepTimer))
+		{
+			GetWorldTimerManager().UnPauseTimer(FootstepTimer);
+		}
+	}
+	else
+	{
+		GetWorldTimerManager().PauseTimer(FootstepTimer);
+	}
 }
 
+UAdvCharacterMovementComponent* APlayerBase::GetCharacterMovement() const
+{
+	return Cast<UAdvCharacterMovementComponent>(Super::GetCharacterMovement());
+}
+
+void APlayerBase::StopCrouch()
+{
+	UnCrouch();
+}
+
+void APlayerBase::StartCrouch()
+{
+	Crouch();
+}
