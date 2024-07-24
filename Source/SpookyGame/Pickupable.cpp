@@ -5,6 +5,7 @@
 
 #include "Components/StaticMeshComponent.h"
 #include "Interaction/ItemData.h"
+#include "Inventory/InventoryInfo.h"
 #include "Inventory/PickupableComponent.h"
 
 APickupable::APickupable(const FObjectInitializer& ObjectInitializer)
@@ -36,7 +37,7 @@ void APickupable::SpudPostRestore_Implementation(const USpudState* State)
 {
 	Super::SpudPostRestore_Implementation(State);
 	
-	FItemInfo* ItemInfo = GetPickupableComponent()->ItemData.GetRow<FItemInfo>("");
+	auto ItemInfo = GetPickupableComponent()->ItemData.GetItemInformation<UItemInformation>();
 	if (ItemInfo && StaticMesh && ItemInfo->ItemMesh)
 		StaticMesh->SetStaticMesh(ItemInfo->ItemMesh.Get());
 }

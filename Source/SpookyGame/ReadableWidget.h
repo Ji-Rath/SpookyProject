@@ -75,7 +75,7 @@ protected:
 	int CurrentPage = 0;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FItemInfo BookData;
+	UBookData* BookData;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool DoesPageExist(int Page, bool bRelative);

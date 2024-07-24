@@ -30,7 +30,7 @@ public:
 	TSubclassOf<class UUserWidget> ItemWidget;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateInventory(bool bItemAdded);
+	void UpdateInventory(const TArray<FInventoryContents>& Inventory);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn=true))
 	UInventoryComponent* InventoryRef;

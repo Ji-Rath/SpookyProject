@@ -1,13 +1,12 @@
 #include "ReadableWidget.h"
-#include "Inventory/PlayerEquipComponent.h"
+
 #include "BookData.h"
-#include "InteractionSystem_Settings.h"
+#include "Inventory/PlayerEquipComponent.h"
 #include "Interaction/ItemData.h"
 #include "Components/TextBlock.h"
 #include "PlayerControllerBase.h"
 #include "Interaction/PlayerInteractComponent.h"
 #include "ViewableComponent.h"
-#include "Inventory/ItemDataComponent.h"
 
 class UItemDataComponent;
 
@@ -71,25 +70,25 @@ int UReadableWidget::GetPageIndex()
 
 void UReadableWidget::IncrementPage(int Num)
 {
-	if (BookData.PageData.Num() > 0)
+	if (BookData->PageData.Num() > 0)
 	{
-		CurrentPage = FMath::Clamp(CurrentPage + Num, 0, BookData.PageData.Num()-1);
-		TextBody->SetText(BookData.PageData[CurrentPage]);
+		CurrentPage = FMath::Clamp(CurrentPage + Num, 0, BookData->PageData.Num()-1);
+		TextBody->SetText(BookData->PageData[CurrentPage]);
 		UpdatePageArrows();
 	}
 }
 
 void UReadableWidget::OnUseItem(const FInventoryContents& ItemName)
 {
-	if (const FItemInfo* BookInfo = ItemName.GetRow<FItemInfo>(""))
-		BookData = *BookInfo;
+	if (auto* BookInfo = ItemName.GetItemInformation<UBookData>())
+		BookData = BookInfo;
 	
-	if (!GetWidgetVisibility() && BookData.ItemType == EItemType::Readable && BookData.PageData.Num() > 0)
+	if (!GetWidgetVisibility() && BookData && !BookData->PageData.IsEmpty())
 	{
 		IncrementPage(0);
 		SetWidgetVisibility(true);
 		PlayerController->SetMouseState(false);
-		TextTitle->SetText(BookData.DisplayName);
+		TextTitle->SetText(BookData->DisplayName);
 	}
 }
 
@@ -108,13 +107,13 @@ bool UReadableWidget::DoesPageExist(int Page, bool bRelative)
 {
 	bool bPageExists = false;
 	
-	int Pages = BookData.PageData.Num();
+	int Pages = BookData->PageData.Num();
 	int PageToCheck = 0;
 	if (bRelative)
 	{
 		PageToCheck = CurrentPage;
 	}
 	PageToCheck += Page;
-	bPageExists = BookData.PageData.IsValidIndex(PageToCheck);
+	bPageExists = BookData->PageData.IsValidIndex(PageToCheck);
 	return bPageExists;
 }

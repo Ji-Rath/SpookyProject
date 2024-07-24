@@ -28,10 +28,7 @@ void UNotificationManagerWidget::CreateNotification_Implementation(TSubclassOf<U
 	
 }
 
-void UNotificationManagerWidget::InventoryChange(bool bAdded)
+void UNotificationManagerWidget::InventoryChange(const TArray<FInventoryContents>& Inventory)
 {
-	if (bAdded)
-	{
-		CreateNotification(IconWidget);
-	}
+	CreateNotification(IconWidget);
 }

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Inventory/InventoryInfo.h"
 #include "NotificationManagerWidget.generated.h"
 
 class UHorizontalBox;
@@ -23,7 +24,7 @@ public:
 	void CreateNotification(TSubclassOf<UUserWidget> NotificationWidget);
 
 	UFUNCTION()
-	void InventoryChange(bool bAdded);
+	void InventoryChange(const TArray<FInventoryContents>& Inventory);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UHorizontalBox* NotificationHolder;

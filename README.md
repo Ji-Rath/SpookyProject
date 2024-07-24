@@ -11,8 +11,8 @@ on an already established codebase.
 
 Current UE version: 5.4.4
 
-#Notes
-##Physics Simulation
+# Notes
+## Physics Simulation
 - Creating small physics objects can be glitchy when the player steps over it or run into it.
 This was resolved by letting the player capsule overlap the smaller objects.
 Then, a small sphere capsule is placed at the base of the player so that the physics objects move
@@ -28,6 +28,6 @@ the air. This can be mitigated by disabling CanCharacterStepUpOn and adjusting '
 - Disabling pawn collision while the player is grabbing an object is the only solution I found to prevent
 flying while grabbing a physics object under you. A better solution may be possible.
 
-##External Assets Currently Used
+## External Assets Currently Used
 - https://elbolilloduro.itch.io/paquete-de-modelos-low-poly-estilo-psx-2
 - https://chilly-durango.itch.io/medieval-building-parts

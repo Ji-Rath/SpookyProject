@@ -5,7 +5,7 @@
 #include "BookData.generated.h"
 
 UCLASS()
-class SPOOKYGAME_API UBookData : public UItemData
+class SPOOKYGAME_API UBookData : public UItemInformation
 {
 	GENERATED_BODY()
 	

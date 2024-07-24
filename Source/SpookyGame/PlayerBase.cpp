@@ -18,6 +18,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AttentionComponent.h"
 #include "AdvCharacterMovementComponent.h"
+#include "EnhancedInputComponent.h"
 #include "Interaction/PhysicsGrabComponent.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Inventory/PlayerEquipComponent.h"
@@ -117,6 +118,12 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (auto EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &APlayerBase::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &APlayerBase::StopJumping);
+	}
+
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerBase::MovementForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerBase::MovementRight);
 
@@ -128,9 +135,6 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, GetCharacterMovement(), &UAdvCharacterMovementComponent::Sprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, GetCharacterMovement(), &UAdvCharacterMovementComponent::StopSprint);
-
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 }
 
 void APlayerBase::TriggerFootstep()

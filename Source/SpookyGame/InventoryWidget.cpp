@@ -7,6 +7,8 @@
 #include "Components/ScrollBox.h"
 #include "Inventory/InventoryComponent.h"
 #include "InventoryItemWidget.h"
+#include "Interaction/ItemData.h"
+#include "Inventory/InventoryInfo.h"
 #include "Inventory/PlayerEquipComponent.h"
 
 bool UInventoryWidget::Initialize()
@@ -26,13 +28,15 @@ bool UInventoryWidget::Initialize()
 	if (InventoryRef)
 	{
 		InventoryRef->OnInventoryChange.AddDynamic(this, &UInventoryWidget::UpdateInventory);
-		UpdateInventory(false);
+		TArray<FInventoryContents> Inventory;
+		InventoryRef->GetInventory(Inventory);
+		UpdateInventory(Inventory);
 	}
 	
 	return true;
 }
 
-void UInventoryWidget::UpdateInventory(bool bItemAdded)
+void UInventoryWidget::UpdateInventory(const TArray<FInventoryContents>& Inventory)
 {
 	if (ensure(InventoryRef && ItemWidget))
 	{
@@ -47,7 +51,7 @@ void UInventoryWidget::UpdateInventory(bool bItemAdded)
 		// Loop through all current items in player inventory and display them to UI
 		for (const FInventoryContents& InventoryItem : Inventory)
 		{
-			const FItemInfo* ItemInfo = InventoryItem.GetRow<FItemInfo>("");
+			const auto ItemInfo = InventoryItem.GetItemInformation<UItemInformation>();
 			if (ensure(ItemInfo && InventoryDisplay))
 			{
 				UInventoryItemWidget* ItemReference = CreateWidget<UInventoryItemWidget>(InventoryDisplay, ItemWidget);
@@ -78,8 +82,10 @@ void UInventoryWidget::ToggleItem(int ItemSlot)
 	if (EquipCompRef)
 	{
 		/** Equip current item in slot if not already done */
-		const FInventoryContents Item = InventoryRef->FindItem(ItemSlot);
-		if (EquipCompRef->GetEquippedItemData().IsNull())
+		TArray<FInventoryContents> Inventory;
+		InventoryRef->GetInventory(Inventory);
+		const auto Item = Inventory[ItemSlot];
+		if (EquipCompRef->GetEquippedItemData().ItemInformation)
 		{
 			EquipCompRef->EquipItem(Item);
 		}

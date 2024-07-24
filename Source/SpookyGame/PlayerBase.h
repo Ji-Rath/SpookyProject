@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputAction.h"
 #include "ISpudObject.h"
 #include "GameFramework/Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerBase.generated.h"
 
 class IInteraction;
@@ -53,6 +53,9 @@ public:
 	/** Rate of footsteps while walking. Rate is proportional to the current speed of the pawn */
 	UPROPERTY(EditDefaultsOnly, Category = "Footsteps")
 	float WalkFootstepRate = 1.f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	const UInputAction* JumpAction;
 
 	//Called when player no longer wants to crouch
 	void StopCrouch();
