@@ -26,12 +26,6 @@ bool UReadableWidget::Initialize()
 		APawn* Player = PlayerController->GetPawn();
 		if (Player)
 		{
-			auto* EquipComponent = Player->FindComponentByClass<UPlayerEquipComponent>();
-			if (EquipComponent)
-			{
-				EquipComponent->OnItemUse.AddDynamic(this, &UReadableWidget::OnUseItem);
-			}
-
 			UPlayerInteractComponent* InteractComponent = Player->FindComponentByClass<UPlayerInteractComponent>();
 			if (InteractComponent)
 			{
