@@ -45,8 +45,6 @@ void UInventoryWidget::UpdateInventory(const TArray<FInventoryContents>& Invento
 
 		// Get player inventory contents
 		int CurrentSlot = 0;
-		TArray<FInventoryContents> Inventory;
-		InventoryRef->GetInventory(Inventory);
 
 		// Loop through all current items in player inventory and display them to UI
 		for (const FInventoryContents& InventoryItem : Inventory)
