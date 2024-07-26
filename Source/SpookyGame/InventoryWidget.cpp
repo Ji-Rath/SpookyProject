@@ -68,36 +68,3 @@ void UInventoryWidget::ClickedOnItem(int ItemIndex)
 	OnItemClick.Broadcast(ItemIndex, InventoryRef);
 }
 
-void UInventoryWidget::ToggleItem(int ItemSlot)
-{
-	UPlayerEquipComponent* EquipCompRef = nullptr;
-	
-	if (GetOwningPlayerPawn())
-	{
-		EquipCompRef = GetOwningPlayerPawn()->FindComponentByClass<UPlayerEquipComponent>();
-	}
-	
-	if (EquipCompRef)
-	{
-		/** Equip current item in slot if not already done */
-		TArray<FInventoryContents> Inventory;
-		InventoryRef->GetInventory(Inventory);
-		const auto Item = Inventory[ItemSlot];
-		if (EquipCompRef->GetEquippedItemData().ItemInformation)
-		{
-			EquipCompRef->EquipItem(Item);
-		}
-		else 
-		{
-			if (Item == EquipCompRef->GetEquippedItemData())
-			{
-				EquipCompRef->UnequipItem();
-			}
-			else
-			{
-				EquipCompRef->EquipItem(Item);
-			}
-		}
-	}
-}
-

@@ -14,7 +14,7 @@
 #include "Components/SpotLightComponent.h"
 #include "GameFramework/Controller.h"
 #include "PlayerControllerBase.h"
-#include "Interaction/PlayerInteractComponent.h"
+#include "Interaction/InteractorComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AttentionComponent.h"
 #include "AdvCharacterMovementComponent.h"

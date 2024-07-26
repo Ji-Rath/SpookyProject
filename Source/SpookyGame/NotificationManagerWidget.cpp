@@ -11,8 +11,10 @@ bool UNotificationManagerWidget::Initialize()
 
 	if (GetOwningPlayerPawn())
 	{
-		UInventoryComponent* InventoryComponent = GetOwningPlayerPawn()->FindComponentByClass<UInventoryComponent>();
-		InventoryComponent->OnInventoryChange.AddDynamic(this, &UNotificationManagerWidget::InventoryChange);
+		if (UInventoryComponent* InventoryComponent = GetOwningPlayerPawn()->FindComponentByClass<UInventoryComponent>())
+		{
+			InventoryComponent->OnInventoryChange.AddDynamic(this, &UNotificationManagerWidget::InventoryChange);
+		}
 	}
 	return Success;
 }

@@ -13,7 +13,7 @@ class AInteractable;
 class UCameraComponent;
 class USpringArmComponent;
 class UMatineeCameraShake;
-class UPlayerInteractComponent;
+class UInteractorComponent;
 class UAttentionComponent;
 class UAdvCharacterMovementComponent;
 class UPhysicsHandleComponent;

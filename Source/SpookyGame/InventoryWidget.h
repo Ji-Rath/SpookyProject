@@ -40,7 +40,4 @@ public:
 
 	UFUNCTION()
 	void ClickedOnItem(int ItemIndex);
-
-	UFUNCTION()
-	void ToggleItem(int ItemSlot);
 };

@@ -5,8 +5,6 @@
 #include "Interaction/ItemData.h"
 #include "Components/TextBlock.h"
 #include "PlayerControllerBase.h"
-#include "Interaction/PlayerInteractComponent.h"
-#include "ViewableComponent.h"
 
 class UItemDataComponent;
 
@@ -19,20 +17,6 @@ bool UReadableWidget::Initialize()
 {
 	bool bSuccess = Super::Initialize();
 	if (!bSuccess) { return false; }
-
-	PlayerController = GetOwningPlayer<APlayerControllerBase>();
-	if (PlayerController)
-	{
-		APawn* Player = PlayerController->GetPawn();
-		if (Player)
-		{
-			UPlayerInteractComponent* InteractComponent = Player->FindComponentByClass<UPlayerInteractComponent>();
-			if (InteractComponent)
-			{
-				InteractComponent->OnInteract.AddDynamic(this, &UReadableWidget::OnItemInteract);
-			}
-		}
-	}
 
 	return true;
 }
@@ -86,15 +70,11 @@ void UReadableWidget::OnUseItem(const FInventoryContents& ItemName)
 	}
 }
 
-void UReadableWidget::OnItemInteract(UInteractableComponent* Interactable)
+void UReadableWidget::OnItemInteract(UItemInformation* ItemInfo)
 {
-	if (!Interactable) { return; }
+	if (!ItemInfo) { return; }
 	
 	/** Ensure interacted object is a viewable item */
-	if (const auto* Viewable = Interactable->GetOwner()->FindComponentByClass<UViewableComponent>())
-	{
-		OnUseItem(Viewable->ItemData);
-	}
 }
 
 bool UReadableWidget::DoesPageExist(int Page, bool bRelative)
