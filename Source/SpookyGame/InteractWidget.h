@@ -19,15 +19,18 @@ class SPOOKYGAME_API UInteractWidget : public UUserWidget
 public:
 	bool Initialize() override;
 
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* InteractText;
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetInteractable(UPrimitiveComponent* Component);
 
 	UFUNCTION()
-	void UpdateUI(TWeakObjectPtr<UPrimitiveComponent> Interactable);
+	void UpdateUI(const TWeakObjectPtr<UPrimitiveComponent>& Interactable);
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* InteractionFade;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* MessageFade;
+
+	bool bInteractionVisible = false;
+	bool bMessageVisible = false;
 };

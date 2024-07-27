@@ -25,14 +25,43 @@ bool UInteractWidget::Initialize()
 	return true;
 }
 
-void UInteractWidget::UpdateUI(TWeakObjectPtr<UPrimitiveComponent> Interactable)
+void UInteractWidget::UpdateUI(const TWeakObjectPtr<UPrimitiveComponent>& Interactable)
 {
-	if (Interactable.IsValid() && Interactable->GetOwner()->Implements<UInteractable>())
+	bool bIsAnInteractable = Interactable.IsValid() && Interactable->GetOwner()->Implements<UInteractable>();
+	if (bIsAnInteractable)
 	{
-		PlayAnimation(MessageFade, 0.f, 1.f, EUMGSequencePlayMode::Forward, 1.f, true);
+		FText Name = IInteractable::Execute_GetName(Interactable->GetOwner(), Interactable.Get());
+		SetInteractable(Interactable.Get());
+		
+		if (!bInteractionVisible)
+		{
+			PlayAnimation(InteractionFade, 0.f, 1.f, EUMGSequencePlayMode::Forward, 1.f, false);
+			bInteractionVisible = true;
+		}
+		
+		if (!bMessageVisible && !Name.IsEmpty())
+		{
+			PlayAnimation(MessageFade, 0.f, 1.f, EUMGSequencePlayMode::Forward, 1.f, false);
+			bMessageVisible = true;
+		}
+
+		if (bMessageVisible && Name.IsEmpty())
+		{
+			PlayAnimation(MessageFade, 0.f, 1.f, EUMGSequencePlayMode::Reverse, 1.f, false);
+			bMessageVisible = false;
+		}
 	}
 	else
 	{
-		PlayAnimation(MessageFade, 0.f, 1.f, EUMGSequencePlayMode::Reverse, 1.f, true);
+		if (bInteractionVisible)
+		{
+			PlayAnimation(InteractionFade, 0.f, 1.f, EUMGSequencePlayMode::Reverse, 1.f, false);
+			bInteractionVisible = false;
+		}
+		if (bMessageVisible)
+		{
+			PlayAnimation(MessageFade, 0.f, 1.f, EUMGSequencePlayMode::Reverse, 1.f, false);
+			bMessageVisible = false;
+		}
 	}
 }
