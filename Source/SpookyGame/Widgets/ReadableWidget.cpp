@@ -1,10 +1,10 @@
 #include "ReadableWidget.h"
 
-#include "BookData.h"
+#include "SpookyGame/BookData.h"
 #include "Inventory/PlayerEquipComponent.h"
 #include "Interaction/ItemData.h"
 #include "Components/TextBlock.h"
-#include "PlayerControllerBase.h"
+#include "SpookyGame/PlayerControllerBase.h"
 
 class UItemDataComponent;
 
