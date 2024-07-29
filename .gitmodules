@@ -19,3 +19,6 @@
 [submodule "Plugins/AINodes"]
 	path = Plugins/AINodes
 	url = https://github.com/Ji-Rath/AINodes
+[submodule "Plugins/DlgSystem"]
+	path = Plugins/DlgSystem
+	url = https://github.com/NotYetGames/DlgSystem.git

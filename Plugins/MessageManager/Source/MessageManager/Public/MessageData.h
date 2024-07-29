@@ -13,4 +13,7 @@ struct FSimpleTextMessage : public FTableRowBase
 	/** The message to display */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Message")
 	FText Message;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Message")
+	USoundBase* Sound;
 };
