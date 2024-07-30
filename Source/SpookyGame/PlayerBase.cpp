@@ -143,6 +143,8 @@ void APlayerBase::TriggerFootstep()
 
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundFootstep, GetActorLocation());
 	APlayerController* PlayerController = GetController<APlayerController>();
+	if (!PlayerController) { return; }
+	
 	PlayerController->PlayerCameraManager->StartCameraShake(WalkingScreenShake);
 }
 
