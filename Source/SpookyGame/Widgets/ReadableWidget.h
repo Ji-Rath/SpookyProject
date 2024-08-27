@@ -4,12 +4,12 @@
 #include "Blueprint/UserWidget.h"
 #include "Interaction/ItemData.h"
 #include "Inventory/InventoryInfo.h"
+#include "SpookyGame/Interactables/Readable.h"
 #include "ReadableWidget.generated.h"
 
 class UItemData;
 class UTextBlock;
 class APlayerControllerBase;
-class UBookData;
 class AInteractable;
 
 UCLASS()
@@ -55,17 +55,8 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TextBody;
 
-	/** Textblock to display item contents */
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* TextTitle;
-
-	/** Called whenever the player uses an item (on self) */
-	UFUNCTION()
-	void OnUseItem(const FInventoryContents& ItemName);
-
-	/** Called whenever the player interacts with an item in the world */
-	UFUNCTION()
-	void OnItemInteract(UItemInformation* ItemInfo);
+	UFUNCTION(BlueprintCallable)
+	void UpdateReadable(const FReadableData& Readable);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	APlayerControllerBase* PlayerController;
@@ -74,7 +65,7 @@ protected:
 	int CurrentPage = 0;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UBookData* BookData;
+	FReadableData BookData;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool DoesPageExist(int Page, bool bRelative);

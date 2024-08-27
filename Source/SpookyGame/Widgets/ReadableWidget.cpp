@@ -1,10 +1,9 @@
 #include "ReadableWidget.h"
 
-#include "SpookyGame/BookData.h"
-#include "Inventory/PlayerEquipComponent.h"
 #include "Interaction/ItemData.h"
 #include "Components/TextBlock.h"
 #include "SpookyGame/PlayerControllerBase.h"
+#include "SpookyGame/Interactables/Readable.h"
 
 class UItemDataComponent;
 
@@ -48,46 +47,37 @@ int UReadableWidget::GetPageIndex()
 
 void UReadableWidget::IncrementPage(int Num)
 {
-	if (BookData->PageData.Num() > 0)
+	if (BookData.PageData.Num() > 0)
 	{
-		CurrentPage = FMath::Clamp(CurrentPage + Num, 0, BookData->PageData.Num()-1);
-		TextBody->SetText(BookData->PageData[CurrentPage]);
+		CurrentPage = FMath::Clamp(CurrentPage + Num, 0, BookData.PageData.Num()-1);
+		TextBody->SetText(BookData.PageData[CurrentPage]);
 		UpdatePageArrows();
 	}
 }
 
-void UReadableWidget::OnUseItem(const FInventoryContents& ItemName)
+void UReadableWidget::UpdateReadable(const FReadableData& Readable)
 {
-	if (auto* BookInfo = ItemName.GetItemInformation<UBookData>())
-		BookData = BookInfo;
+	BookData = Readable;
 	
-	if (!GetWidgetVisibility() && BookData && !BookData->PageData.IsEmpty())
+	if (!GetWidgetVisibility() && !BookData.PageData.IsEmpty())
 	{
 		IncrementPage(0);
 		SetWidgetVisibility(true);
-		PlayerController->SetMouseState(false);
-		TextTitle->SetText(BookData->DisplayName);
+		//PlayerController->SetMouseState(false);
 	}
-}
-
-void UReadableWidget::OnItemInteract(UItemInformation* ItemInfo)
-{
-	if (!ItemInfo) { return; }
-	
-	/** Ensure interacted object is a viewable item */
 }
 
 bool UReadableWidget::DoesPageExist(int Page, bool bRelative)
 {
 	bool bPageExists = false;
 	
-	int Pages = BookData->PageData.Num();
+	int Pages = BookData.PageData.Num();
 	int PageToCheck = 0;
 	if (bRelative)
 	{
 		PageToCheck = CurrentPage;
 	}
 	PageToCheck += Page;
-	bPageExists = BookData->PageData.IsValidIndex(PageToCheck);
+	bPageExists = BookData.PageData.IsValidIndex(PageToCheck);
 	return bPageExists;
 }

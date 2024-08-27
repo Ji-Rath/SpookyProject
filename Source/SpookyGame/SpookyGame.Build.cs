@@ -8,7 +8,7 @@ public class SpookyGame : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "InteractionSystem", "MoreMovement", "SPUD", "StructUtils", "InteractionSystem"});
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "InteractionSystem", "MoreMovement", "SPUD", "StructUtils", "InteractionSystem", "SlateCore"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput" });
 
