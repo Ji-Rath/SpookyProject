@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CommonActivatableWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Interaction/ItemData.h"
 #include "Inventory/InventoryInfo.h"
@@ -13,7 +14,7 @@ class APlayerControllerBase;
 class AInteractable;
 
 UCLASS()
-class SPOOKYGAME_API UReadableWidget : public UUserWidget
+class SPOOKYGAME_API UReadableWidget : public UCommonActivatableWidget
 {
 	GENERATED_BODY()
 
