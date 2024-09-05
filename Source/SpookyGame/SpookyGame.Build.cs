@@ -10,7 +10,7 @@ public class SpookyGame : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "InteractionSystem", "MoreMovement", "SPUD", "StructUtils", "InteractionSystem", "SlateCore"});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput", "CommonUI" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
