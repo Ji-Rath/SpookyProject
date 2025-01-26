@@ -53,7 +53,7 @@ void UInventoryWidget::UpdateInventory(const TArray<FInventoryContents>& Invento
 			if (ensure(ItemInfo && InventoryDisplay))
 			{
 				UInventoryItemWidget* ItemReference = CreateWidget<UInventoryItemWidget>(InventoryDisplay, ItemWidget);
-				ItemReference->UpdateDisplay(ItemInfo->DisplayName, InventoryItem.Count);
+				ItemReference->UpdateDisplay(ItemInfo->DisplayName, InventoryItem.Item.Get().Count);
 				InventoryDisplay->AddChild(ItemReference);
 				ItemReference->ItemSlot = CurrentSlot;
 				ItemReference->OnClick.AddDynamic(this, &UInventoryWidget::ClickedOnItem);
