@@ -1,4 +1,4 @@
-# SpookyProject
+# Project Scare
 Small project I've been working on. While it is planned to be a complete game in the near future, its primary use is to let me experiment freely with new systems
 on an already established codebase.
 
@@ -8,8 +8,10 @@ on an already established codebase.
 - Physics-based puzzles
 - Quest system using [SUQS](https://github.com/sinbad/SUQS)
 - Save system using [SPUD](https://github.com/sinbad/SPUD)
+- Dialogue system using [DlgSystem](https://github.com/NotYetGames/DlgSystem)
+- Interaction System using [InteractionSystem](https://github.com/Ji-Rath/UEInteractSystem/)
 
-Current UE version: 5.4.4
+Current UE version: 5.5
 
 # Notes
 ## Physics Simulation
